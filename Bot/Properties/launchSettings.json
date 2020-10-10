@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "Telegram.Bot.Altayskaya97": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "api_id": "1453302",
+        "api_hash": "2b3e4074f0de9c4a32bd32355317136b",
+        "altayskaya97_test_bot": "1334252997:AAHXInE3TR2M1aW78MNmj1W0Bid6Zhcs5B0",
+        "altayski_bot": "1000669157:AAGwyABrzHgIkl29X2nNRtYeXOoNUXpAINU"
+      }
+    }
+  }
+}

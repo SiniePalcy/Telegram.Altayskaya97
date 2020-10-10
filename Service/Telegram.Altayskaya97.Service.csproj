@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Telegram.Bot" Version="15.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
+    <ProjectReference Include="..\Model\Telegram.Altayskaya97.Model.csproj" />
+  </ItemGroup>
+
+</Project>
