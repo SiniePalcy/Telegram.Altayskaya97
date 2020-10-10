@@ -29,8 +29,10 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command GetCommand(string commandText)
         {
             string commandName = ExtractCommandName(commandText);
+
             var props = typeof(Commands).GetProperties(BindingFlags.Public | BindingFlags.Static);
             var commands = props.Where(p => p.PropertyType == typeof(Command)).Select(p => (Command) p.GetValue(null));
+
             var command =  commands.FirstOrDefault(c => c.Name == commandName);
             if (command == null)
                 return null;
