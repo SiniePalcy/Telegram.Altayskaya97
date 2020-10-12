@@ -79,6 +79,8 @@ namespace Telegram.Altayskaya97.Bot
 
             //var sec = configuration.GetSection("Tokens").GetSection(_accessTokenKeyName);
             string accessToken = Environment.GetEnvironmentVariable(_accessTokenKeyName);
+            Console.WriteLine(_accessTokenKeyName);
+            Console.WriteLine(accessToken);
             _botClient = new TelegramBotClient(accessToken);
 
             _botClient.OnMessage += Bot_OnMessage;
