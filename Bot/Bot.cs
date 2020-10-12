@@ -174,7 +174,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     chatMembers = await _botClient.GetChatMembersCountAsync(chat.Id);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     await _chatService.DeleteChat(chat.Id);
                 }
