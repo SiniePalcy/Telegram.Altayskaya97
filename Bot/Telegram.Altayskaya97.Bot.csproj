@@ -4,7 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Bot-58DF0949-B5BB-44C8-8A9D-C56CDF7CA616</UserSecretsId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <Version>0.1.1</Version>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <RuntimeIdentifiers>win-x64;ubuntu.18.04-x64</RuntimeIdentifiers>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <Version>0.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
