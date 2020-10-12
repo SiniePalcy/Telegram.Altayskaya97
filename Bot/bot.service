@@ -7,7 +7,7 @@ Type=notify
 WorkingDirectory=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64
 
 # systemd will run this executable to start the service
-ExecStart=dotnet /home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot.dll
+ExecStart=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
 
 # to query logs using journalctl, set a logical name here  
 SyslogIdentifier=bot
@@ -15,7 +15,7 @@ SyslogIdentifier=bot
 # Use your username to keep things simple.
 # If you pick a different user, make sure dotnet and all permissions are set correctly to run the app
 # To update permissions, use 'chown yourusername -R ../Telegram.Altayskaya97.Bot.dll' to take ownership of the folder and files,
-#       Use 'chmod +x ../Telegram.Altayskaya97.Bot.dll' to allow execution of the executable file
+#       Use 'chmod +x ../Telegram.Altayskaya97.Bot' to allow execution of the executable file
 User=altayski
 
 # ensure the service restarts after crashing
