@@ -22,4 +22,10 @@
     <ProjectReference Include="..\Model\Telegram.Altayskaya97.Model.csproj" />
     <ProjectReference Include="..\Service\Telegram.Altayskaya97.Service.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="bot.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
