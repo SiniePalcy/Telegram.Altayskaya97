@@ -42,7 +42,6 @@ namespace Telegram.Altayskaya97.Bot
         private static DynamoDbContext InitDynamoDbContext(IServiceProvider provider)
         {
             string connString = Configuration.GetSection("Configuration").GetSection("ConnectionStrings").GetSection("DynamoConnectionString").Value;
-            Console.WriteLine(connString);
             return new DynamoDbContext(connString);
         }
     }
