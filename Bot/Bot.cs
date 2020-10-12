@@ -77,7 +77,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
 
-            string accessToken = Environment.GetEnvironmentVariable(_accessTokenKeyName);
+            string accessToken = configSection.GetSection(_accessTokenKeyName).Value;
             _botClient = new TelegramBotClient(accessToken);
 
             _botClient.OnMessage += Bot_OnMessage;
