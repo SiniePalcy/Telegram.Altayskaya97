@@ -28,12 +28,6 @@ namespace Telegram.Altayskaya97.Bot
 {
     public class Bot : BackgroundService
     {
-#if DEBUG
-        private static readonly string _accessTokenKeyName = "altayskaya97_test_bot";
-#else
-        private static readonly string _accessTokenKeyName = "altayski_bot";
-#endif
-
         private readonly ILogger<Bot> _logger;
         //private readonly IConfiguration _configuration;
         private readonly ITelegramBotClient _botClient;
@@ -77,7 +71,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
 
-            string accessToken = configSection.GetSection(_accessTokenKeyName).Value;
+            string accessToken = configSection.GetSection(GlobalEnvironment.BotName).Value;
             _botClient = new TelegramBotClient(accessToken);
 
             _botClient.OnMessage += Bot_OnMessage;
