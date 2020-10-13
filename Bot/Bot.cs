@@ -358,7 +358,7 @@ namespace Telegram.Altayskaya97.Bot
 
             bool isBlocked = await _userService.IsBlocked(user.Id);
             if (!isBlocked)
-                return new CommandResult("Рад тебя видеть :)", CommandResultType.Message);
+                return new CommandResult("Glad to see you :)", CommandResultType.Message);
 
             await _userService.UnbanUser(user.Id);
 
