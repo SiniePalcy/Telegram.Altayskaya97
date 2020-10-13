@@ -72,7 +72,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
 
             string botName = GlobalEnvironment.BotName.StartsWith("@") ? GlobalEnvironment.BotName.Remove(0, 1) : GlobalEnvironment.BotName;
-            string accessToken = configSection.GetSection(GlobalEnvironment.BotName).Value;
+            string accessToken = configSection.GetSection(botName).Value;
             _botClient = new TelegramBotClient(accessToken);
 
             _botClient.OnMessage += Bot_OnMessage;
