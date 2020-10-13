@@ -91,6 +91,7 @@ namespace Telegram.Altayskaya97.Bot
         private async void Init()
         {
             var chatList = await _chatService.GetChatList();
+            var chat = chatList.First();
             if (!chatList.Any())
                 return;
 
@@ -374,7 +375,7 @@ namespace Telegram.Altayskaya97.Bot
                     result.Links.Add(new Link
                     {
                         Url = inviteLink,
-                        Description = $"×àò <b>{chat.Title}</b>"
+                        Description = $"Chat <b>{chat.Title}</b>"
                     }); 
                 }
             }
@@ -480,7 +481,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     await _botClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     await _userService.BanUser(user.Id);
-                    buffer.AppendLine($"User <b>{user.Name}</b> deketed from chat <b>{chatRepo.Title}</b>");
+                    buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
                 }
                 catch (Telegram.Bot.Exceptions.ApiRequestException ex)
                 {
