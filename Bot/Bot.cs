@@ -119,6 +119,7 @@ namespace Telegram.Altayskaya97.Bot
                     Id = admin.User.Id,
                     Name = userName,
                     IsAdmin = true,
+                    IsBot = admin.User.IsBot
                 };
                 await _userService.AddUser(newUser);
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, isAdmin={newUser.IsAdmin}");
@@ -463,6 +464,9 @@ namespace Telegram.Altayskaya97.Bot
             if (user.IsCoordinator)
                 return new CommandResult("You can't ban coordinator", CommandResultType.None);
 
+            if (user.IsBot)
+                return new CommandResult("You can't ban bot", CommandResultType.None);
+
             var chats = await _chatService.GetChatList();
             if (!chats.Any())
                 return new CommandResult("Not any chats", CommandResultType.Message);
@@ -506,13 +510,17 @@ namespace Telegram.Altayskaya97.Bot
                     continue;
                 }
 
-                if (user.IsCoordinator)
+                if (user.IsCoordinator || user.IsBot)
                     continue;
 
                 foreach (var chatRepo in chats)
                 {
                     var chat = await _botClient.GetChatAsync(chatRepo.Id);
                     if (chat == null)
+                        continue;
+
+                    var chatMember = await _botClient.GetChatMemberAsync(chat.Id, (int)user.Id);
+                    if (chatMember.User.IsBot)
                         continue;
 
                     try
