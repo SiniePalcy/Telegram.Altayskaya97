@@ -99,7 +99,6 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach (var admin in admins)
             {
-                _adminResetCounters[admin.User.Id] = 0;
                 var userInRepo = await _userService.GetUser(admin.User.Id);
                 if (userInRepo != null)
                 {
@@ -118,6 +117,13 @@ namespace Telegram.Altayskaya97.Bot
                 await _userService.AddUser(newUser);
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, isAdmin={newUser.IsAdmin}");
             }
+
+            var users = await _userService.AllUsers();
+            foreach(var user in users)
+            {
+                _adminResetCounters.TryAdd(user.Id, 0);
+            }
+
         }
 
         private int ParseInt(string source, int defaultValue)
@@ -157,28 +163,29 @@ namespace Telegram.Altayskaya97.Bot
         private async Task UpdateChatList()
         {
             if (_chatListCounter == PeriodChatListMin * 60 / PeriodEchoSec)
+            {
                 _chatListCounter = 0;
 
-            var chatList = await _chatService.GetChatList();
-            foreach (var chatRepo in chatList)
-            {
-                var chat = await _botClient.GetChatAsync(chatRepo.Id);
+                var chatList = await _chatService.GetChatList();
+                foreach (var chatRepo in chatList)
+                {
+                    var chat = await _botClient.GetChatAsync(chatRepo.Id);
 
-                int chatMembers = 0;
-                try
-                {
-                    chatMembers = await _botClient.GetChatMembersCountAsync(chat.Id);
-                }
-                catch (Exception)
-                {
-                    await _chatService.DeleteChat(chat.Id);
-                }
-                if (chat == null  || chatMembers <= 1)
-                {
-                    await _chatService.DeleteChat(chatRepo.Id);
+                    try
+                    {
+                        int chatMembers = await _botClient.GetChatMembersCountAsync(chat.Id);
+                        if (chat == null || chatMembers <= 1)
+                        {
+                            await _chatService.DeleteChat(chatRepo.Id);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        await _chatService.DeleteChat(chat.Id);
+                    }
                 }
             }
-            
+
             _chatListCounter++;
         }
 
@@ -289,6 +296,7 @@ namespace Telegram.Altayskaya97.Bot
                     IsBot = user.IsBot
                 };
                 await _userService.AddUser(dbUser);
+                _adminResetCounters.TryAdd(dbUser.Id, 0);
             }
         }
 
