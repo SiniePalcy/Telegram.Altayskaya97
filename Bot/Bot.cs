@@ -71,6 +71,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
 
+            string botName = GlobalEnvironment.BotName.StartsWith("@") ? GlobalEnvironment.BotName.Remove(0, 1) : GlobalEnvironment.BotName;
             string accessToken = configSection.GetSection(GlobalEnvironment.BotName).Value;
             _botClient = new TelegramBotClient(accessToken);
 
@@ -123,7 +124,6 @@ namespace Telegram.Altayskaya97.Bot
             {
                 _adminResetCounters.TryAdd(user.Id, 0);
             }
-
         }
 
         private int ParseInt(string source, int defaultValue)
