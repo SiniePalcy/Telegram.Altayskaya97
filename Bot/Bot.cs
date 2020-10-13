@@ -291,7 +291,8 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Id = user.Id,
                     Name = user.GetUserName(),
-                    IsAdmin = true
+                    IsAdmin = true,
+                    IsBot = user.IsBot
                 };
                 await _userService.AddUser(dbUser);
             }
