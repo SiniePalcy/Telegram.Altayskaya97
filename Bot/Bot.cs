@@ -262,7 +262,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 Id = chat.Id,
                 Title = chat.Title,
-                ChatType = chat.Type == ChatType.Supergroup ? Core.Model.ChatType.Admin : Core.Model.ChatType.Public
+                ChatType = Core.Model.ChatType.Public
             };
             await _chatService.AddChat(chatRepo);
         }
@@ -276,7 +276,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Id = chat.Id,
                     Title = chat.Title,
-                    ChatType = chat.Type == ChatType.Supergroup ? Core.Model.ChatType.Admin : Core.Model.ChatType.Public
+                    ChatType = Core.Model.ChatType.Public
                 };
                 await _chatService.AddChat(dbChat);
             }
