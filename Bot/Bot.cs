@@ -46,7 +46,7 @@ namespace Telegram.Altayskaya97.Bot
         private volatile int _chatListCounter = 0;
 
         #region Constant
-        private const string INCORRECT_COMMAND = "Неверная команда";
+        private const string INCORRECT_COMMAND = "Incorrect command";
         private const int PERIOD_ECHO_SEC_DEFAULT = 20;
         private const int PERIOD_RESET_ACCESS_MIN_DEFAULT = 60;
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
@@ -435,7 +435,7 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             if (chatsToPost == null || !chatsToPost.Any())
-                return new CommandResult("Проверьте команду", CommandResultType.Message);
+                return new CommandResult("Check command", CommandResultType.Message);
 
             string contentToPost = command.Text.Replace(command.Name, "").Replace(firstWord, "").Trim();
             
@@ -449,22 +449,22 @@ namespace Telegram.Altayskaya97.Bot
         {
             var commandContent = command.Text.Replace(command.Name,"").Trim().ToLower();
             if (string.IsNullOrEmpty(commandContent))
-                return new CommandResult("Проверьте команду", CommandResultType.Message);
+                return new CommandResult("Check command", CommandResultType.Message);
 
             var users = await _userService.AllUsers();
             var user = users.FirstOrDefault(u => commandContent.Contains(u.Name.ToLower()));
             if (user == null)
-                return new CommandResult("Пользователь не найден", CommandResultType.Message);
+                return new CommandResult("User not found", CommandResultType.Message);
 
             if (user.IsBlocked)
-                return new CommandResult("Пользователь уже заблокирован", CommandResultType.Message);
+                return new CommandResult("User blocked", CommandResultType.Message);
 
             if (user.IsCoordinator)
-                return new CommandResult("Координаторов не баним", CommandResultType.None);
+                return new CommandResult("You can't ban coordinator", CommandResultType.None);
 
             var chats = await _chatService.GetChatList();
             if (!chats.Any())
-                return new CommandResult("Список чатов пуст", CommandResultType.Message);
+                return new CommandResult("Not any chats", CommandResultType.Message);
 
             StringBuilder buffer = new StringBuilder();
             foreach (var chatRepo in chats)
@@ -480,7 +480,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     await _botClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     await _userService.BanUser(user.Id);
-                    buffer.AppendLine($"Пользователь <b>{user.Name}</b> удален из чата <b>{chatRepo.Title}</b>");
+                    buffer.AppendLine($"User <b>{user.Name}</b> deketed from chat <b>{chatRepo.Title}</b>");
                 }
                 catch (Telegram.Bot.Exceptions.ApiRequestException ex)
                 {
@@ -501,7 +501,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 if (user.IsBlocked)
                 {
-                    sb.AppendLine($"Пользователь <b>{user.Name}</b> уже заблокирован");
+                    sb.AppendLine($"User <b>{user.Name}</b> has been blocked already");
                     continue;
                 }
 
@@ -524,7 +524,7 @@ namespace Telegram.Altayskaya97.Bot
                         _logger.LogInformation(ex.Message);
                     }
 
-                    sb.AppendLine($"Пользователь <b>{user.Name}</b> удален из чата <b>{chatRepo.Title}</b>");
+                    sb.AppendLine($"User <b>{user.Name}</b> has been deleted from chat <b>{chatRepo.Title}</b>");
                 }
             }
 
