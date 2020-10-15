@@ -311,6 +311,7 @@ namespace Telegram.Altayskaya97.Bot
                 return;
 
             var user = chatMessage.From;
+            _logger.LogDebug($"Recieved message from {user.GetUserName()}, id={user.Id}");
 
             CommandResult commandResult;
             var userRepo = await _userService.GetUser(user.Id);
