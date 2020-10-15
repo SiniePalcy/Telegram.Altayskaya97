@@ -17,7 +17,7 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
         public static Command Ban { get; } = new Command("/ban", "/ban username", "Забанить пользователя с username", true);
         public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
-        public static Command Sobachku { get; } = new Command("/sobachku", "/sobachku","", true, false); // secret word
+        public static Command GrantAdmin { get; } = new Command("/sobachku", "/sobachku","", true, false); // secret word
 
         public static string ExtractCommandName(string command)
         {

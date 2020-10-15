@@ -322,7 +322,7 @@ namespace Telegram.Altayskaya97.Bot
             else if (command.IsAdmin && userRepo.IsAdmin)
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) : 
-                                command.Name == Commands.Sobachku.Name ? await Sobachku(user) :
+                                command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
                                 command.Name == Commands.ChatList.Name ? await ChatList() :
                                 command.Name == Commands.UserList.Name ? await UserList() :
                                 command.Name == Commands.Ban.Name ? await Ban(command) :
@@ -332,7 +332,7 @@ namespace Telegram.Altayskaya97.Bot
             else
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
-                                command.Name == Commands.Sobachku.Name ? await Sobachku(user) :
+                                command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
 
@@ -356,7 +356,7 @@ namespace Telegram.Altayskaya97.Bot
             return new CommandResult(_menuService.GetMenu(user.Username, isAdmin), CommandResultType.Message, new InlineKeyboardMarkup(_welcomeService.GetWelcomeButtons()));
         }
 
-        private async Task<CommandResult> Sobachku(User user)
+        private async Task<CommandResult> GrantAdminPermissions(User user)
         {
             await _userService.PromoteUserAdmin(user.Id);
 
