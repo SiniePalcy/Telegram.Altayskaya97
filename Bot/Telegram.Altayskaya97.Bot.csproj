@@ -24,7 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="bot.service">
+    <None Update="Linux\bot.test.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Linux\bot.service">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
