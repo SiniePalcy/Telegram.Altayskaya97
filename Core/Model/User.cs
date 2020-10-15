@@ -2,6 +2,14 @@
 
 namespace Telegram.Altayskaya97.Core.Model
 {
+    public class UserType
+    {
+        public const string Coordinator = "Coordinator";
+        public const string Admin = "Admin";
+        public const string Member = "Member";
+        public const string Bot = "Bot";
+    };
+
     public class User : IObject
     {
         public virtual long Id { get; set; }
