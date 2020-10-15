@@ -230,7 +230,7 @@ namespace Telegram.Altayskaya97.Bot
 
             var chatRepo = await _chatService.GetChat(chat.Id);
             User sender = chatMessage.From;
-            if (chatRepo.ChatType == Telegram.Altayskaya97.Core.Model.ChatType.Admin)
+            if (chatRepo.ChatType == Core.Model.ChatType.Admin)
                 await EnsureUserSaved(sender);
 
             if (chatMessage.Type == MessageType.ChatMembersAdded)
