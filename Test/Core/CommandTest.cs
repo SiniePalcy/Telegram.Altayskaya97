@@ -6,7 +6,7 @@ namespace Telegram.Altayskaya97.Test
     public class CommandTest
     {
         [Fact]
-        public void StartCommandTest()
+        public void CheckCommandTest()
         {
             string commandText = "/start";
             var command = Commands.GetCommand(commandText);
