@@ -14,7 +14,6 @@ namespace Telegram.Altayskaya97.Test.Bot
     {
         private BotFixture _fixture = null;
         private Altayskaya97.Bot.Bot _bot = null;
-        private BaseMapper<User, Core.Model.User> _userMapper = new BaseMapper<User, Core.Model.User>();
 
         public StartTests(BotFixture fixture)
         {
@@ -76,7 +75,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             var chat = new Chat
             {
                 Id = 1,

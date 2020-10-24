@@ -12,14 +12,12 @@ using System;
 
 namespace Telegram.Altayskaya97.Test.Bot
 {
-    public class BanTest : IClassFixture<BotFixture>
+    public class BanTests : IClassFixture<BotFixture>
     {
         private BotFixture _fixture = null;
         private Altayskaya97.Bot.Bot _bot = null;
-        private BaseMapper<User, Core.Model.User> _userMapper = new BaseMapper<User, Core.Model.User>();
-        private BaseMapper<Chat, Core.Model.Chat> _chatMapper = new BaseMapper<Chat, Core.Model.Chat>();
 
-        public BanTest(BotFixture fixture)
+        public BanTests(BotFixture fixture)
         {
             _fixture = fixture;
             _bot = fixture.Bot;
@@ -34,7 +32,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = _userMapper.MapToEntity(user1);
+            var userRepo = _fixture.UserMapper.MapToEntity(user1);
             var chat = new Chat
             {
                 Id = 1,
@@ -81,8 +79,8 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Type = ChatType.Private
             };
-            var chatRepo1 = _chatMapper.MapToEntity(chat1);
-            var chatRepo2 = _chatMapper.MapToEntity(chat2);
+            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
+            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
             var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
             string userName = "TestUser";
@@ -96,10 +94,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Username = userName + "2",
             };
-            var userRepo1 = _userMapper.MapToEntity(user1);
+            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
             userRepo1.Type = Core.Model.UserType.Admin;
-            var userRepo2 = _userMapper.MapToEntity(user2);
+            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
             userRepo2.IsBlocked = true;
             var users = new Core.Model.User[] { userRepo1, userRepo2 };
             
@@ -195,7 +193,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = _userMapper.MapToEntity(user1);
+            var userRepo = _fixture.UserMapper.MapToEntity(user1);
             var chat = new Chat
             {
                 Id = 1,
@@ -242,8 +240,8 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Type = ChatType.Private
             };
-            var chatRepo1 = _chatMapper.MapToEntity(chat1);
-            var chatRepo2 = _chatMapper.MapToEntity(chat2);
+            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
+            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
             var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
             string userName = "TestUser";
@@ -257,10 +255,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Username = userName + "2",
             };
-            var userRepo1 = _userMapper.MapToEntity(user1);
+            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
             userRepo1.Type = Core.Model.UserType.Admin;
-            var userRepo2 = _userMapper.MapToEntity(user2);
+            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
             var users = new Core.Model.User[] { userRepo1, userRepo2 };
 
             var chatMember1 = new ChatMember { User = user1 };

@@ -14,8 +14,6 @@ namespace Telegram.Altayskaya97.Test.Bot
     {
         private BotFixture _fixture = null;
         private Altayskaya97.Bot.Bot _bot = null;
-        private BaseMapper<User, Core.Model.User> _userMapper = new BaseMapper<User, Core.Model.User>();
-        private BaseMapper<Chat, Core.Model.Chat> _chatMapper = new BaseMapper<Chat, Core.Model.Chat>();
 
         public GrantAdminTests(BotFixture fixture)
         {
@@ -78,7 +76,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             userRepo.IsAdmin = true;
             userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
@@ -131,7 +129,8 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
+            userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -141,7 +140,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             {
                 Chat = chat,
                 From = user,
-                Text = "/sobachku"
+                Text = "/shpic"
             };
 
             _fixture.MockBotClient.Reset();
@@ -182,8 +181,9 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             userRepo.IsBlocked = true;
+            userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -199,11 +199,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = ChatType.Supergroup
             };
-            var chatRepo1 = _chatMapper.MapToEntity(chat);
+            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
             chatRepo1.ChatType = Core.Model.ChatType.Private;
-            var chatRepo2 = _chatMapper.MapToEntity(chat1);
+            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
             chatRepo2.ChatType = Core.Model.ChatType.Admin;
-            var chatRepo3 = _chatMapper.MapToEntity(chat2);
+            var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
             chatRepo3.ChatType = Core.Model.ChatType.Public;
             var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
@@ -212,7 +212,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             {
                 Chat = chat,
                 From = user,
-                Text = "/sobachku"
+                Text = "/shpic"
             };
 
             _fixture.MockBotClient.Reset();
@@ -274,8 +274,9 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             userRepo.IsBlocked = true;
+            userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -291,11 +292,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = ChatType.Supergroup
             };
-            var chatRepo1 = _chatMapper.MapToEntity(chat);
+            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
             chatRepo1.ChatType = Core.Model.ChatType.Private;
-            var chatRepo2 = _chatMapper.MapToEntity(chat1);
+            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
             chatRepo2.ChatType = Core.Model.ChatType.Admin;
-            var chatRepo3 = _chatMapper.MapToEntity(chat2);
+            var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
             chatRepo3.ChatType = Core.Model.ChatType.Public;
             var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
@@ -304,7 +305,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             {
                 Chat = chat,
                 From = user,
-                Text = "/sobachku"
+                Text = "/shpic"
             };
 
             _fixture.MockBotClient.Reset();

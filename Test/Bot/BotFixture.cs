@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
+using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Telegram.Altayskaya97.Test.Bot
 {
@@ -12,8 +14,9 @@ namespace Telegram.Altayskaya97.Test.Bot
 
         //private Mock<IConfiguration> _configMock;
 
-        public Mock<ITelegramBotClient> MockBotClient { get; }
-
+        public Mock<ITelegramBotClient> MockBotClient { get; }// = new Mock<ITelegramBotClient>();
+        public BaseMapper<User, Core.Model.User> UserMapper => new BaseMapper<User, Core.Model.User>();
+        public BaseMapper<Chat, Core.Model.Chat> ChatMapper => new BaseMapper<Chat, Core.Model.Chat>();
 
         public BotFixture()
         {
@@ -27,7 +30,6 @@ namespace Telegram.Altayskaya97.Test.Bot
                 null, 
                 false, 
                 false);
-
             MockBotClient = new Mock<ITelegramBotClient>();
             Bot.BotClient = MockBotClient.Object;
         }

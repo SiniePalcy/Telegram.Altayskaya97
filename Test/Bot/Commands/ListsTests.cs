@@ -13,8 +13,6 @@ namespace Telegram.Altayskaya97.Test.Bot
     {
         private BotFixture _fixture = null;
         private Altayskaya97.Bot.Bot _bot = null;
-        private BaseMapper<User, Core.Model.User> _userMapper = new BaseMapper<User, Core.Model.User>();
-        private BaseMapper<Chat, Core.Model.Chat> _chatMapper = new BaseMapper<Chat, Core.Model.Chat>();
 
         public ListsTests(BotFixture fixture)
         {
@@ -80,7 +78,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             var chat = new Chat
             {
                 Id = 1,
@@ -135,10 +133,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Username = userName + "2"
             };
-            var userRepo1 = _userMapper.MapToEntity(user1);
+            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
             userRepo1.Type = Core.Model.UserType.Admin;
-            var userRepo2 = _userMapper.MapToEntity(user2);
+            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
             var chat1 = new Chat
             {
                 Id = 1,
@@ -149,8 +147,8 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 2,
                 Type = ChatType.Private
             };
-            var chatRepo1 = _chatMapper.MapToEntity(chat1);
-            var chatRepo2 = _chatMapper.MapToEntity(chat2);
+            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
+            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
             var message = new Message
             {
                 Chat = chat1,

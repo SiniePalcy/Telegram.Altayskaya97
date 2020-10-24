@@ -13,7 +13,6 @@ namespace Telegram.Altayskaya97.Test.Bot
     {
         private BotFixture _fixture = null;
         private Altayskaya97.Bot.Bot _bot = null;
-        private BaseMapper<User, Core.Model.User> _userMapper = new BaseMapper<User, Core.Model.User>();
 
         public PublicMessagesTests(BotFixture fixture)
         {
@@ -51,7 +50,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
-                .ReturnsAsync(_userMapper.MapToEntity(user));
+                .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             var chatServiceMock = new Mock<IChatService>(); 
             chatServiceMock.SetupSequence(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(default(Core.Model.Chat))
@@ -105,7 +104,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
-                .ReturnsAsync(_userMapper.MapToEntity(user));
+                .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             var chatServiceMock = new Mock<IChatService>();
             chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
@@ -191,7 +190,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             userRepo.Name = user.Username;
             var chat = new Chat
             {
@@ -247,7 +246,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName,
             };
-            var userRepo = _userMapper.MapToEntity(user);
+            var userRepo = _fixture.UserMapper.MapToEntity(user);
             userRepo.Name = user.Username;
             var chat = new Chat
             {

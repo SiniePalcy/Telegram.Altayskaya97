@@ -246,7 +246,6 @@ namespace Telegram.Altayskaya97.Bot
                                 command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
                                 command.Name == Commands.Return.Name ? await Unban(user) :
                                     new CommandResult(INCORRECT_COMMAND);
-
             }
             else if (command.IsAdmin && isAdmin)
             {
