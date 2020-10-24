@@ -497,6 +497,9 @@ namespace Telegram.Altayskaya97.Bot
 
                 try
                 {
+                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == Core.Model.UserType.Member)
+                        continue;
+
                     await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     await UserService.BanUser(user.Id);
                     buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
