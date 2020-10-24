@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Telegram.Altayskaya97.Test
 {
-    public class CommandTest
+    public class CommandTests
     {
         [Fact]
         public void CheckCommandTest()

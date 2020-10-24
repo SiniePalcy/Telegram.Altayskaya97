@@ -19,7 +19,7 @@ namespace Telegram.Altayskaya97.Service
             _logger = logger;
         }
 
-        public async Task<ICollection<User>> AllUsers()
+        public async Task<ICollection<User>> GetUserList()
         {
             return await _repo.GetCollection();
         }
@@ -32,7 +32,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task<User> GetUser(string userName)
         {
             var users = await _repo.GetCollection();
-            return users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower());
+            return users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower().Trim());
         }
 
         public async Task<bool> PromoteUserAdmin(long userId)

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\NewFolder\" />
+  </ItemGroup>
+
 </Project>
