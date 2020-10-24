@@ -10,6 +10,8 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command Help { get; } = new Command("/help", "/help", "Справка");
         public static Command Helb { get; } = new Command("/helb", "/helb", "", false, false);
         public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
+        public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); // secret word
+        public static Command Return { get; } = new Command("/sobachku", "/sobachku", "", false, false); // secret word
 
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post [chatId or all] text", "Отправить объявление в чат (chatId) или все чаты (all) с текстом text", true);
@@ -17,11 +19,11 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
         public static Command Ban { get; } = new Command("/ban", "/ban username", "Забанить пользователя с username", true);
         public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
-        public static Command Sobachku { get; } = new Command("/sobachku", "/sobachku","", true, false); // secret word
+        public static Command GrantAdmin { get; } = new Command("/shpic", "/shpic", "", true, false); // secret word
 
         public static string ExtractCommandName(string command)
         {
-            command = command.Trim();
+            command = command.Trim().ToLower();
             var spaceInd =command.IndexOf(' ');
             return spaceInd < 1 ? command : command.Substring(0, spaceInd);
         }
@@ -33,7 +35,7 @@ namespace Telegram.Altayskaya97.Core.Constant
             var props = typeof(Commands).GetProperties(BindingFlags.Public | BindingFlags.Static);
             var commands = props.Where(p => p.PropertyType == typeof(Command)).Select(p => (Command) p.GetValue(null));
 
-            var command =  commands.FirstOrDefault(c => c.Name == commandName);
+            var command =  commands.FirstOrDefault(c => c.Name.ToLower() == commandName);
             if (command == null)
                 return null;
 

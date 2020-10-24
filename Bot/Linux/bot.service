@@ -1,0 +1,26 @@
+﻿[Unit]
+# use it only for Release configuration
+Description=Bot service .NET
+
+[Service]
+Type=simple
+# will set the Current Working Directory (CWD). Worker service will have issues without this setting
+WorkingDirectory=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64
+
+# systemd will run this executable to start the service
+ExecStart=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
+
+# to query logs using journalctl, set a logical name here  
+SyslogIdentifier=bot
+
+# Use your username to keep things simple.
+# If you pick a different user, make sure dotnet and all permissions are set correctly to run the app
+User=altayski
+
+# ensure the service restarts after crashing
+Restart=always
+# amount of time to wait before restarting the service              
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

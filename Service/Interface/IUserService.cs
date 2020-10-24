@@ -8,7 +8,7 @@ namespace Telegram.Altayskaya97.Service.Interface
 {
     public interface IUserService : IService
     {
-        Task<ICollection<User>> AllUsers();
+        Task<ICollection<User>> GetUserList();
         Task<User> GetUser(long userId);
         Task<User> GetUser(string userName);
         Task<bool> PromoteUserAdmin(long userId);
