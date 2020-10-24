@@ -497,8 +497,11 @@ namespace Telegram.Altayskaya97.Bot
 
                 try
                 {
-                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == Core.Model.UserType.Member)
+                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member)
+                    {
+                        _logger.LogInformation($"Chat admin chat for member");
                         continue;
+                    }
 
                     await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     await UserService.BanUser(user.Id);
