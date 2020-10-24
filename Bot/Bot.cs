@@ -240,10 +240,13 @@ namespace Telegram.Altayskaya97.Bot
             CommandResult commandResult;
             var userRepo = await UserService.GetUser(user.Id);
             var isAdmin = await UserService.IsAdmin(user.Id);
-            if (userRepo == null)
+            if (userRepo == null || userRepo.Type == UserType.Member)
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
+                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
+                                command.Name == Commands.Return.Name ? await Unban(user) :
                                     new CommandResult(INCORRECT_COMMAND);
+
             }
             else if (command.IsAdmin && isAdmin)
             {
@@ -251,13 +254,15 @@ namespace Telegram.Altayskaya97.Bot
                                 command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
                                 command.Name == Commands.ChatList.Name ? await ChatList() :
                                 command.Name == Commands.UserList.Name ? await UserList() :
+                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
                                 command.Name == Commands.Ban.Name ? await Ban(command) :
                                 command.Name == Commands.BanAll.Name ? await BanAll() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
-            else
+            else //non admin command for admin
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
+                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
                                 command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
@@ -361,6 +366,34 @@ namespace Telegram.Altayskaya97.Bot
                 }
             }
             
+            return result;
+        }
+
+        public async Task<CommandResult> Unban(User user)
+        {
+            await UserService.UnbanUser(user.Id);
+
+            var result = new CommandResult("", CommandResultType.Links);
+
+            var chatList = await ChatService.GetChatList();
+            foreach (var chat in chatList)
+            {
+                if (chat.ChatType == Core.Model.ChatType.Private || chat.ChatType == Core.Model.ChatType.Admin)
+                    continue;
+
+                var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
+                if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
+                {
+                    await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
+                    var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
+                    result.Links.Add(new Link
+                    {
+                        Url = inviteLink,
+                        Description = $"Chat <b>{chat.Title}</b>"
+                    });
+                }
+            }
+
             return result;
         }
 

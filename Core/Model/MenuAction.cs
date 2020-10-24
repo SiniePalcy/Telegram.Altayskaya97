@@ -4,10 +4,10 @@
     {
         public string Command { get; set; }
         public string Description { get; set; }
-        public MenuAction(string command, string description)
+        public MenuAction(Command command)
         {
-            this.Command = command;
-            this.Description = description;
+            this.Command = command.Name;
+            this.Description = command.Description;
         }
     }
 }

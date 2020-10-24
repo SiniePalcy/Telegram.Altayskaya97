@@ -9,15 +9,16 @@ namespace Telegram.Altayskaya97.Service
     {
         private IList<MenuAction> _commands = new List<MenuAction>
         {
-            new MenuAction(Commands.Start.Template, Commands.Start.Description),
+            new MenuAction(Commands.Start),
+            new MenuAction(Commands.IWalk)
         };
 
         private IList<MenuAction> _adminCommands = new List<MenuAction>
         {
-            new MenuAction(Commands.UserList.Template, Commands.UserList.Description),
-            new MenuAction(Commands.ChatList.Template, Commands.ChatList.Description),
-            new MenuAction(Commands.Ban.Template, Commands.Ban.Description),
-            new MenuAction(Commands.BanAll.Template, Commands.BanAll.Description)
+            new MenuAction(Commands.UserList),
+            new MenuAction(Commands.ChatList),
+            new MenuAction(Commands.Ban),
+            new MenuAction(Commands.BanAll)
         };
         public MenuService()
         {

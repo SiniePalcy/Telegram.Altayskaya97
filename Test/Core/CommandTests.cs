@@ -35,6 +35,27 @@ namespace Telegram.Altayskaya97.Test
             Assert.False(command.IsValid);
             command.Text = "/ban 123";
             Assert.True(command.IsValid);
+
+            commandText = "/iwalk";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.IWalk.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/Iwalk";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.IWalk.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/sobachku";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.Return.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/shpic";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.GrantAdmin.Name, command.Name);
+            Assert.True(command.IsValid);
+
         }
     }
 }

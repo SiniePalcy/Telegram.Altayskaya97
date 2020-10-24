@@ -273,7 +273,6 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Text = "/banall"
             };
             
-
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
