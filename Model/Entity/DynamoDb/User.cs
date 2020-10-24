@@ -21,8 +21,6 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         [DynamoDBProperty]
         public bool IsBlocked { get; set; }
         [DynamoDBProperty]
-        public bool IsCoordinator { get; set; }
-        [DynamoDBProperty]
-        public bool IsBot { get; set; }
+        public string Type { get; set; } = Core.Model.UserType.Member;
     }
 }

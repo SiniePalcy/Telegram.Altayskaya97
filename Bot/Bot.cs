@@ -127,7 +127,7 @@ namespace Telegram.Altayskaya97.Bot
                     Id = admin.User.Id,
                     Name = userName,
                     IsAdmin = true,
-                    IsBot = admin.User.IsBot
+                    Type = admin.User.IsBot ? UserType.Bot : UserType.Admin
                 };
                 await UserService.AddUser(newUser);
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, isAdmin={newUser.IsAdmin}");
@@ -439,10 +439,10 @@ namespace Telegram.Altayskaya97.Bot
             if (user.IsBlocked)
                 return new CommandResult(Messages.UserBlocked, CommandResultType.Message);
 
-            if (user.IsCoordinator)
+            if (user.Type == UserType.Coordinator)
                 return new CommandResult(Messages.YouCantBanCoordinator, CommandResultType.Message);
 
-            if (user.IsBot)
+            if (user.Type == UserType.Bot)
                 return new CommandResult(Messages.YouCantBanBot, CommandResultType.Message);
 
             var chats = await ChatService.GetChatList();
@@ -488,7 +488,7 @@ namespace Telegram.Altayskaya97.Bot
                     continue;
                 }
 
-                if (user.IsCoordinator || user.IsBot)
+                if (user.Type == UserType.Coordinator || user.Type == UserType.Bot)
                     continue;
 
                 foreach (var chatRepo in chats)
@@ -565,7 +565,7 @@ namespace Telegram.Altayskaya97.Bot
                     Id = user.Id,
                     Name = user.GetUserName(),
                     IsAdmin = true,
-                    IsBot = user.IsBot
+                    Type = UserType.Admin
                 };
                 await UserService.AddUser(dbUser);
                 _adminResetCounters.TryAdd(dbUser.Id, 0);

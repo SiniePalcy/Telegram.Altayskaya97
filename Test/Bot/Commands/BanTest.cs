@@ -135,15 +135,14 @@ namespace Telegram.Altayskaya97.Test.Bot
             message.Text = "/ban testuser2";
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.IsCoordinator = true;
+            userRepo2.Type = Core.Model.UserType.Coordinator;
             userRepo2.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.IsCoordinator = false;
-            userRepo2.IsBot = true;
+            userRepo2.Type = Core.Model.UserType.Bot;
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.IsBot = false;
+            userRepo2.Type = Core.Model.UserType.Member;
             _bot.RecieveMessage(message).Wait();
 
             _bot.RecieveMessage(message).Wait();
@@ -313,7 +312,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Times.Never);
             userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
 
-            userRepo2.IsCoordinator = true;
+            userRepo2.Type = Core.Model.UserType.Coordinator;
             userRepo2.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
@@ -327,8 +326,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Times.Never);
             userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
 
-            userRepo2.IsCoordinator = false;
-            userRepo2.IsBot = true;
+            userRepo2.Type = Core.Model.UserType.Bot;
             userRepo2.IsBlocked = false;
             userRepo1.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
@@ -343,7 +341,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Times.Never);
             userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
 
-            userRepo2.IsBot = false;
+            userRepo2.Type = Core.Model.UserType.Member;
             userRepo2.IsBlocked = false;
             userRepo1.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();

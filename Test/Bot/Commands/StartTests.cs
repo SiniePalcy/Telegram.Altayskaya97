@@ -23,7 +23,7 @@ namespace Telegram.Altayskaya97.Test.Bot
         }
 
         [Fact]
-        public async void UnknownMessageTest()
+        public void UnknownMessageTest()
         {
             string userName = "TestUser";
             var user = new User
