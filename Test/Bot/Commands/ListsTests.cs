@@ -137,6 +137,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var userRepo1 = _userMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
+            userRepo1.Type = Core.Model.UserType.Admin;
             var userRepo2 = _userMapper.MapToEntity(user2);
             var chat1 = new Chat
             {
@@ -161,6 +162,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(userRepo1);
+            userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user1.Id)))
+                .ReturnsAsync(true);
             userServiceMock.Setup(s => s.GetUserList())
                 .ReturnsAsync(new Core.Model.User[] { userRepo1, userRepo2 });
             _bot.UserService = userServiceMock.Object;

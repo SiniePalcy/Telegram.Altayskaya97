@@ -130,7 +130,7 @@ namespace Telegram.Altayskaya97.Bot
                     Type = admin.User.IsBot ? UserType.Bot : UserType.Admin
                 };
                 await UserService.AddUser(newUser);
-                _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, isAdmin={newUser.IsAdmin}");
+                _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, type={newUser.Type}");
             }
 
             var users = await UserService.GetUserList();
@@ -239,12 +239,13 @@ namespace Telegram.Altayskaya97.Bot
 
             CommandResult commandResult;
             var userRepo = await UserService.GetUser(user.Id);
+            var isAdmin = await UserService.IsAdmin(user.Id);
             if (userRepo == null)
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
-            else if (command.IsAdmin && userRepo.IsAdmin)
+            else if (command.IsAdmin && isAdmin)
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
                                 command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
@@ -297,8 +298,8 @@ namespace Telegram.Altayskaya97.Bot
 
             var chatRepo = await ChatService.GetChat(chat.Id);
             User sender = chatMessage.From;
-            if (chatRepo.ChatType == Core.Model.ChatType.Admin)
-                await EnsureUserSaved(sender);
+            
+            await EnsureUserSaved(sender, chatRepo.ChatType);
 
             if (string.IsNullOrEmpty(chatMessage.Text))
                 return;
@@ -381,12 +382,14 @@ namespace Telegram.Altayskaya97.Bot
         {
             var userList = await UserService.GetUserList();
 
-            StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Admin",-6}{"Blocked",-7}\n"));
+            StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Blocked",-8}{"Access",-6}\n"));
             foreach (var user in userList)
             {
-                var adminSign = user.IsAdmin ? "  +" : "  -";
+                var isAdmin = await UserService.IsAdmin(user.Id);
+                var userType = user.Type;
                 var blockedSign = user.IsBlocked ? "  +" : "  -";
-                sb.AppendLine($"{user.Name,-20}{adminSign,-6}{blockedSign,-7}");
+                var accessSign = isAdmin ? "  +" : "  -";
+                sb.AppendLine($"{user.Name,-20}{userType,-12}{blockedSign,-8}{accessSign,-6}");
             }
             sb.Append("</code>");
 
@@ -555,7 +558,7 @@ namespace Telegram.Altayskaya97.Bot
             }
         }
 
-        private async Task EnsureUserSaved(User user)
+        private async Task EnsureUserSaved(User user, string chatType)
         {
             var userRepo = await UserService.GetUser(user.Id);
             if (userRepo == null)
@@ -564,9 +567,9 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Id = user.Id,
                     Name = user.GetUserName(),
-                    IsAdmin = true,
-                    Type = UserType.Admin
+                    Type = chatType == Core.Model.ChatType.Admin ? UserType.Admin : UserType.Member
                 };
+                dbUser.IsAdmin = dbUser.Type == Core.Model.UserType.Admin;
                 await UserService.AddUser(dbUser);
                 _adminResetCounters.TryAdd(dbUser.Id, 0);
             }

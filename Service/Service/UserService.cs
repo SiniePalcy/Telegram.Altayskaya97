@@ -38,7 +38,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task<bool> PromoteUserAdmin(long userId)
         {
             User user = await _repo.GetItem(userId);
-            if (user == null)
+            if (user == null || user.Type == UserType.Member)
                 return false;
             
             user.IsAdmin = true;
@@ -125,7 +125,7 @@ namespace Telegram.Altayskaya97.Service
             if (user == null)
                 return false;
 
-            return user.IsAdmin;
+            return user.Type == UserType.Admin && user.IsAdmin;
         }
 
         public async Task<bool> IsBlocked(long userId)

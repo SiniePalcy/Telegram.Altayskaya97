@@ -61,7 +61,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Never);
+            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Once);
             chatServiceMock.Verify(mock => 
                 mock.AddChat(It.Is<Core.Model.Chat>(c => c.Id == chat.Id)), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
@@ -114,7 +114,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Never);
+            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Once);
             chatServiceMock.Verify(mock =>
                 mock.AddChat(It.Is<Core.Model.Chat>(ct => ct.Id == chat.Id)), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(

@@ -80,6 +80,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var userRepo = _userMapper.MapToEntity(user);
             userRepo.IsAdmin = true;
+            userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
