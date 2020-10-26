@@ -24,6 +24,7 @@ using UserRepo = Telegram.Altayskaya97.Core.Model.User;
 using Microsoft.Extensions.Configuration;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Bot.Exceptions;
+using System.Reflection;
 
 namespace Telegram.Altayskaya97.Bot
 {
@@ -162,10 +163,10 @@ namespace Telegram.Altayskaya97.Bot
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var now = DateTimeOffset.Now;
+                var now = DateTime.UtcNow;
                 await UpdateUsersAccess();
                 await UpdateBotMessages();
-                _logger.LogInformation($"[Echo] Bot running at: {now}");
+                _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
         }
