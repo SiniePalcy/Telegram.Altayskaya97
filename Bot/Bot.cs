@@ -23,6 +23,7 @@ using ChatRepo = Telegram.Altayskaya97.Core.Model.Chat;
 using UserRepo = Telegram.Altayskaya97.Core.Model.User;
 using Microsoft.Extensions.Configuration;
 using Telegram.Altayskaya97.Bot.Model;
+using Telegram.Bot.Exceptions;
 
 namespace Telegram.Altayskaya97.Bot
 {
@@ -108,8 +109,16 @@ namespace Telegram.Altayskaya97.Bot
             List<ChatMember> admins = new List<ChatMember>();
             foreach (var adminChat in adminChats)
             {
-                var adminsOfChat = await BotClient.GetChatAdministratorsAsync(adminChat.Id);
-                admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
+                try
+                {
+                    var adminsOfChat = await BotClient.GetChatAdministratorsAsync(adminChat.Id);
+                    admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
+                }
+                catch(ApiRequestException ex)
+                {
+                    _logger.LogInformation($"Chat {adminChat.Title} is unavailable and will be deleted");
+                    await ChatService.DeleteChat(adminChat.Id);
+                }
             }
 
             foreach (var admin in admins)
@@ -342,24 +351,35 @@ namespace Telegram.Altayskaya97.Bot
             var result = new CommandResult("", CommandResultType.Links);
 
             var chatList = await ChatService.GetChatList();
+            List<Core.Model.Chat> chatsToDelete = new List<ChatRepo>();
             foreach(var chat in chatList)
             {
                 if (chat.ChatType == Core.Model.ChatType.Private)
                     continue;
-
-                var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
-                if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
+                try
                 {
-                    if (chatMember.Status == ChatMemberStatus.Kicked)
-                        await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
-                    var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
-                    result.Links.Add(new Link
+                    var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
+                    if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
                     {
-                        Url = inviteLink,
-                        Description = $"Chat <b>{chat.Title}</b>"
-                    }); 
+                        if (chatMember.Status == ChatMemberStatus.Kicked)
+                            await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
+                        var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
+                        result.Links.Add(new Link
+                        {
+                            Url = inviteLink,
+                            Description = $"Chat <b>{chat.Title}</b>"
+                        });
+                    }
+                }
+                catch(ApiRequestException ex)
+                {
+                    _logger.LogInformation($"Chat {chat.Title} s unavailable and will be deleted");
+                    chatsToDelete.Add(chat);
                 }
             }
+
+            foreach (var chat in chatsToDelete)
+                await ChatService.DeleteChat(chat.Id);
             
             return result;
         }
