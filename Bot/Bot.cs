@@ -377,7 +377,8 @@ namespace Telegram.Altayskaya97.Bot
                 var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
                 if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
                 {
-                    await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
+                    if (chatMember.Status == ChatMemberStatus.Kicked)
+                        await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
                     var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
                     result.Links.Add(new Link
                     {
