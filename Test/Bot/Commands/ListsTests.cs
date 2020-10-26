@@ -55,8 +55,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
@@ -105,8 +103,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
@@ -177,8 +173,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Once);
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(

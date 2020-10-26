@@ -59,50 +59,6 @@ namespace Telegram.Altayskaya97.Service
             return true;
         }
 
-        public async Task<bool> BanUser(long userId)
-        {
-            var user = await _repo.GetItem(userId);
-            if (user == null)
-                return false;
-
-            user.IsBlocked = true;
-            await _repo.UpdateItem(user);
-            _logger.LogInformation($"User {user.Name} has been blocked");
-            return true;
-        }
-
-        public async Task<bool> UnbanUser(long userId)
-        {
-            var user = await _repo.GetItem(userId);
-            if (user == null)
-                return false;
-
-            user.IsBlocked = false;
-            await _repo.UpdateItem(user);
-            _logger.LogInformation($"User {user.Name} has been unblocked");
-            return true;
-        }
-
-        public async Task<bool> BanUser(string userName)
-        {
-            var users = await _repo.GetCollection();
-            var findUser = users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower());
-            if (findUser == null)
-                return false;
-
-            return await BanUser(findUser.Id);
-        }
-
-        public async Task<bool> UnbanUser(string userName)
-        {
-            var users = await _repo.GetCollection();
-            var findUser = users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower());
-            if (findUser == null)
-                return false;
-
-            return await UnbanUser(findUser.Id);
-        }
-
         public async Task AddUser(User user)
         {
             await _repo.AddItem(user);
@@ -128,13 +84,5 @@ namespace Telegram.Altayskaya97.Service
             return user.Type == UserType.Admin && user.IsAdmin;
         }
 
-        public async Task<bool> IsBlocked(long userId)
-        {
-            User user = await _repo.GetItem(userId);
-            if (user == null)
-                return false;
-
-            return user.IsBlocked;
-        }
     }
 }

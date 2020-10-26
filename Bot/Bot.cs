@@ -339,12 +339,6 @@ namespace Telegram.Altayskaya97.Bot
             if (!isAdmin)
                 await UserService.PromoteUserAdmin(user.Id);
 
-            bool isBlocked = await UserService.IsBlocked(user.Id);
-            if (!isBlocked)
-                return new CommandResult(Messages.GladToSeeYou, CommandResultType.Message);
-
-            await UserService.UnbanUser(user.Id);
-
             var result = new CommandResult("", CommandResultType.Links);
 
             var chatList = await ChatService.GetChatList();
@@ -371,8 +365,6 @@ namespace Telegram.Altayskaya97.Bot
 
         public async Task<CommandResult> Unban(User user)
         {
-            await UserService.UnbanUser(user.Id);
-
             var result = new CommandResult("", CommandResultType.Links);
 
             var chatList = await ChatService.GetChatList();
@@ -420,9 +412,8 @@ namespace Telegram.Altayskaya97.Bot
             {
                 var isAdmin = await UserService.IsAdmin(user.Id);
                 var userType = user.Type;
-                var blockedSign = user.IsBlocked ? "  +" : "  -";
                 var accessSign = isAdmin ? "  +" : "  -";
-                sb.AppendLine($"{user.Name,-20}{userType,-12}{blockedSign,-8}{accessSign,-6}");
+                sb.AppendLine($"{user.Name,-20}{userType,-12}{accessSign,-6}");
             }
             sb.Append("</code>");
 
@@ -472,9 +463,6 @@ namespace Telegram.Altayskaya97.Bot
             if (user == null)
                 return new CommandResult(Messages.UserNotFound, CommandResultType.Message);
 
-            if (user.IsBlocked)
-                return new CommandResult(Messages.UserBlocked, CommandResultType.Message);
-
             if (user.Type == UserType.Coordinator)
                 return new CommandResult(Messages.YouCantBanCoordinator, CommandResultType.Message);
 
@@ -498,13 +486,9 @@ namespace Telegram.Altayskaya97.Bot
                 try
                 {
                     if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member)
-                    {
-                        _logger.LogInformation($"Chat admin chat for member");
                         continue;
-                    }
 
                     await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
-                    await UserService.BanUser(user.Id);
                     buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
                 }
                 catch (Telegram.Bot.Exceptions.ApiRequestException ex)
@@ -524,12 +508,6 @@ namespace Telegram.Altayskaya97.Bot
             StringBuilder sb = new StringBuilder();
             foreach (var user in users)
             {
-                if (user.IsBlocked)
-                {
-                    sb.AppendLine($"User <b>{user.Name}</b> has been blocked already");
-                    continue;
-                }
-
                 if (user.Type == UserType.Coordinator || user.Type == UserType.Bot)
                     continue;
 
@@ -546,7 +524,6 @@ namespace Telegram.Altayskaya97.Bot
                     try
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
-                        await UserService.BanUser(user.Id);
                     }
                     catch (Telegram.Bot.Exceptions.ApiRequestException ex)
                     {

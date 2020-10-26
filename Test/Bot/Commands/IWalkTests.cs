@@ -86,13 +86,10 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
 
             _bot.RecieveMessage(message).Wait();
             
-            userRepo.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Exactly(2));
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(

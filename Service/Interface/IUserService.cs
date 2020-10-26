@@ -13,11 +13,8 @@ namespace Telegram.Altayskaya97.Service.Interface
         Task<User> GetUser(string userName);
         Task<bool> PromoteUserAdmin(long userId);
         Task<bool> RestrictUser(long userId);
-        Task<bool> BanUser(long userId);
-        Task<bool> UnbanUser(long userId);
         Task AddUser(User user);
         Task DeleteUser(long userId);
         Task<bool> IsAdmin(long userId);
-        Task<bool> IsBlocked(long userId);
     }
 }

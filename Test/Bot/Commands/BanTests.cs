@@ -56,8 +56,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat.Id),
                 It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
@@ -98,7 +96,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             userRepo1.IsAdmin = true;
             userRepo1.Type = Core.Model.UserType.Admin;
             var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-            userRepo2.IsBlocked = true;
             var users = new Core.Model.User[] { userRepo1, userRepo2 };
             
             var message = new Message
@@ -137,7 +134,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.RecieveMessage(message).Wait();
 
             userRepo2.Type = Core.Model.UserType.Coordinator;
-            userRepo2.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
 
             userRepo2.Type = Core.Model.UserType.Bot;
@@ -146,26 +142,14 @@ namespace Telegram.Altayskaya97.Test.Bot
             userRepo2.Type = Core.Model.UserType.Member;
             _bot.RecieveMessage(message).Wait();
 
-            _bot.RecieveMessage(message).Wait();
-
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(6));
+            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(5));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Exactly(2));
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id), 
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), 
                 Times.Exactly(2));
-            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == Messages.UserNotFound), It.IsAny<ParseMode>(), It.IsAny<bool>(), 
-                It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
-                Times.Once);
-            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == Messages.UserBlocked), It.IsAny<ParseMode>(), It.IsAny<bool>(), 
-                It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
-                Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
                 It.Is<string>(_ => _ == Messages.YouCantBanCoordinator), It.IsAny<ParseMode>(), It.IsAny<bool>(), 
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
@@ -217,8 +201,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat.Id),
                 It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
@@ -302,65 +284,50 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Setup(s => s.GetChatMemberAsync(It.IsAny<ChatId>(), It.Is<int>(_ => _ == user2.Id), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(chatMember2);
 
-            userRepo2.IsBlocked = true;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo1.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
-                Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
+                Times.Exactly(2));
 
             userRepo2.Type = Core.Model.UserType.Coordinator;
-            userRepo2.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo1.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(4));
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(4));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
-                Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
+                Times.Exactly(2));
 
             userRepo2.Type = Core.Model.UserType.Bot;
-            userRepo2.IsBlocked = false;
-            userRepo1.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo1.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(6));
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(6));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
-                Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Never);
+                Times.Exactly(2));
 
             userRepo2.Type = Core.Model.UserType.Member;
-            userRepo2.IsBlocked = false;
-            userRepo1.IsBlocked = false;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo1.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(8));
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(8));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
-                Times.Exactly(2));
-            userServiceMock.Verify(mock => mock.BanUser(It.Is<long>(_ => _ == user2.Id)), Times.Exactly(2));
+                Times.Exactly(4));
 
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Exactly(4));
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Exactly(4));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),

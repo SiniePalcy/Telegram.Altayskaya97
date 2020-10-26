@@ -19,8 +19,6 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         [DynamoDBProperty]
         public string Telephone { get; set; }
         [DynamoDBProperty]
-        public bool IsBlocked { get; set; }
-        [DynamoDBProperty]
         public string Type { get; set; } = Core.Model.UserType.Member;
     }
 }

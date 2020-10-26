@@ -53,8 +53,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
@@ -68,111 +66,6 @@ namespace Telegram.Altayskaya97.Test.Bot
         }
 
         [Fact]
-        public void GrantNonBlockedAdminWithPermissionsTest()
-        {
-            string userName = "TestUser";
-            var user = new User
-            {
-                Id = 1,
-                Username = userName,
-            };
-            var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.IsAdmin = true;
-            userRepo.Type = Core.Model.UserType.Admin;
-            var chat = new Chat
-            {
-                Id = 1,
-                Type = ChatType.Private
-            };
-            var message = new Message
-            {
-                Chat = chat,
-                From = user,
-                Text = "/shpic"
-            };
-
-            _fixture.MockBotClient.Reset();
-
-            var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.IsBlocked(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsBlocked);
-            userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsAdmin);
-            _bot.UserService = userServiceMock.Object;
-
-            _bot.RecieveMessage(message).Wait();
-
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
-            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
-                 It.Is<ChatId>(_ => _.Identifier == chat.Id),
-                 It.Is<string>(_ => _ == Messages.GladToSeeYou),
-                 It.IsAny<ParseMode>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<int>(),
-                 It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public void GrantNonBlockedAdminWithoutPermissionsTest()
-        {
-            string userName = "TestUser";
-            var user = new User
-            {
-                Id = 1,
-                Username = userName,
-            };
-            var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Core.Model.UserType.Admin;
-            var chat = new Chat
-            {
-                Id = 1,
-                Type = ChatType.Private
-            };
-            var message = new Message
-            {
-                Chat = chat,
-                From = user,
-                Text = "/shpic"
-            };
-
-            _fixture.MockBotClient.Reset();
-
-            var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.IsBlocked(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsBlocked);
-            userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsAdmin);
-            _bot.UserService = userServiceMock.Object;
-
-            _bot.RecieveMessage(message).Wait();
-
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
-            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Once);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
-                 It.Is<ChatId>(_ => _.Identifier == chat.Id),
-                 It.Is<string>(_ => _ == Messages.GladToSeeYou),
-                 It.IsAny<ParseMode>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<int>(),
-                 It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
         public void GrantBlockedKickedAdminWithoutPermissionsTest()
         {
             string userName = "TestUser";
@@ -182,7 +75,6 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.IsBlocked = true;
             userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
@@ -223,8 +115,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.IsBlocked(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsBlocked);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo.IsAdmin);
             _bot.UserService = userServiceMock.Object;
@@ -238,8 +128,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Once);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.ExportChatInviteLinkAsync(
                 It.IsAny<ChatId>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
@@ -275,7 +163,6 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.IsBlocked = true;
             userRepo.Type = Core.Model.UserType.Admin;
             var chat = new Chat
             {
@@ -316,8 +203,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.IsBlocked(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsBlocked);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo.IsAdmin);
             _bot.UserService = userServiceMock.Object;
@@ -331,8 +216,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Once);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.ExportChatInviteLinkAsync(
                 It.IsAny<ChatId>(), It.IsAny<CancellationToken>()), Times.Exactly(2));

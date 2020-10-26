@@ -16,7 +16,6 @@ namespace Telegram.Altayskaya97.Core.Model
         public virtual string Name { get; set; }
         public virtual bool IsAdmin { get; set; }
         public virtual string Telephone { get; set; }
-        public virtual bool IsBlocked { get; set; }
         public virtual string Type { get; set; } = UserType.Member;
     }
 }

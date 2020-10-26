@@ -66,8 +66,6 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.IsBlocked(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(userRepo.IsBlocked);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo.IsAdmin);
             _bot.UserService = userServiceMock.Object;
@@ -81,8 +79,6 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.BanUser(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.UnbanUser(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.GetChatMemberAsync(
