@@ -214,11 +214,14 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
-            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Once);
+            chatMember.Status = ChatMemberStatus.Kicked;
+            _bot.RecieveMessage(message).Wait();
+
+            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.ExportChatInviteLinkAsync(
-                It.IsAny<ChatId>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+                It.IsAny<ChatId>(), It.IsAny<CancellationToken>()), Times.Exactly(4));
             _fixture.MockBotClient.Verify(mock => mock.UnbanChatMemberAsync(It.IsAny<ChatId>(),
                 It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
@@ -229,16 +232,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                  It.IsAny<bool>(),
                  It.IsAny<int>(),
                  It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Exactly(2));
-            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
-                It.Is<ChatId>(_ => _.Identifier == chat.Id),
-                It.IsAny<string>(),
-                It.IsAny<ParseMode>(),
-                It.IsAny<bool>(),
-                It.IsAny<bool>(),
-                It.IsAny<int>(),
-                It.IsAny<IReplyMarkup>(),
-                It.IsAny<CancellationToken>()), Times.Exactly(2));
+                 It.IsAny<CancellationToken>()), Times.Exactly(4));
         }
 
     }

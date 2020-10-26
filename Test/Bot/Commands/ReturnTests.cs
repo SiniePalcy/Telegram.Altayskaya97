@@ -39,20 +39,48 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             var chat2 = new Chat
             {
                 Id = 2,
-                Type = ChatType.Private
+                Type = ChatType.Group
             };
             var chat3 = new Chat
             {
                 Id = 3,
-                Type = ChatType.Private
+                Type = ChatType.Supergroup
             };
+            var chat4 = new Chat
+            {
+                Id = 4,
+                Type = ChatType.Supergroup
+            };
+            var chatMember1 = new ChatMember
+            {
+                User = user,
+                Status = ChatMemberStatus.Administrator
+            };
+            var chatMember2 = new ChatMember
+            {
+                User = user,
+                Status = ChatMemberStatus.Kicked
+            };
+            var chatMember3 = new ChatMember
+            {
+                User = user,
+                Status = ChatMemberStatus.Member
+            };
+            var chatMember4 = new ChatMember
+            {
+                User = user,
+                Status = ChatMemberStatus.Left
+            };
+
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo1.ChatType = Core.Model.ChatType.Admin;
+            chatRepo1.ChatType = Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
             chatRepo2.ChatType = Core.Model.ChatType.Public;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat3);
             chatRepo3.ChatType = Core.Model.ChatType.Public;
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo4 = _fixture.ChatMapper.MapToEntity(chat4);
+            chatRepo4.ChatType = Core.Model.ChatType.Admin;
+            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3, chatRepo4 };
 
             var message = new Message
             {
@@ -75,6 +103,19 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
 
+            var clientMock = _fixture.MockBotClient;
+            clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(chatMember1);
+            clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(chatMember2);
+            clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat3.Id),
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(chatMember4);
+            clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat4.Id),
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(chatMember4);
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
@@ -87,7 +128,7 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             _fixture.MockBotClient.Verify(mock => mock.ExportChatInviteLinkAsync(
                 It.IsAny<ChatId>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.UnbanChatMemberAsync(It.IsAny<ChatId>(),
-                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()), Times.Exactly(2));
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                 It.Is<ChatId>(_ => _.Identifier == chat1.Id),
                 It.IsAny<string>(),
