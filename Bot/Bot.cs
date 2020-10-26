@@ -413,7 +413,7 @@ namespace Telegram.Altayskaya97.Bot
             var userList = await UserService.GetUserList();
 
             StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Blocked",-8}{"Access",-6}\n"));
-            foreach (var user in userList)
+            foreach (var user in userList.OrderBy(u => u.Type))
             {
                 var isAdmin = await UserService.IsAdmin(user.Id);
                 var userType = user.Type;
@@ -494,10 +494,14 @@ namespace Telegram.Altayskaya97.Bot
                         chatRepo.ChatType == Core.Model.ChatType.Private)
                         continue;
 
-                    await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
-                    buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
+                    ChatMember chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
+                    if (chatMember.Status != ChatMemberStatus.Kicked && chatMember.Status != ChatMemberStatus.Left)
+                    {
+                        await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
+                        buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
+                    }
                 }
-                catch (Telegram.Bot.Exceptions.ApiRequestException ex)
+                catch (ApiRequestException ex)
                 {
                     _logger.LogInformation(ex.Message);
                 }
