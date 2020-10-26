@@ -596,6 +596,9 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task<Message> SendTextMessage(long chatId, string content, IReplyMarkup markUp = null)
         {
+            if (string.IsNullOrEmpty(content))
+                return null;
+
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
             
