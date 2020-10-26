@@ -165,7 +165,6 @@ namespace Telegram.Altayskaya97.Bot
                 var now = DateTimeOffset.Now;
                 await UpdateUsersAccess();
                 await UpdateBotMessages();
-                //await UpdateChatList();
                 _logger.LogInformation($"[Echo] Bot running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
