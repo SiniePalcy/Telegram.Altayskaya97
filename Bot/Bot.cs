@@ -417,7 +417,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             var userList = await UserService.GetUserList();
 
-            StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Blocked",-8}{"Access",-6}\n"));
+            StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Access",-6}\n"));
             foreach (var user in userList.OrderBy(u => u.Type))
             {
                 var isAdmin = await UserService.IsAdmin(user.Id);
