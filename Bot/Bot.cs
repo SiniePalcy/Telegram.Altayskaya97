@@ -541,6 +541,7 @@ namespace Telegram.Altayskaya97.Bot
                         continue;
 
                     ChatMember chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
+                    _logger.LogInformation($"For chat='{chat.Title}', user={user.Name}, status={chatMember.Status}");
                     if (chatMember.Status != ChatMemberStatus.Kicked && chatMember.Status != ChatMemberStatus.Left)
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
