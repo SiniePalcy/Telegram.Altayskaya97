@@ -273,7 +273,7 @@ namespace Telegram.Altayskaya97.Bot
             await EnsureChatSaved(chatMessage.Chat, chatMessage.From);
 
             var user = chatMessage.From;
-            _logger.LogInformation($"Recieved message from {user.GetUserName()}, id={user.Id}");
+            _logger.LogInformation($"Recieved message from '{user.GetUserName()}', id={user.Id}");
 
             if (chatMessage.Chat.Type == ChatType.Private)
                 await AddMessage(chatMessage);
@@ -423,12 +423,12 @@ namespace Telegram.Altayskaya97.Bot
                             Url = inviteLink,
                             Description = $"Chat <b>{chat.Title}</b>"
                         });
-                        _logger.LogInformation($"Link to {chat.Title} formed for {user.GetUserName()}");
+                        _logger.LogInformation($"Link to '{chat.Title}' formed for {user.GetUserName()}");
                     }
                 }
                 catch (ApiRequestException)
                 {
-                    _logger.LogInformation($"Chat {chat.Title} is unavailable and will be deleted");
+                    _logger.LogInformation($"Chat '{chat.Title}' is unavailable and will be deleted");
                     chatsToDelete.Add(chat);
                 }
             }
@@ -530,7 +530,7 @@ namespace Telegram.Altayskaya97.Bot
                 var chat = await BotClient.GetChatAsync(chatRepo.Id);
                 if (chat == null)
                 {
-                    _logger.LogInformation($"Chat {chatRepo.Title} not found");
+                    _logger.LogInformation($"Chat '{chatRepo.Title}' not found");
                     continue;
                 }
 
@@ -545,7 +545,7 @@ namespace Telegram.Altayskaya97.Bot
                     if (chatMember.Status != ChatMemberStatus.Kicked && chatMember.Status != ChatMemberStatus.Left)
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
-                        _logger.LogInformation($"User {user.Name} kicked from chat {chatRepo.Title}");
+                        _logger.LogInformation($"User '{user.Name}' kicked from chat '{chatRepo.Title}'");
                         buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
                     }
                 }
