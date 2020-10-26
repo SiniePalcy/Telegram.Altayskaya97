@@ -354,10 +354,11 @@ namespace Telegram.Altayskaya97.Bot
             List<Core.Model.Chat> chatsToDelete = new List<ChatRepo>();
             foreach(var chat in chatList)
             {
-                if (chat.ChatType == Core.Model.ChatType.Private)
-                    continue;
                 try
                 {
+                    if (chat.ChatType == Core.Model.ChatType.Private)
+                        continue;
+
                     var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
                     if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
                     {
@@ -389,24 +390,36 @@ namespace Telegram.Altayskaya97.Bot
             var result = new CommandResult("", CommandResultType.Links);
 
             var chatList = await ChatService.GetChatList();
+            List<Core.Model.Chat> chatsToDelete = new List<ChatRepo>();
             foreach (var chat in chatList)
             {
-                if (chat.ChatType == Core.Model.ChatType.Private || chat.ChatType == Core.Model.ChatType.Admin)
-                    continue;
-
-                var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
-                if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
+                try
                 {
-                    if (chatMember.Status == ChatMemberStatus.Kicked)
-                        await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
-                    var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
-                    result.Links.Add(new Link
+                    if (chat.ChatType == Core.Model.ChatType.Private || chat.ChatType == Core.Model.ChatType.Admin)
+                        continue;
+
+                    var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
+                    if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
                     {
-                        Url = inviteLink,
-                        Description = $"Chat <b>{chat.Title}</b>"
-                    });
+                        if (chatMember.Status == ChatMemberStatus.Kicked)
+                            await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
+                        var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
+                        result.Links.Add(new Link
+                        {
+                            Url = inviteLink,
+                            Description = $"Chat <b>{chat.Title}</b>"
+                        });
+                    }
+                }
+                catch (ApiRequestException ex)
+                {
+                    _logger.LogInformation($"Chat {chat.Title} s unavailable and will be deleted");
+                    chatsToDelete.Add(chat);
                 }
             }
+
+            foreach (var chat in chatsToDelete)
+                await ChatService.DeleteChat(chat.Id);
 
             return result;
         }
