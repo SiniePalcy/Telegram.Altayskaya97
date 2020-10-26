@@ -54,6 +54,8 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             userRepo.Name = user.GetUserName();
             var users = new Core.Model.User[] { userRepo };
 
+            ChatMember chatMember = new ChatMember { Status = ChatMemberStatus.Member };
+
             var message = new Message
             {
                 Chat = chat1,
@@ -83,6 +85,9 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             _fixture.MockBotClient.SetupSequence(s => s.GetChatAsync(It.IsAny<ChatId>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(chat1)
                 .ReturnsAsync(chat2);
+            _fixture.MockBotClient.Setup(s => s.GetChatMemberAsync(It.IsAny<ChatId>(),
+                It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(chatMember);
 
             _bot.RecieveMessage(message).Wait();
             

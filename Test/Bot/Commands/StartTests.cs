@@ -35,6 +35,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Type = ChatType.Private
             };
+            var chatRepo = _fixture.ChatMapper.MapToEntity(chat);
             var message = new Message
             {
                 Chat = chat,
@@ -48,6 +49,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Setup(s => s.GetUser(It.IsAny<string>()))
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
+
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(chatRepo);
+            _bot.ChatService = chatServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
 
@@ -79,6 +85,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Type = ChatType.Private
             };
+            var chatRepo = _fixture.ChatMapper.MapToEntity(chat);
             var message = new Message
             {
                 Chat = chat,
@@ -93,10 +100,17 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(chatRepo);
+            _bot.ChatService = chatServiceMock.Object;
+
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == 1)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
+            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == 1)), Times.Once);
+
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.Is<ChatId>(_ => _.Identifier == chat.Id),
                  It.IsAny<string>(),

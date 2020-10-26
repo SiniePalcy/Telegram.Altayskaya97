@@ -6,6 +6,7 @@ namespace Telegram.Altayskaya97.Model.Interface
     {
         IRepository<User> UserRepository { get; }
         IRepository<Chat> ChatRepository { get; }
+        IRepository<UserMessage> UserMessageRepository { get; }
         void Init(string connectionString);
     }
 }

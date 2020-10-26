@@ -34,6 +34,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Type = ChatType.Private
             };
+            var chatRepo = _fixture.ChatMapper.MapToEntity(chat);
             var message = new Message
             {
                 Chat = chat,
@@ -48,6 +49,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(chatRepo);
+            _bot.ChatService = chatServiceMock.Object;
+
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "/chatlist";
@@ -56,6 +62,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
                  It.IsAny<string>(),
@@ -82,6 +89,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Type = ChatType.Private
             };
+            var chatRepo = _fixture.ChatMapper.MapToEntity(chat);
             var message = new Message
             {
                 Chat = chat,
@@ -96,6 +104,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(userRepo);
             _bot.UserService = userServiceMock.Object;
 
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(chatRepo);
+            _bot.ChatService = chatServiceMock.Object;
+
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "/chatlist";
@@ -104,6 +117,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
                  It.IsAny<string>(),

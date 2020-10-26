@@ -241,6 +241,8 @@ namespace Telegram.Altayskaya97.Bot
             if (string.IsNullOrEmpty(commandText))
                 return;
 
+            await EnsureChatSaved(chatMessage.Chat);
+
             var command = Commands.GetCommand(commandText);
             if (command == null || !command.IsValid)
                 return;
@@ -583,7 +585,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Id = chat.Id,
                     Title = chat.Title,
-                    ChatType = Core.Model.ChatType.Public
+                    ChatType = chat.Type == ChatType.Private ? Core.Model.ChatType.Private : Core.Model.ChatType.Public
                 };
                 await ChatService.AddChat(dbChat);
             }

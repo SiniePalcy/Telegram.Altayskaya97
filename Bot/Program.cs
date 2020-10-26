@@ -36,6 +36,7 @@ namespace Telegram.Altayskaya97.Bot
                     services.AddTransient<IMenuService, MenuService>();
                     services.AddTransient<IUserService, UserService>();
                     services.AddTransient<IChatService, ChatService>();
+                    services.AddTransient<IUserMessageService, UserMessageService>();
                 });
 
         private static DynamoDbContext InitDynamoDbContext(IServiceProvider provider)

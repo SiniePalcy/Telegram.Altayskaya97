@@ -17,12 +17,14 @@ namespace Telegram.Altayskaya97.Model.DbContext
         #region Repositories
         public IRepository<User> UserRepository { get; }
         public IRepository<Chat> ChatRepository { get; }
+        public IRepository<UserMessage> UserMessageRepository { get; }
         #endregion
         public DynamoDbContext(string connectionString)
         {
             Init(connectionString);
             UserRepository = new Repository.DynamoDb.UserRepository(_dbContext);
             ChatRepository = new Repository.DynamoDb.ChatRepository(_dbContext);
+            UserMessageRepository = new Repository.DynamoDb.UserMessageRepository(_dbContext);
         }
 
         public void Init(string connectionString)
@@ -41,13 +43,7 @@ namespace Telegram.Altayskaya97.Model.DbContext
             string[] regionKeyPair = pairs[2].Split(':');
             return new Tuple<string, string, string>(accessKeyPair[1].Trim(), secretKeyPair[1].Trim(), regionKeyPair[1].Trim());
         }
-
-        public async Task<ICollection<T>> GetCollection<T>()
-        {
-            var conditions = new List<ScanCondition>();
-            return await _dbContext.ScanAsync<T>(conditions).GetRemainingAsync();
-        }
-      
+     
         #region IDisposable
         protected virtual void Dispose(bool disposing)
         {
