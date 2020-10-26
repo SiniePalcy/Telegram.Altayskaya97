@@ -114,7 +114,7 @@ namespace Telegram.Altayskaya97.Bot
                     var adminsOfChat = await BotClient.GetChatAdministratorsAsync(adminChat.Id);
                     admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
                 }
-                catch(ApiRequestException ex)
+                catch(ApiRequestException)
                 {
                     _logger.LogInformation($"Chat {adminChat.Title} is unavailable and will be deleted");
                     await ChatService.DeleteChat(adminChat.Id);
@@ -348,44 +348,10 @@ namespace Telegram.Altayskaya97.Bot
             if (!isAdmin)
                 await UserService.PromoteUserAdmin(user.Id);
 
-            var result = new CommandResult("", CommandResultType.Links);
-
-            var chatList = await ChatService.GetChatList();
-            List<Core.Model.Chat> chatsToDelete = new List<ChatRepo>();
-            foreach(var chat in chatList)
-            {
-                try
-                {
-                    if (chat.ChatType == Core.Model.ChatType.Private)
-                        continue;
-
-                    var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
-                    if (chatMember == null || chatMember.Status == ChatMemberStatus.Kicked || chatMember.Status == ChatMemberStatus.Left)
-                    {
-                        if (chatMember.Status == ChatMemberStatus.Kicked)
-                            await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
-                        var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
-                        result.Links.Add(new Link
-                        {
-                            Url = inviteLink,
-                            Description = $"Chat <b>{chat.Title}</b>"
-                        });
-                    }
-                }
-                catch(ApiRequestException ex)
-                {
-                    _logger.LogInformation($"Chat {chat.Title} s unavailable and will be deleted");
-                    chatsToDelete.Add(chat);
-                }
-            }
-
-            foreach (var chat in chatsToDelete)
-                await ChatService.DeleteChat(chat.Id);
-            
-            return result;
+            return await Unban(user, false);
         }
 
-        public async Task<CommandResult> Unban(User user)
+        public async Task<CommandResult> Unban(User user, bool nonAdminChats = true)
         {
             var result = new CommandResult("", CommandResultType.Links);
 
@@ -395,7 +361,10 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    if (chat.ChatType == Core.Model.ChatType.Private || chat.ChatType == Core.Model.ChatType.Admin)
+                    if (chat.ChatType == Core.Model.ChatType.Private)
+                        continue;
+
+                    if (nonAdminChats && chat.ChatType == Core.Model.ChatType.Admin)
                         continue;
 
                     var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
@@ -411,7 +380,7 @@ namespace Telegram.Altayskaya97.Bot
                         });
                     }
                 }
-                catch (ApiRequestException ex)
+                catch (ApiRequestException)
                 {
                     _logger.LogInformation($"Chat {chat.Title} s unavailable and will be deleted");
                     chatsToDelete.Add(chat);
@@ -431,7 +400,8 @@ namespace Telegram.Altayskaya97.Bot
             StringBuilder sb = new StringBuilder("<code>");
             foreach (var chat in chatList)
             {
-                sb.AppendLine($"id: {chat.Id,-20}title: <b>{chat.Title}</b>");
+                if (chat.ChatType != Core.Model.ChatType.Private)
+                    sb.AppendLine($"id: {chat.Id,-20}title: <b>{chat.Title}</b>");
             }
             sb.Append("</code>");
 
@@ -520,7 +490,8 @@ namespace Telegram.Altayskaya97.Bot
 
                 try
                 {
-                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member)
+                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member ||
+                        chatRepo.ChatType == Core.Model.ChatType.Private)
                         continue;
 
                     await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
@@ -546,7 +517,7 @@ namespace Telegram.Altayskaya97.Bot
                 if (user.Type == UserType.Coordinator || user.Type == UserType.Bot)
                     continue;
 
-                foreach (var chatRepo in chats)
+                foreach (var chatRepo in chats.Where(c => c.ChatType != Core.Model.ChatType.Private))
                 {
                     var chat = await BotClient.GetChatAsync(chatRepo.Id);
                     if (chat == null)
