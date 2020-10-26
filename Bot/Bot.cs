@@ -42,6 +42,7 @@ namespace Telegram.Altayskaya97.Bot
 
         #region Constant
         private const string INCORRECT_COMMAND = "Incorrect command";
+        private const string NO_PERMISSIONS = "No permissions. Please, input secret command";
         private const int PERIOD_ECHO_SEC_DEFAULT = 20;
         private const int PERIOD_RESET_ACCESS_MIN_DEFAULT = 60;
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
@@ -268,10 +269,14 @@ namespace Telegram.Altayskaya97.Bot
                                 command.Name == Commands.BanAll.Name ? await BanAll() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
-            else //non admin command for admin
+            else  //non admin command for admin
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
+                                command.Name == Commands.ChatList.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command.Name == Commands.UserList.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
                                 command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
+                                command.Name == Commands.Ban.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command.Name == Commands.BanAll.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
                                 command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
