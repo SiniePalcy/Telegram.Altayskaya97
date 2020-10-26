@@ -581,7 +581,7 @@ namespace Telegram.Altayskaya97.Bot
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     }
-                    catch (Telegram.Bot.Exceptions.ApiRequestException ex)
+                    catch (ApiRequestException ex)
                     {
                         _logger.LogInformation(ex.Message);
                     }
