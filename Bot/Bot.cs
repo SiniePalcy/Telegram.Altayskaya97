@@ -396,7 +396,7 @@ namespace Telegram.Altayskaya97.Bot
             return await Unban(user, false);
         }
 
-        public async Task<CommandResult> Unban(User user, bool nonAdminChats = true)
+        public async Task<CommandResult> Unban(User user, bool onlyPublicChates = true)
         {
             var result = new CommandResult("", CommandResultType.Links);
 
@@ -409,7 +409,7 @@ namespace Telegram.Altayskaya97.Bot
                     if (chat.ChatType == Core.Model.ChatType.Private)
                         continue;
 
-                    if (nonAdminChats && chat.ChatType == Core.Model.ChatType.Admin)
+                    if (onlyPublicChates && chat.ChatType == Core.Model.ChatType.Admin)
                         continue;
 
                     var chatMember = await BotClient.GetChatMemberAsync(chat.Id, user.Id);
@@ -544,6 +544,7 @@ namespace Telegram.Altayskaya97.Bot
                     if (chatMember.Status != ChatMemberStatus.Kicked && chatMember.Status != ChatMemberStatus.Left)
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
+                        _logger.LogInformation($"User {user.Name} kicked from chat {chatRepo.Title}");
                         buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
                     }
                 }
