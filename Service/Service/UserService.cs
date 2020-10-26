@@ -50,7 +50,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task<bool> RestrictUser(long userId)
         {
             var user = await _repo.GetItem(userId);
-            if (user == null)
+            if (user == null || user.Type == UserType.Member || user.Type == UserType.Bot)
                 return false;
 
             user.IsAdmin = false;

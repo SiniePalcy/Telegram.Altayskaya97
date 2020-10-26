@@ -132,6 +132,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Setup(s => s.GetChatMemberAsync(It.IsAny<ChatId>(),
                 It.Is<int>(_ => _ == user2.Id), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(chatMember);
+            _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat1);
+            _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
+
 
             _bot.RecieveMessage(message).Wait();
 

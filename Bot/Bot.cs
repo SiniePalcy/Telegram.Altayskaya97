@@ -36,7 +36,8 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodEchoSec { get; private set; }
         public int PeriodResetAccessMin { get; private set; }
         public int PeriodChatListMin { get; private set; }
-        
+        public int PeriodClearPrivateChatMin { get; private set; }
+
         private ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private volatile int _chatListCounter = 0;
 
@@ -46,6 +47,7 @@ namespace Telegram.Altayskaya97.Bot
         private const int PERIOD_ECHO_SEC_DEFAULT = 20;
         private const int PERIOD_RESET_ACCESS_MIN_DEFAULT = 60;
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
+        private const int PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT = 30;
         #endregion
 
         #region Services
@@ -53,6 +55,7 @@ namespace Telegram.Altayskaya97.Bot
         public IMenuService MenuService { get; set; }
         public IUserService UserService { get; set; }
         public IChatService ChatService { get; set; }
+        public IUserMessageService UserMessageService { get; set; }
         #endregion
 
         public Bot(ILogger<Bot> logger, IConfiguration configuration,
@@ -60,6 +63,7 @@ namespace Telegram.Altayskaya97.Bot
             IMenuService menuService,
             IUserService userService,
             IChatService chatService,
+            IUserMessageService userMessageService,
             bool shouldInitClient = true,
             bool shouldInitDb = true)
         {
@@ -69,6 +73,7 @@ namespace Telegram.Altayskaya97.Bot
             this.MenuService = menuService;
             this.UserService = userService;
             this.ChatService = chatService;
+            this.UserMessageService = userMessageService;
 
             var configSection = configuration.GetSection("Configuration");
 
@@ -81,11 +86,13 @@ namespace Telegram.Altayskaya97.Bot
             InitProps(configSection);
         }
 
+        #region Initialize
         private void InitProps(IConfigurationSection configSection)
         {
             PeriodEchoSec = ParseInt(configSection.GetSection("PeriodEchoSec").Value, PERIOD_ECHO_SEC_DEFAULT);
             PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
+            PeriodClearPrivateChatMin = ParseInt(configSection.GetSection("PeriodClearPrivateChatMin").Value, PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -149,6 +156,7 @@ namespace Telegram.Altayskaya97.Bot
                 _adminResetCounters.TryAdd(user.Id, 0);
             }
         }
+        #endregion
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -156,6 +164,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 var now = DateTimeOffset.Now;
                 await UpdateUsersAccess();
+                await UpdateBotMessages();
                 //await UpdateChatList();
                 _logger.LogInformation($"[Echo] Bot running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
@@ -176,6 +185,26 @@ namespace Telegram.Altayskaya97.Bot
             }
         }
 
+        private async Task UpdateBotMessages()
+        {
+            var allMessages = await UserMessageService.GetUserMessageList();
+
+            var dtNow = DateTime.UtcNow;
+            List<UserMessage> messagesForDelete = new List<UserMessage>();
+            foreach (var message in allMessages)
+            {
+                var msgDateTime = message.When.ToUniversalTime();
+                if ((dtNow - msgDateTime).TotalMinutes >= PeriodClearPrivateChatMin)
+                    messagesForDelete.Add(message);
+            }
+
+            foreach (var message in messagesForDelete)
+            {
+                await BotClient.DeleteMessageAsync(message.ChatId, (int)message.Id);
+                await UserMessageService.DeleteUserMessage(message.Id);
+            }
+        }
+
         private async Task UpdateChatList()
         {
             if (_chatListCounter == PeriodChatListMin * 60 / PeriodEchoSec)
@@ -186,7 +215,7 @@ namespace Telegram.Altayskaya97.Bot
                 foreach (var chatRepo in chatList)
                 {
                     var chat = await BotClient.GetChatAsync(chatRepo.Id);
-
+                    
                     try
                     {
                         int chatMembers = await BotClient.GetChatMembersCountAsync(chat.Id);
@@ -241,26 +270,35 @@ namespace Telegram.Altayskaya97.Bot
             if (string.IsNullOrEmpty(commandText))
                 return;
 
-            await EnsureChatSaved(chatMessage.Chat);
+            await EnsureChatSaved(chatMessage.Chat, chatMessage.From);
+
+            var user = chatMessage.From;
+            _logger.LogInformation($"Recieved message from {user.GetUserName()}, id={user.Id}");
+
+            if (chatMessage.Chat.Type == ChatType.Private)
+                await AddMessage(chatMessage);
 
             var command = Commands.GetCommand(commandText);
             if (command == null || !command.IsValid)
                 return;
 
-            var user = chatMessage.From;
-            _logger.LogInformation($"Recieved message from {user.GetUserName()}, id={user.Id}");
-
             CommandResult commandResult;
             var userRepo = await UserService.GetUser(user.Id);
             var isAdmin = await UserService.IsAdmin(user.Id);
-            if (userRepo == null || userRepo.Type == UserType.Member)
+            if (userRepo == null)
+            {
+                commandResult = command.Name == Commands.Start.Name ? 
+                    new CommandResult("Who are you? Let's goodbye!", CommandResultType.Message) :
+                    new CommandResult(INCORRECT_COMMAND);
+            }
+            else if (userRepo.Type == UserType.Member)
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
                                 command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Name}")) :
                                 command.Name == Commands.Return.Name ? await Unban(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
-            else if (command.IsAdmin && isAdmin)
+            else if (command.IsAdmin && isAdmin) //commands for admin with permissions
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
                                 command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
@@ -271,7 +309,7 @@ namespace Telegram.Altayskaya97.Bot
                                 command.Name == Commands.BanAll.Name ? await BanAll() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
-            else  //non admin command for admin
+            else  //commands for admin without permissions
             {
                 commandResult = command.Name == Commands.Start.Name ? await Start(user) :
                                 command.Name == Commands.ChatList.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
@@ -288,11 +326,11 @@ namespace Telegram.Altayskaya97.Bot
             foreach (var reciever in recievers)
             {
                 if (commandResult.Type == CommandResultType.Message)
-                    await BotClient.SendTextMessageAsync(chatId: reciever, text: commandResult.Content, parseMode: ParseMode.Html, replyMarkup: commandResult.ReplyMarkup);
+                    await SendTextMessage(reciever, commandResult.Content, commandResult.ReplyMarkup);
                 else if (commandResult.Type == CommandResultType.Links)
                 {
                     foreach (var link in commandResult.Links)
-                        await BotClient.SendTextMessageAsync(reciever, $"{link.Description}{Environment.NewLine}{link.Url}", ParseMode.Html);
+                        await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}");
                 }
             }
         }
@@ -385,11 +423,12 @@ namespace Telegram.Altayskaya97.Bot
                             Url = inviteLink,
                             Description = $"Chat <b>{chat.Title}</b>"
                         });
+                        _logger.LogInformation($"Link to {chat.Title} formed for {user.GetUserName()}");
                     }
                 }
                 catch (ApiRequestException)
                 {
-                    _logger.LogInformation($"Chat {chat.Title} s unavailable and will be deleted");
+                    _logger.LogInformation($"Chat {chat.Title} is unavailable and will be deleted");
                     chatsToDelete.Add(chat);
                 }
             }
@@ -405,7 +444,7 @@ namespace Telegram.Altayskaya97.Bot
             var chatList = await ChatService.GetChatList();
 
             StringBuilder sb = new StringBuilder("<code>");
-            foreach (var chat in chatList)
+            foreach (var chat in chatList.Where(c => c.ChatType != Core.Model.ChatType.Private))
             {
                 if (chat.ChatType != Core.Model.ChatType.Private)
                     sb.AppendLine($"id: {chat.Id,-20}title: <b>{chat.Title}</b>");
@@ -554,6 +593,17 @@ namespace Telegram.Altayskaya97.Bot
             return new CommandResult(sb.ToString(), CommandResultType.Message);
         }
 
+        private async Task<Message> SendTextMessage(long chatId, string content, IReplyMarkup markUp = null)
+        {
+            var chat = await BotClient.GetChatAsync(chatId);
+            var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
+            
+            if (message != null && chat.Type == ChatType.Private)
+                await AddMessage(message);
+            
+            return message;
+        }
+
         private async Task<Message> SendWelcomeGroupMessage(Telegram.Bot.Types.Chat chat, string userName, int messageId = 0)
         {
             return await BotClient.SendTextMessageAsync(
@@ -576,7 +626,20 @@ namespace Telegram.Altayskaya97.Bot
             await ChatService.AddChat(chatRepo);
         }
 
-        private async Task EnsureChatSaved(Chat chat)
+        private async Task AddMessage(Message message)
+        {
+            var userMessage = new UserMessage
+            {
+                Id = message.MessageId,
+                ChatId = message.Chat.Id,
+                UserId = message.From.Id,
+                Text = message.Text,
+                When = DateTime.UtcNow
+            };
+            await UserMessageService.AddUserMessage(userMessage);
+        }
+
+        private async Task EnsureChatSaved(Chat chat, User user = null)
         {
             var chatRepo = await ChatService.GetChat(chat.Id);
             if (chatRepo == null)
@@ -587,6 +650,10 @@ namespace Telegram.Altayskaya97.Bot
                     Title = chat.Title,
                     ChatType = chat.Type == ChatType.Private ? Core.Model.ChatType.Private : Core.Model.ChatType.Public
                 };
+
+                if (dbChat.ChatType == Core.Model.ChatType.Private && user != null)
+                    dbChat.Title = user.Id.ToString();
+
                 await ChatService.AddChat(dbChat);
             }
         }

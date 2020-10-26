@@ -3,6 +3,7 @@ using Moq;
 using System;
 using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service;
+using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -28,10 +29,12 @@ namespace Telegram.Altayskaya97.Test.Bot
                 new MenuService(), 
                 null, 
                 null, 
+                null,
                 false, 
                 false);
             MockBotClient = new Mock<ITelegramBotClient>();
             Bot.BotClient = MockBotClient.Object;
+            Bot.UserMessageService = new Mock<IUserMessageService>().Object;
         }
 
         private Mock<IConfiguration> SetUpConfigMock()
@@ -55,6 +58,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodChatListMin")))
                 .Returns(configPeriodChatListMinMock.Object);
             configPeriodChatListMinMock.SetupGet(c => c.Value).Returns("1");
+
+            var configClearPrivateChatMinMock = new Mock<IConfigurationSection>();
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodClearPrivateChatMin")))
+                .Returns(configClearPrivateChatMinMock.Object);
+            configClearPrivateChatMinMock.SetupGet(c => c.Value).Returns("1");
 
             var configBotCredsMock = new Mock<IConfigurationSection>();
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "altayskaya97_test_bot")))

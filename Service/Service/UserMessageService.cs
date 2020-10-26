@@ -20,7 +20,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task AddUserMessage(UserMessage userMessage)
         {
             await _repo.AddItem(userMessage);
-            _logger.LogInformation($"Added message from {userMessage.Id} with text={userMessage.Text}");
+            _logger.LogInformation($"Added message from {userMessage.UserId} in chat {userMessage.ChatId}'");
         }
 
         public async Task DeleteUserMessage(long id)

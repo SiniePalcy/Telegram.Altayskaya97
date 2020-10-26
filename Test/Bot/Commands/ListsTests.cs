@@ -167,6 +167,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
 
             _fixture.MockBotClient.Reset();
+            _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat1);
+            _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(userRepo1);

@@ -82,9 +82,10 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
                 .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
 
-            _fixture.MockBotClient.SetupSequence(s => s.GetChatAsync(It.IsAny<ChatId>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(chat1)
-                .ReturnsAsync(chat2);
+            _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == 1),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat1);
+            _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == 2),
+                It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
             _fixture.MockBotClient.Setup(s => s.GetChatMemberAsync(It.IsAny<ChatId>(),
                 It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(chatMember);
