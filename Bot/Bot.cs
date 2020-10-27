@@ -262,7 +262,6 @@ namespace Telegram.Altayskaya97.Bot
             if (e.CallbackQuery.Data == CallbackActions.IWalk)
             {
                 await Ban(Commands.GetCommand($"/ban {userRepo.Name}"));
-                await SendTextMessage(chat.Id, $"User <b>{user.GetUserName()}<b> kicked");
             }
         }
         #endregion
