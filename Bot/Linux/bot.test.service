@@ -11,7 +11,7 @@ WorkingDirectory=/home/sergey/git/Telegram.Altayskaya97/Bot/bin/Debug/netcoreapp
 ExecStart=/home/sergey/git/Telegram.Altayskaya97/Bot/bin/Debug/netcoreapp3.1/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
 
 # to query logs using journalctl, set a logical name here  
-SyslogIdentifier=bot
+SyslogIdentifier=bot.test
 
 # Use your username to keep things simple.
 # If you pick a different user, make sure dotnet and all permissions are set correctly to run the app
