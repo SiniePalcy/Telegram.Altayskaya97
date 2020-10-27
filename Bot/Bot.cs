@@ -250,19 +250,8 @@ namespace Telegram.Altayskaya97.Bot
 
         private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            var user = e.CallbackQuery.From;
-            var userRepo = await UserService.GetUser(user.Id);
-            var chat = e.CallbackQuery.Message.Chat;
-            if (userRepo == null)
-            {
-                await SendTextMessage(chat.Id, "Unknown user");
-                return;
-            }
-
-            if (e.CallbackQuery.Data == CallbackActions.IWalk)
-            {
-                await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
-            }
+            //don't change this method for saving test cover
+            await RecieveCallbackData(e.CallbackQuery.Message.Chat, e.CallbackQuery.From, e.CallbackQuery.Data);
         }
         #endregion
 
@@ -272,6 +261,21 @@ namespace Telegram.Altayskaya97.Bot
                 await ProcessBotMessage(message);
             else
                 await ProcessChatMessage(message);
+        }
+
+        public async Task RecieveCallbackData(Chat chat, User from, string data)
+        {
+            var userRepo = await UserService.GetUser(from.Id);
+            if (userRepo == null)
+            {
+                await SendTextMessage(chat.Id, "Unknown user");
+                return;
+            }
+
+            if (data == CallbackActions.IWalk)
+            {
+                await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
+            }
         }
 
         public async Task ProcessBotMessage(Message chatMessage)
