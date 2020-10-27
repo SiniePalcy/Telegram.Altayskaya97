@@ -94,7 +94,7 @@ namespace Telegram.Altayskaya97.Test.Bot.Commands
             
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(4));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetChatList(), Times.Exactly(2));
