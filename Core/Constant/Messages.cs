@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Telegram.Altayskaya97.Core.Constant
 {
-    public class Messages
+    public static class Messages
     {
         public const string CheckCommand = "Check command";
         public const string NoAnyChats = "No any chats";

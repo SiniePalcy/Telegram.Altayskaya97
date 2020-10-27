@@ -250,9 +250,20 @@ namespace Telegram.Altayskaya97.Bot
 
         private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            await BotClient.SendTextMessageAsync(
-                chatId: e.CallbackQuery.From.Id,
-                text: e.CallbackQuery.Data);
+            var user = e.CallbackQuery.From;
+            var userRepo = await UserService.GetUser(user.Id);
+            var chat = e.CallbackQuery.Message.Chat;
+            if (userRepo == null)
+            {
+                await SendTextMessage(chat.Id, "Unknown user");
+                return;
+            }
+
+            if (e.CallbackQuery.Data == CallbackActions.IWalk)
+            {
+                await Ban(Commands.GetCommand($"/ban {userRepo.Name}"));
+                await SendTextMessage(chat.Id, $"User <b>{user.GetUserName()}<b> kicked");
+            }
         }
         #endregion
 

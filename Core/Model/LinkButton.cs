@@ -1,8 +1,7 @@
 ﻿namespace Telegram.Altayskaya97.Core.Model
 {
-    public class LinkButton
+    public class LinkButton : Button
     {
-        public string Title { get; set; }
         public string Link { get; set; }
         public LinkButton(string title, string link)
         {

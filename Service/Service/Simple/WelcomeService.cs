@@ -8,24 +8,30 @@ namespace Telegram.Altayskaya97.Service
 {
     public class WelcomeService : IWelcomeService
     {
-        private LinkButton[] _linkButtons = new LinkButton[]
+        private Button[] _buttons = new Button[]
         {
             new LinkButton("Правила чата",  "https://telegra.ph/Pravila-chata-Altajskaya-09-22"),
             new LinkButton("Список районных чатов",  "http://dze.chat"),
             new LinkButton("Анонимность в Телеграм",  "https://telegra.ph/faq-09-08-4"),
-            new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net")
+            new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net"),
+            new CallbackButton("Я гуляю", CallbackActions.IWalk)
         };
 
 
         public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons()
         {
-            var inlineKeyboardArray = new InlineKeyboardButton[_linkButtons.Length][];
-            for(int i = 0; i < inlineKeyboardArray.Length; i++)
+            var inlineKeyboardButtonsLine = new InlineKeyboardButton[_buttons.Length][];
+            for(int i = 0; i < inlineKeyboardButtonsLine.Length; i++)
             {
-                inlineKeyboardArray[i] = new InlineKeyboardButton[1];
-                inlineKeyboardArray[i][0] = InlineKeyboardButton.WithUrl(_linkButtons[i].Title, _linkButtons[i].Link);
+                inlineKeyboardButtonsLine[i] = new InlineKeyboardButton[1];
+                inlineKeyboardButtonsLine[i][0] = _buttons[i] switch
+                {
+                    LinkButton linkButton => InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link),
+                    CallbackButton callbackButton => InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName),
+                    _ => throw new System.Exception("Unknown button type")
+                };
             }
-            return inlineKeyboardArray;
+            return inlineKeyboardButtonsLine;
         }
 
         public string GetWelcomeMessage(string userName)
