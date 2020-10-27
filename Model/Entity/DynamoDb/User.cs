@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using System;
 using Telegram.Altayskaya97.Core.Interface;
 
 namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
@@ -20,5 +21,7 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         public string Telephone { get; set; }
         [DynamoDBProperty]
         public string Type { get; set; } = Core.Model.UserType.Member;
+        [DynamoDBProperty]
+        public virtual DateTime LastMessageTime { get; set; }
     }
 }

@@ -84,5 +84,9 @@ namespace Telegram.Altayskaya97.Service
             return user.Type == UserType.Admin && user.IsAdmin;
         }
 
+        public async Task UpdateUser(User user)
+        {
+            await _repo.UpdateItem(user);
+        }
     }
 }

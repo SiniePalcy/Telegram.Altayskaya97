@@ -12,6 +12,7 @@ namespace Telegram.Altayskaya97.Service.Interface
         Task<bool> PromoteUserAdmin(long userId);
         Task<bool> RestrictUser(long userId);
         Task AddUser(User user);
+        Task UpdateUser(User user);
         Task DeleteUser(long userId);
         Task<bool> IsAdmin(long userId);
     }

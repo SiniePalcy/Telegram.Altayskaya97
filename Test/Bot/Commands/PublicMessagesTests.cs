@@ -51,6 +51,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
+            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+                .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             var chatServiceMock = new Mock<IChatService>(); 
             chatServiceMock.SetupSequence(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(default(Core.Model.Chat))
@@ -105,6 +107,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
+            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+                .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             var chatServiceMock = new Mock<IChatService>();
             chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
@@ -114,6 +118,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Once);
+            userServiceMock.Verify(mock => mock.UpdateUser(It.Is<Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
             chatServiceMock.Verify(mock =>
                 mock.AddChat(It.Is<Core.Model.Chat>(ct => ct.Id == chat.Id)), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
@@ -168,6 +173,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.AddUser(It.Is<Core.Model.User>(u => u.Id == user.Id)), Times.Once);
+            userServiceMock.Verify(mock => mock.UpdateUser(It.Is<Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
             chatServiceMock.Verify(mock =>
                 mock.AddChat(It.Is<Core.Model.Chat>(_ => _.Id == chat.Id)), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(

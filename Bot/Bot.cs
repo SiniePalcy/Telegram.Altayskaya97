@@ -688,16 +688,20 @@ namespace Telegram.Altayskaya97.Bot
             var userRepo = await UserService.GetUser(user.Id);
             if (userRepo == null)
             {
-                var dbUser = new UserRepo
+                userRepo = new UserRepo
                 {
                     Id = user.Id,
                     Name = user.GetUserName(),
                     Type = chatType == Core.Model.ChatType.Admin ? UserType.Admin : UserType.Member
                 };
-                dbUser.IsAdmin = dbUser.Type == Core.Model.UserType.Admin;
-                await UserService.AddUser(dbUser);
-                _adminResetCounters.TryAdd(dbUser.Id, 0);
+                userRepo.IsAdmin = userRepo.Type == Core.Model.UserType.Admin;
+                await UserService.AddUser(userRepo);
+                _adminResetCounters.TryAdd(userRepo.Id, 0);
             }
+
+            userRepo.LastMessageTime = DateTime.UtcNow;
+            await UserService.UpdateUser(userRepo);
+            
         }
 
         private int ParseInt(string source, int defaultValue)
