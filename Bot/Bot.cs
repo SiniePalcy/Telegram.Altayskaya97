@@ -42,6 +42,7 @@ namespace Telegram.Altayskaya97.Bot
 
         private ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private volatile int _chatListCounter = 0;
+        private volatile int _updateUserNameCounter = 0;
 
         #region Constant
         private const string INCORRECT_COMMAND = "Incorrect command";
@@ -131,7 +132,7 @@ namespace Telegram.Altayskaya97.Bot
                 }
                 catch(ApiRequestException)
                 {
-                    _logger.LogInformation($"Chat {adminChat.Title} is unavailable and will be deleted");
+                    _logger.LogWarning($"Chat {adminChat.Title} is unavailable and will be deleted");
                     await ChatService.DeleteChat(adminChat.Id);
                 }
             }
@@ -172,10 +173,13 @@ namespace Telegram.Altayskaya97.Bot
                 var now = DateTimeService.GetDateTimeUTCNow();
                 await UpdateUsersAccess();
                 await UpdateBotMessages();
+                await UpdateUserNames();
                 _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
         }
+
+        #region Periodically updaters
 
         private async Task UpdateUsersAccess()
         {
@@ -211,6 +215,47 @@ namespace Telegram.Altayskaya97.Bot
             }
         }
 
+        private async Task UpdateUserNames()
+        {
+            if (_updateUserNameCounter == 12 * 3600 / PeriodEchoSec)
+            {
+                _updateUserNameCounter = 0;
+
+                var userList = await UserService.GetUserList();
+                var chatList = await ChatService.GetChatList();
+                foreach (var userRepo in userList)
+                {
+                    User user = null;
+                    foreach (var chatRepo in chatList)
+                    {
+                        var chatMember = await BotClient.GetChatMemberAsync(chatRepo.Id, (int)userRepo.Id);
+                        if (chatMember != null)
+                        {
+                            user = chatMember.User;
+                            break;
+                        }
+                    }
+
+                    if (user == null)
+                    {
+                        _logger.LogWarning($"User '{userRepo.Name}' not found!");
+                        continue;
+                    }
+
+                    var userName = user.GetUserName();
+                    if (userName != userRepo.Name)
+                    {
+                        var oldName = userRepo.Name;
+                        userRepo.Name = userName;
+                        await UserService.UpdateUser(userRepo);
+                        _logger.LogInformation($"User name updated from '{oldName}' to '{userName}'");
+                    }
+                }
+            }
+
+            _updateUserNameCounter++;
+        }
+
         private async Task UpdateChatList()
         {
             if (_chatListCounter == PeriodChatListMin * 60 / PeriodEchoSec)
@@ -239,6 +284,7 @@ namespace Telegram.Altayskaya97.Bot
 
             _chatListCounter++;
         }
+        #endregion
 
         #region Event handlers
         private async void Bot_OnMessage(object sender, MessageEventArgs e)
@@ -280,7 +326,8 @@ namespace Telegram.Altayskaya97.Bot
 
             if (data == CallbackActions.IWalk)
             {
-                await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
+                var result = await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
+                await SendTextMessage(chat.Id, result.Content);
             }
         }
 
@@ -307,38 +354,38 @@ namespace Telegram.Altayskaya97.Bot
             var isAdmin = await UserService.IsAdmin(user.Id);
             if (userRepo == null)
             {
-                commandResult = command.Name == Commands.Start.Name ? 
+                commandResult = command == Commands.Start ? 
                     new CommandResult("Who are you? Let's goodbye!", CommandResultType.Message) :
                     new CommandResult(INCORRECT_COMMAND);
             }
             else if (userRepo.Type == UserType.Member)
             {
-                commandResult = command.Name == Commands.Start.Name ? await Start(user) :
-                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command.Name == Commands.Return.Name ? await Unban(user) :
+                commandResult = command == Commands.Start ? await Start(user) :
+                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
+                                command == Commands.Return ? await Unban(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
             else if (command.IsAdmin && isAdmin) //commands for admin with permissions
             {
-                commandResult = command.Name == Commands.Start.Name ? await Start(user) :
-                                command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
-                                command.Name == Commands.ChatList.Name ? await ChatList() :
-                                command.Name == Commands.UserList.Name ? await UserList() :
-                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command.Name == Commands.Ban.Name ? await Ban(command) :
-                                command.Name == Commands.BanAll.Name ? await BanAll() :
-                                command.Name == Commands.InActive.Name ? await InActiveUsers() :
+                commandResult = command == Commands.Start ? await Start(user) :
+                                command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
+                                command == Commands.ChatList ? await ChatList() :
+                                command == Commands.UserList ? await UserList() :
+                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
+                                command == Commands.Ban ? await Ban(command) :
+                                command == Commands.BanAll ? await BanAll() :
+                                command == Commands.InActive ? await InActiveUsers() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
             else  //commands for admin without permissions
             {
-                commandResult = command.Name == Commands.Start.Name ? await Start(user) :
-                                command.Name == Commands.ChatList.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command.Name == Commands.UserList.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command.Name == Commands.Ban.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command.Name == Commands.BanAll.Name ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command.Name == Commands.GrantAdmin.Name ? await GrantAdminPermissions(user) :
+                commandResult = command == Commands.Start ? await Start(user) :
+                                command == Commands.ChatList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command == Commands.UserList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
+                                command == Commands.Ban ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command == Commands.BanAll ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
 
@@ -451,7 +498,7 @@ namespace Telegram.Altayskaya97.Bot
                 }
                 catch (ApiRequestException)
                 {
-                    _logger.LogInformation($"Chat '{chat.Title}' is unavailable and will be deleted");
+                    _logger.LogWarning($"Chat '{chat.Title}' is unavailable and will be deleted");
                     chatsToDelete.Add(chat);
                 }
             }
@@ -605,7 +652,7 @@ namespace Telegram.Altayskaya97.Bot
                 }
                 catch (ApiRequestException ex)
                 {
-                    _logger.LogInformation(ex.Message);
+                    _logger.LogError(ex.Message);
                 }
             }
 
@@ -639,7 +686,7 @@ namespace Telegram.Altayskaya97.Bot
                     }
                     catch (ApiRequestException ex)
                     {
-                        _logger.LogInformation(ex.Message);
+                        _logger.LogError(ex.Message);
                     }
 
                     sb.AppendLine($"User <b>{user.Name}</b> has been deleted from chat <b>{chatRepo.Title}</b>");
@@ -657,7 +704,7 @@ namespace Telegram.Altayskaya97.Bot
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
             
-            if (message != null && chat.Type == ChatType.Private)
+            if (message != null && chat.Type == ChatType.Private || content.ToLower() == Commands.NoWalk.Template)
                 await AddMessage(message);
             
             return message;
@@ -734,8 +781,8 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             userRepo.LastMessageTime = DateTimeService.GetDateTimeUTCNow();
+            userRepo.Name = user.GetUserName();
             await UserService.UpdateUser(userRepo);
-            
         }
 
         private int ParseInt(string source, int defaultValue)
