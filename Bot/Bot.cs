@@ -368,17 +368,17 @@ namespace Telegram.Altayskaya97.Bot
                 return;
             }
 
+            var chatRepo = await ChatService.GetChat(chat.Id);
+            User sender = chatMessage.From;
+
             if (chatMessage.Type == MessageType.ChatMembersAdded)
             {
                 var users = await UserService.GetUserList();
                 var newMembers = chatMessage.NewChatMembers.Where(c => !users.Any(u => u.Id == c.Id)).ToList();
-                newMembers.ForEach(async chatMember => await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName()));
+                newMembers.ForEach(async chatMember => await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType == Core.Model.ChatType.Admin));
                 return;
             }
 
-            var chatRepo = await ChatService.GetChat(chat.Id);
-            User sender = chatMessage.From;
-            
             await EnsureUserSaved(sender, chatRepo.ChatType);
 
             if (string.IsNullOrEmpty(chatMessage.Text))
@@ -395,7 +395,7 @@ namespace Telegram.Altayskaya97.Bot
             _logger.LogInformation($"Recieved message from {userName} in chat id={chat?.Id}, title={chat?.Title}, type={chat?.Type}");
 
             if (message == Commands.Help.Name)
-                await SendWelcomeGroupMessage(chatMessage.Chat, userName, chatMessage.MessageId);
+                await SendWelcomeGroupMessage(chatMessage.Chat, userName, chatRepo.ChatType == Core.Model.ChatType.Admin, chatMessage.MessageId);
             else if (message == Commands.Helb.Name)
                 await BotClient.SendPhotoAsync(chatMessage.Chat, "https://i.ytimg.com/vi/gpEtNGeM3zE/maxresdefault.jpg");
 
@@ -661,14 +661,14 @@ namespace Telegram.Altayskaya97.Bot
             return message;
         }
 
-        private async Task<Message> SendWelcomeGroupMessage(Telegram.Bot.Types.Chat chat, string userName, int messageId = 0)
+        private async Task<Message> SendWelcomeGroupMessage(Chat chat, string userName, bool isAdmin = false, int messageId = 0)
         {
             return await BotClient.SendTextMessageAsync(
                     chatId: chat.Id,
                     text: WelcomeService.GetWelcomeMessage(userName),
                     parseMode: ParseMode.Html,
                     replyToMessageId: messageId,
-                    replyMarkup: new InlineKeyboardMarkup(WelcomeService.GetWelcomeButtons())
+                    replyMarkup: new InlineKeyboardMarkup(WelcomeService.GetWelcomeButtons(isAdmin))
             );
         }
 

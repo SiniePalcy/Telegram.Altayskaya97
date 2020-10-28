@@ -10,7 +10,8 @@ namespace Telegram.Altayskaya97.Service
     {
         private Button[] _buttons = new Button[]
         {
-            new LinkButton("Правила чата",  "https://telegra.ph/Pravila-chata-Altajskaya-09-22"),
+            new LinkButton("Правила чата",  "https://telegra.ph/Pravila-chata-10-28-4", false),
+            new LinkButton("Правила чата",  "https://telegra.ph/Pravila-SHpiciyalnyh-botov-10-28", true),
             new LinkButton("Список районных чатов",  "http://dze.chat"),
             new LinkButton("Анонимность в Телеграм",  "https://telegra.ph/faq-09-08-4"),
             new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net"),
@@ -18,7 +19,7 @@ namespace Telegram.Altayskaya97.Service
         };
 
 
-        public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons()
+        public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons(bool isAdmin)
         {
             var inlineKeyboardButtonsLine = new InlineKeyboardButton[_buttons.Length][];
             for(int i = 0; i < inlineKeyboardButtonsLine.Length; i++)
@@ -26,7 +27,7 @@ namespace Telegram.Altayskaya97.Service
                 inlineKeyboardButtonsLine[i] = new InlineKeyboardButton[1];
                 inlineKeyboardButtonsLine[i][0] = _buttons[i] switch
                 {
-                    LinkButton linkButton => InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link),
+                    LinkButton linkButton => linkButton.IsAdmin == isAdmin ? InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) : null,
                     CallbackButton callbackButton => InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName),
                     _ => throw new System.Exception("Unknown button type")
                 };

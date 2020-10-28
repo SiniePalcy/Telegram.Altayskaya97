@@ -3,10 +3,12 @@
     public class LinkButton : Button
     {
         public string Link { get; set; }
-        public LinkButton(string title, string link)
+        public bool IsAdmin { get; set; }
+        public LinkButton(string title, string link, bool isAdmin = false)
         {
-            this.Title = title;
-            this.Link = link;
+            Title = title;
+            Link = link;
+            IsAdmin = isAdmin;
         }
     }
 }
