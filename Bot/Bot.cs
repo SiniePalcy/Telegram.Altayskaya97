@@ -217,7 +217,7 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task UpdateUserNames()
         {
-            if (_updateUserNameCounter == 1 * 3600 / PeriodEchoSec)
+            if (_updateUserNameCounter == 12 * 3600 / PeriodEchoSec)
             {
                 _updateUserNameCounter = 0;
 
