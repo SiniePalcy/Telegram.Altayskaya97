@@ -509,7 +509,7 @@ namespace Telegram.Altayskaya97.Bot
                 foreach (var user in userList.OrderBy(u => u.Type).OrderBy(u => u.LastMessageTime))
                 {
                     var userType = user.Type;
-                    var lastDateTime = user?.LastMessageTime != null ? DateTimeService.FormatToString(user.LastMessageTime.Value) : null;
+                    var lastDateTime = user?.LastMessageTime != null ? DateTimeService.FormatToString(user.LastMessageTime.Value) : "";
                     sb.AppendLine($"{user.Name,-20}{userType,-12}{lastDateTime,-16}");
                 }
                 sb.Append("</code>");
