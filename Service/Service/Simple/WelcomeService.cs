@@ -19,7 +19,7 @@ namespace Telegram.Altayskaya97.Service
         };
 
 
-        public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons(bool isAdmin)
+        public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons(string chatType)
         {
             var inlineKeyboardButtons = new List<InlineKeyboardButton[]>();
             
@@ -27,7 +27,13 @@ namespace Telegram.Altayskaya97.Service
             {
                 switch(_buttons[i])
                 {
-                    case LinkButton linkButton when linkButton.IsAdmin == isAdmin:
+                    case LinkButton linkButton when chatType == ChatType.Admin && linkButton.IsAdmin.HasValue && linkButton.IsAdmin.Value:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                        break;
+                    case LinkButton linkButton when chatType == ChatType.Public && linkButton.IsAdmin.HasValue && !linkButton.IsAdmin.Value:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                        break;
+                    case LinkButton linkButton when !linkButton.IsAdmin.HasValue:
                         inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
                         break;
                     case CallbackButton callbackButton:
