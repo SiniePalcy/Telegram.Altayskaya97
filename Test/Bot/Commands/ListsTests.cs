@@ -1,6 +1,7 @@
 ﻿using Moq;
 using System;
 using System.Threading;
+using Telegram.Altayskaya97.Service;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -282,7 +283,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             var user1 = new User { Id = 1 };
             var user2 = new User { Id = 2 };
             var user3 = new User { Id = 3 };
-            var userRepo = new Core.Model.User { Id = 0, Type = Core.Model.UserType.Admin, LastMessageTime = dt0 };
+            var userRepo = new Core.Model.User { Id = 0, Name = "user0", Type = Core.Model.UserType.Admin, LastMessageTime = dt0 };
             var userRepo1 = new Core.Model.User { Id = 1, LastMessageTime = dt1, Name = "user1", Type = member };
             var userRepo2 = new Core.Model.User { Id = 2, LastMessageTime = dt2, Name = "user2", Type = member };
             var userRepo3 = new Core.Model.User { Id = 3, LastMessageTime = dt3, Name = "user3", Type = member };
@@ -324,6 +325,19 @@ namespace Telegram.Altayskaya97.Test.Bot
             dateTimeServiceMock.Setup(s => s.GetDateTimeUTCNow())
                 .Returns(dt);
             _bot.DateTimeService = dateTimeServiceMock.Object;
+            DateTimeService dtService = new DateTimeService();
+            Console.WriteLine(dtService.FormatToString(userRepo1.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo2.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo3.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo4.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo5.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo6.LastMessageTime));
+            Console.WriteLine(dtService.FormatToString(userRepo7.LastMessageTime));
+            dateTimeServiceMock.Setup(s => s.GetDateTimeUTCNow())
+                .Returns(dt);
+            _bot.DateTimeService = dateTimeServiceMock.Object;
+
+
 
             _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat.Id),
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat);
@@ -336,7 +350,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.Is<ChatId>(_ => _.Identifier == chatRepo.Id),
-                 It.Is<string>(_ => _.Contains("user1") && _.Contains("user3") && _.Contains("user4")),
+                 It.Is<string>(_ => _.Contains("user1") && _.Contains("user3") && _.Contains("user4") && _.Contains("user5") && 
+                 !_.Contains("user0") && !_.Contains("user2") &&  !_.Contains("user6") && !_.Contains("user7")),
                  It.IsAny<ParseMode>(),
                  It.IsAny<bool>(),
                  It.IsAny<bool>(),
