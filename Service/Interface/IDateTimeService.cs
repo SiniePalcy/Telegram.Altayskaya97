@@ -7,6 +7,6 @@ namespace Telegram.Altayskaya97.Service.Interface
     public interface IDateTimeService : IService
     {
         DateTime GetDateTimeUTCNow();
-        string FormatToString(DateTime dateTime);
+        string FormatToString(DateTime? dateTime);
     }
 }

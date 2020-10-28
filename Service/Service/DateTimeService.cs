@@ -7,9 +7,9 @@ namespace Telegram.Altayskaya97.Service
 {
     public class DateTimeService : IDateTimeService
     {
-        public string FormatToString(DateTime dateTime)
+        public string FormatToString(DateTime? dateTime)
         {
-            return dateTime.ToFileTimeUtc().ToString("dd-MM-yyyy HH:mm");
+            return dateTime?.ToFileTimeUtc().ToString("dd-MM-yyyy HH:mm") ?? string.Empty;
         }
 
         public DateTime GetDateTimeUTCNow()
