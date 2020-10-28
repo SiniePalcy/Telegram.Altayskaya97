@@ -405,7 +405,8 @@ namespace Telegram.Altayskaya97.Bot
         public async Task<CommandResult> Start(User user)
         {
             bool isAdmin = await UserService.IsAdmin(user.Id);
-            return new CommandResult(MenuService.GetMenu(user.Username, isAdmin), CommandResultType.Message, new InlineKeyboardMarkup(WelcomeService.GetWelcomeButtons()));
+            return new CommandResult(MenuService.GetMenu(user.Username, isAdmin), CommandResultType.Message, 
+                new InlineKeyboardMarkup(WelcomeService.GetWelcomeButtons(isAdmin)));
         }
 
         public async Task<CommandResult> GrantAdminPermissions(User user)
