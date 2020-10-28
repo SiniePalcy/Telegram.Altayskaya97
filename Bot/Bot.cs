@@ -506,7 +506,7 @@ namespace Telegram.Altayskaya97.Bot
             if (inActiveUsers.Any())
             {
                 StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Last msg",-16}\n"));
-                foreach (var user in userList.OrderBy(u => u.Type).OrderBy(u => u.LastMessageTime))
+                foreach (var user in inActiveUsers.OrderBy(u => u.Type).OrderBy(u => u.LastMessageTime))
                 {
                     var userType = user.Type;
                     var lastDateTime =  DateTimeService.FormatToString(user.LastMessageTime);
