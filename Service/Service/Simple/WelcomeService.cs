@@ -8,7 +8,7 @@ namespace Telegram.Altayskaya97.Service
 {
     public class WelcomeService : IWelcomeService
     {
-        private Button[] _buttons = new Button[]
+        private readonly Button[] _buttons = new Button[]
         {
             new LinkButton("Правила чата",  "https://telegra.ph/Pravila-chata-10-28-4", false),
             new LinkButton("Правила чата",  "https://telegra.ph/Pravila-SHpiciyalnyh-botov-10-28", true),

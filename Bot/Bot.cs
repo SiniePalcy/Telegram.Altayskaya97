@@ -40,7 +40,7 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodClearPrivateChatMin { get; private set; }
         public int PeriodInactiveUserDays { get; private set; }
 
-        private ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
+        private readonly ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private volatile int _chatListCounter = 0;
         private volatile int _updateUserNameCounter = 0;
 
@@ -592,9 +592,11 @@ namespace Telegram.Altayskaya97.Bot
                 return new CommandResult(Messages.CheckCommand, CommandResultType.Message);
 
             string contentToPost = command.Text.Replace(command.Name, "").Replace(firstWord, "").Trim();
-            
-            var commandResult = new CommandResult(contentToPost, CommandResultType.Message);
-            commandResult.Recievers = chatsToPost.Select(c => c.Id).ToList();
+
+            var commandResult = new CommandResult(contentToPost, CommandResultType.Message)
+            {
+                Recievers = chatsToPost.Select(c => c.Id).ToList()
+            };
 
             return commandResult;
         }
@@ -605,9 +607,8 @@ namespace Telegram.Altayskaya97.Bot
             if (string.IsNullOrEmpty(commandContent))
                 return new CommandResult(Messages.CheckCommand, CommandResultType.Message);
 
-            long userId;
-            Core.Model.User user;
-            if (long.TryParse(commandContent, out userId))
+            UserRepo user;
+            if (long.TryParse(commandContent, out long userId))
                 user = await UserService.GetUser(userId);
             else 
                 user = await UserService.GetUser(commandContent);

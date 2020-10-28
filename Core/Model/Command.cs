@@ -81,14 +81,14 @@ namespace Telegram.Altayskaya97.Core.Model
 
         public static bool operator ==(Command operand1, Command operand2)
         {
-            if (object.ReferenceEquals(operand1, null))
+            if (operand1 is null)
             {
-                return object.ReferenceEquals(operand2, null);
+                return operand2 is null;
             }
 
-            if (object.ReferenceEquals(operand2, null))
+            if (operand2 is null)
             {
-                return object.ReferenceEquals(operand1, null);
+                return operand1 is null;
             }
 
             return operand1.Name.ToLower() == operand2.Name.ToLower();
@@ -97,6 +97,20 @@ namespace Telegram.Altayskaya97.Core.Model
         public static bool operator !=(Command operand1, Command operand2)
         {
             return !(operand1 == operand2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            var command = obj as Command;
+            if (command == null)
+                return false;
+
+            return Name.Equals(command.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name);
         }
     }
 }
