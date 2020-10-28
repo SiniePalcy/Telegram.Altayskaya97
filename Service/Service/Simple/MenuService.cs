@@ -17,6 +17,7 @@ namespace Telegram.Altayskaya97.Service
         {
             new MenuAction(Commands.UserList),
             new MenuAction(Commands.ChatList),
+            new MenuAction(Commands.InActive),
             new MenuAction(Commands.Ban),
             new MenuAction(Commands.BanAll)
         };
