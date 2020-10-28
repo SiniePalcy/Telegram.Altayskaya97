@@ -9,7 +9,7 @@ namespace Telegram.Altayskaya97.Service
     {
         public string FormatToString(DateTime? dateTime)
         {
-            return dateTime?.ToFileTimeUtc().ToString("dd-MM-yyyy HH:mm") ?? string.Empty;
+            return dateTime.HasValue ? dateTime.Value.ToUniversalTime().ToString("dd-MM-yyyy HH:mm") : string.Empty;
         }
 
         public DateTime GetDateTimeUTCNow()
