@@ -21,18 +21,21 @@ namespace Telegram.Altayskaya97.Service
 
         public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons(bool isAdmin)
         {
-            var inlineKeyboardButtonsLine = new InlineKeyboardButton[_buttons.Length][];
-            for(int i = 0; i < inlineKeyboardButtonsLine.Length; i++)
+            var inlineKeyboardButtons = new List<InlineKeyboardButton[]>();
+            
+            for(int i = 0; i < _buttons.Length; i++)
             {
-                inlineKeyboardButtonsLine[i] = new InlineKeyboardButton[1];
-                inlineKeyboardButtonsLine[i][0] = _buttons[i] switch
+                switch(_buttons[i])
                 {
-                    LinkButton linkButton => linkButton.IsAdmin == isAdmin ? InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) : null,
-                    CallbackButton callbackButton => InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName),
-                    _ => throw new System.Exception("Unknown button type")
+                    case LinkButton linkButton when linkButton.IsAdmin == isAdmin:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                        break;
+                    case CallbackButton callbackButton:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName) });
+                        break;
                 };
             }
-            return inlineKeyboardButtonsLine;
+            return inlineKeyboardButtons;
         }
 
         public string GetWelcomeMessage(string userName)
