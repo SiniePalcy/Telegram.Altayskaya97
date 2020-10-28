@@ -73,5 +73,30 @@ namespace Telegram.Altayskaya97.Core.Model
         {
             return text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Length;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public static bool operator ==(Command operand1, Command operand2)
+        {
+            if (object.ReferenceEquals(operand1, null))
+            {
+                return object.ReferenceEquals(operand2, null);
+            }
+
+            if (object.ReferenceEquals(operand2, null))
+            {
+                return object.ReferenceEquals(operand1, null);
+            }
+
+            return operand1.Name.ToLower() == operand2.Name.ToLower();
+        }
+
+        public static bool operator !=(Command operand1, Command operand2)
+        {
+            return !(operand1 == operand2);
+        }
     }
 }

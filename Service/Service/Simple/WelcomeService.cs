@@ -16,6 +16,7 @@ namespace Telegram.Altayskaya97.Service
             new LinkButton("Анонимность в Телеграм",  "https://telegra.ph/faq-09-08-4"),
             new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net"),
             new CallbackButton("Я гуляю", CallbackActions.IWalk)
+          //  new CallbackButton("Я не гуляю", CallbackActions.NoWalk)
         };
 
 

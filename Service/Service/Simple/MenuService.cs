@@ -11,6 +11,7 @@ namespace Telegram.Altayskaya97.Service
         {
             new MenuAction(Commands.Start),
             new MenuAction(Commands.IWalk)
+            //new MenuAction(Commands.NoWalk)
         };
 
         private IList<MenuAction> _adminCommands = new List<MenuAction>
