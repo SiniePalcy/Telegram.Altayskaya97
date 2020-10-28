@@ -22,6 +22,6 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         [DynamoDBProperty]
         public string Type { get; set; } = Core.Model.UserType.Member;
         [DynamoDBProperty]
-        public virtual DateTime LastMessageTime { get; set; }
+        public virtual DateTime? LastMessageTime { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command Post { get; } = new Command("/post", "/post [chatId or all] text", "Отправить объявление в чат (chatId) или все чаты (all) с текстом text", true);
         public static Command ChatList { get; } = new Command("/chatlist", "/chatlist", "Показать список чатов бота", true);
         public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
+        public static Command InActive { get; } = new Command("/inactive", "/inactive", "Неактивные пользователи", true);
         public static Command Ban { get; } = new Command("/ban", "/ban username", "Забанить пользователя с username", true);
         public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
         public static Command GrantAdmin { get; } = new Command("/shpic", "/shpic", "", true, false); // secret word

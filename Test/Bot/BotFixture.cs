@@ -23,6 +23,10 @@ namespace Telegram.Altayskaya97.Test.Bot
         {
             var _configMock = SetUpConfigMock();
 
+            var dateTimeServiceMock = new Mock<IDateTimeService>();
+            dateTimeServiceMock.Setup(s => s.GetDateTimeUTCNow()).Returns(DateTime.UtcNow);
+            dateTimeServiceMock.Setup(s => s.FormatToString(It.IsAny<DateTime>())).Returns(DateTime.UtcNow.ToString());
+
             Bot = new Altayskaya97.Bot.Bot(new Logger<Altayskaya97.Bot.Bot>(), 
                 _configMock.Object, 
                 new WelcomeService(), 
@@ -30,6 +34,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 null, 
                 null, 
                 null,
+                dateTimeServiceMock.Object,
                 false, 
                 false);
             MockBotClient = new Mock<ITelegramBotClient>();
@@ -63,6 +68,12 @@ namespace Telegram.Altayskaya97.Test.Bot
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodClearPrivateChatMin")))
                 .Returns(configClearPrivateChatMinMock.Object);
             configClearPrivateChatMinMock.SetupGet(c => c.Value).Returns("1");
+
+            var configInactiveUserDaysMock = new Mock<IConfigurationSection>();
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodInactiveUserDays")))
+                .Returns(configInactiveUserDaysMock.Object);
+            configInactiveUserDaysMock.SetupGet(c => c.Value).Returns("3");
+
 
             var configBotCredsMock = new Mock<IConfigurationSection>();
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "altayskaya97_test_bot")))

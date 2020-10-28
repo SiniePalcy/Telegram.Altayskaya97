@@ -137,7 +137,6 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
 
-
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "/ban testuser2";

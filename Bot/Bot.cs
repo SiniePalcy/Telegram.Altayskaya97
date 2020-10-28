@@ -38,6 +38,7 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodResetAccessMin { get; private set; }
         public int PeriodChatListMin { get; private set; }
         public int PeriodClearPrivateChatMin { get; private set; }
+        public int PeriodInactiveUserDays { get; private set; }
 
         private ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private volatile int _chatListCounter = 0;
@@ -49,6 +50,7 @@ namespace Telegram.Altayskaya97.Bot
         private const int PERIOD_RESET_ACCESS_MIN_DEFAULT = 60;
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
         private const int PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT = 30;
+        private const int PERIOD_INACTIVE_USER_DAYS = 7;
         #endregion
 
         #region Services
@@ -57,6 +59,7 @@ namespace Telegram.Altayskaya97.Bot
         public IUserService UserService { get; set; }
         public IChatService ChatService { get; set; }
         public IUserMessageService UserMessageService { get; set; }
+        public IDateTimeService DateTimeService { get; set; }
         #endregion
 
         public Bot(ILogger<Bot> logger, IConfiguration configuration,
@@ -65,6 +68,7 @@ namespace Telegram.Altayskaya97.Bot
             IUserService userService,
             IChatService chatService,
             IUserMessageService userMessageService,
+            IDateTimeService dateTimeService,
             bool shouldInitClient = true,
             bool shouldInitDb = true)
         {
@@ -75,6 +79,7 @@ namespace Telegram.Altayskaya97.Bot
             this.UserService = userService;
             this.ChatService = chatService;
             this.UserMessageService = userMessageService;
+            this.DateTimeService = dateTimeService;
 
             var configSection = configuration.GetSection("Configuration");
 
@@ -94,6 +99,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
             PeriodClearPrivateChatMin = ParseInt(configSection.GetSection("PeriodClearPrivateChatMin").Value, PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
+            PeriodInactiveUserDays = ParseInt(configSection.GetSection("PeriodInactiveUserDays").Value, PERIOD_INACTIVE_USER_DAYS);
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -163,7 +169,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var now = DateTime.UtcNow;
+                var now = DateTimeService.GetDateTimeUTCNow();
                 await UpdateUsersAccess();
                 await UpdateBotMessages();
                 _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
@@ -189,7 +195,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             var allMessages = await UserMessageService.GetUserMessageList();
 
-            var dtNow = DateTime.UtcNow;
+            var dtNow = DateTimeService.GetDateTimeUTCNow();
             List<UserMessage> messagesForDelete = new List<UserMessage>();
             foreach (var message in allMessages)
             {
@@ -321,6 +327,7 @@ namespace Telegram.Altayskaya97.Bot
                                 command.Name == Commands.IWalk.Name ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
                                 command.Name == Commands.Ban.Name ? await Ban(command) :
                                 command.Name == Commands.BanAll.Name ? await BanAll() :
+                                command.Name == Commands.InActive.Name ? await InActiveUsers() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
             else  //commands for admin without permissions
@@ -483,6 +490,31 @@ namespace Telegram.Altayskaya97.Bot
             sb.Append("</code>");
 
             return new CommandResult(sb.ToString(), CommandResultType.Message);
+        }
+
+        public async Task<CommandResult> InActiveUsers()
+        {
+            string message = "No inactive users";
+
+            var dtNow = DateTimeService.GetDateTimeUTCNow();
+            var userList = await UserService.GetUserList();
+            var inActiveUsers = userList.Where(u => (u.Type == UserType.Member || u.Type == UserType.Admin) && 
+                (u.LastMessageTime == null || (dtNow - u.LastMessageTime.Value).TotalDays >= PeriodInactiveUserDays));
+
+            if (inActiveUsers.Any())
+            {
+                StringBuilder sb = new StringBuilder(string.Format($"<code>{"Username",-20}{"Type",-12}{"Last msg",-16}\n"));
+                foreach (var user in userList.OrderBy(u => u.Type).OrderBy(u => u.LastMessageTime))
+                {
+                    var userType = user.Type;
+                    var lastDateTime = user?.LastMessageTime != null ? DateTimeService.FormatToString(user.LastMessageTime.Value) : null;
+                    sb.AppendLine($"{user.Name,-20}{userType,-12}{lastDateTime,-16}");
+                }
+                sb.Append("</code>");
+                message = sb.ToString();
+            }
+
+            return new CommandResult(message, CommandResultType.Message);
         }
 
         private async Task<CommandResult> Post(Command command)
@@ -659,7 +691,7 @@ namespace Telegram.Altayskaya97.Bot
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
                 Text = message.Text,
-                When = DateTime.UtcNow
+                When = DateTimeService.GetDateTimeUTCNow()
             };
             await UserMessageService.AddUserMessage(userMessage);
         }
@@ -699,7 +731,7 @@ namespace Telegram.Altayskaya97.Bot
                 _adminResetCounters.TryAdd(userRepo.Id, 0);
             }
 
-            userRepo.LastMessageTime = DateTime.UtcNow;
+            userRepo.LastMessageTime = DateTimeService.GetDateTimeUTCNow();
             await UserService.UpdateUser(userRepo);
             
         }

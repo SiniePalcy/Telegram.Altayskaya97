@@ -1,7 +1,5 @@
 ﻿using Moq;
 using System.Threading;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -117,7 +115,6 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat1);
             _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
-
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
