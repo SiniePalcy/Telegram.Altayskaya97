@@ -1,6 +1,6 @@
 ﻿[Unit]
 # use it only for Release configuration
-Description=Bot service .NET
+Description=Bot service .NET for Telegram Altayskaya bot
 
 [Service]
 Type=simple
