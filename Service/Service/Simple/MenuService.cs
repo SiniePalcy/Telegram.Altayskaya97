@@ -10,8 +10,8 @@ namespace Telegram.Altayskaya97.Service
         private readonly IList<MenuAction> _commands = new List<MenuAction>
         {
             new MenuAction(Commands.Start),
-            new MenuAction(Commands.IWalk)
-            //new MenuAction(Commands.NoWalk)
+            new MenuAction(Commands.IWalk),
+            new MenuAction(Commands.NoWalk)
         };
 
         private readonly IList<MenuAction> _adminCommands = new List<MenuAction>

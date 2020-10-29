@@ -39,10 +39,12 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodChatListMin { get; private set; }
         public int PeriodClearPrivateChatMin { get; private set; }
         public int PeriodInactiveUserDays { get; private set; }
+        public TimeSpan WalkingTime { get; private set; }
 
         private readonly ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private volatile int _chatListCounter = 0;
         private volatile int _updateUserNameCounter = 0;
+        private volatile bool _allKicked = false;
 
         #region Constant
         private const string INCORRECT_COMMAND = "Incorrect command";
@@ -52,6 +54,7 @@ namespace Telegram.Altayskaya97.Bot
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
         private const int PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT = 30;
         private const int PERIOD_INACTIVE_USER_DAYS = 7;
+        private readonly TimeSpan WALKING_TIME_DEFAULT = new TimeSpan(13, 40, 00);
         #endregion
 
         #region Services
@@ -101,6 +104,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
             PeriodClearPrivateChatMin = ParseInt(configSection.GetSection("PeriodClearPrivateChatMin").Value, PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
             PeriodInactiveUserDays = ParseInt(configSection.GetSection("PeriodInactiveUserDays").Value, PERIOD_INACTIVE_USER_DAYS);
+            WalkingTime = ParseTimeSpan(configSection.GetSection("WalkingTime").Value, WALKING_TIME_DEFAULT);
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -171,15 +175,22 @@ namespace Telegram.Altayskaya97.Bot
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = DateTimeService.GetDateTimeUTCNow();
-                await UpdateUsersAccess();
+                await UpdateUsers();
                 await UpdateBotMessages();
-                await UpdateUserNames();
+
                 _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
         }
 
         #region Periodically updaters
+
+        private async Task UpdateUsers()
+        {
+            await UpdateUsersAccess();
+            await UpdateUserNames();
+            await UpdateNoWalk();
+        }
 
         private async Task UpdateUsersAccess()
         {
@@ -256,6 +267,35 @@ namespace Telegram.Altayskaya97.Bot
             _updateUserNameCounter++;
         }
 
+        private async Task UpdateNoWalk()
+        {
+            if (IsNextDay())
+            {
+                var userList = await UserService.GetUserList();
+                foreach (var user in userList)
+                {
+                    if (user.NoWalk.HasValue && user.NoWalk.Value)
+                    {
+                        user.NoWalk = false;
+                        await UserService.UpdateUser(user);
+                        _logger.LogInformation($"User '{user.Name}' hasn't 'No walk' status yet");
+                    }
+                }
+                _allKicked = false;
+                return;
+            }
+
+            var now = DateTimeService.GetDateTimeNow();
+            if (now.DayOfWeek != DayOfWeek.Sunday)
+                return; 
+
+            if (now.TimeOfDay > WalkingTime && !_allKicked)
+            {
+                await BanAll(true);
+                _allKicked = true;
+            }
+        }
+
         private async Task UpdateChatList()
         {
             if (_chatListCounter == PeriodChatListMin * 60 / PeriodEchoSec)
@@ -327,8 +367,16 @@ namespace Telegram.Altayskaya97.Bot
             if (data == CallbackActions.IWalk)
             {
                 var result = await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
+                if (chat.Type == ChatType.Private)
+                    await SendTextMessage(chat.Id, result.Content);
+            }
+
+            if (data == CallbackActions.NoWalk)
+            {
+                var result = await NoWalk(from);
                 await SendTextMessage(chat.Id, result.Content);
             }
+
         }
 
         public async Task ProcessBotMessage(Message chatMessage)
@@ -363,6 +411,7 @@ namespace Telegram.Altayskaya97.Bot
                 commandResult = command == Commands.Start ? await Start(user) :
                                 command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
                                 command == Commands.Return ? await Unban(user) :
+                                command == Commands.NoWalk ? await NoWalk(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
             else if (command.IsAdmin && isAdmin) //commands for admin with permissions
@@ -374,6 +423,7 @@ namespace Telegram.Altayskaya97.Bot
                                 command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
                                 command == Commands.Ban ? await Ban(command) :
                                 command == Commands.BanAll ? await BanAll() :
+                                command == Commands.NoWalk ? await NoWalk(user) :
                                 command == Commands.InActive ? await InActiveUsers() :
                                     new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
             }
@@ -385,6 +435,7 @@ namespace Telegram.Altayskaya97.Bot
                                 command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
                                 command == Commands.Ban ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
                                 command == Commands.BanAll ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                                command == Commands.NoWalk ? await NoWalk(user) :
                                 command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                                     new CommandResult(INCORRECT_COMMAND);
             }
@@ -446,6 +497,14 @@ namespace Telegram.Altayskaya97.Bot
                 await SendWelcomeGroupMessage(chatMessage.Chat, userName, chatRepo.ChatType, chatMessage.MessageId);
             else if (message == Commands.Helb.Name)
                 await BotClient.SendPhotoAsync(chatMessage.Chat, "https://i.ytimg.com/vi/gpEtNGeM3zE/maxresdefault.jpg");
+            else if (message == Commands.IWalk.Name)
+                await Ban(Commands.GetCommand($"/ban {sender.Id}"));
+            else if (message == Commands.NoWalk.Name)
+            {
+                var commandResult = await NoWalk(sender);
+                if (commandResult.Type == CommandResultType.Message)
+                    await SendTextMessage(chat.Id, commandResult.Content);
+            }
 
             return;
         }
@@ -660,7 +719,26 @@ namespace Telegram.Altayskaya97.Bot
             return new CommandResult(buffer.ToString(), CommandResultType.Message);
         }
 
-        public async Task<CommandResult> BanAll()
+        public async Task<CommandResult> NoWalk(User user)
+        {
+            var userName = user.GetUserName();
+            var userRepo = await UserService.GetUser(user.Id);
+            if (userRepo == null)
+                return new CommandResult($"User {userName} not found", CommandResultType.Message);
+
+            if (userRepo.Type == UserType.Coordinator)
+                return new CommandResult($"Forbidden for Coordinator");
+
+            if (!userRepo.NoWalk.HasValue || !userRepo.NoWalk.Value)
+            {
+                userRepo.NoWalk = true;
+                await UserService.UpdateUser(userRepo);
+                return new CommandResult($"You're not walking, <b>{userName}</b>", CommandResultType.Message);
+            }
+            return new CommandResult("", CommandResultType.None);
+        }
+
+        public async Task<CommandResult> BanAll(bool onlyWalking = false)
         {
             var users = await UserService.GetUserList();
             var chats = await ChatService.GetChatList();
@@ -669,6 +747,9 @@ namespace Telegram.Altayskaya97.Bot
             foreach (var user in users)
             {
                 if (user.Type == UserType.Coordinator || user.Type == UserType.Bot)
+                    continue;
+
+                if (onlyWalking && user.NoWalk.HasValue && user.NoWalk.Value)
                     continue;
 
                 foreach (var chatRepo in chats.Where(c => c.ChatType != Core.Model.ChatType.Private))
@@ -687,7 +768,7 @@ namespace Telegram.Altayskaya97.Bot
                     }
                     catch (ApiRequestException ex)
                     {
-                        _logger.LogError(ex.Message);
+                        _logger.LogWarning(ex.Message);
                     }
 
                     sb.AppendLine($"User <b>{user.Name}</b> has been deleted from chat <b>{chatRepo.Title}</b>");
@@ -786,12 +867,50 @@ namespace Telegram.Altayskaya97.Bot
             await UserService.UpdateUser(userRepo);
         }
 
+        private bool IsNextDay()
+        {
+            var ts = new TimeSpan(0, 0, PeriodEchoSec);
+            var now = DateTimeService.GetDateTimeUTCNow();
+            var currentDay = now.Day;
+            var prevDay = now.Subtract(ts).Day;
+            return currentDay != prevDay;
+        }
+
         private int ParseInt(string source, int defaultValue)
         {
             if (string.IsNullOrEmpty(source) || !int.TryParse(source, out int result))
                 result = defaultValue;
 
             return result;
+        }
+
+        private TimeSpan ParseTimeSpan(string source, TimeSpan defaultValue)
+        {
+            if (string.IsNullOrEmpty(source))
+                return defaultValue;
+
+            var parts = source.Split(':');
+            if (parts.Length != 2 && parts.Length != 3)
+            {
+                parts = source.Split('.');
+                if (parts.Length != 2 && parts.Length != 3)
+                    return defaultValue;
+            }
+
+            int hours = 0;
+            int minutes = 0;
+            int seconds = 0;
+
+            if (!int.TryParse(parts[0], out hours) || !int.TryParse(parts[1], out minutes))
+                return defaultValue;
+            
+            if (parts.Length == 3)
+            {
+                if (!int.TryParse(parts[2], out seconds))
+                    return defaultValue;
+            }
+
+            return new TimeSpan(hours, minutes, seconds);
         }
     }
 }

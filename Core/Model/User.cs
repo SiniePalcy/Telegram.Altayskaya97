@@ -19,5 +19,6 @@ namespace Telegram.Altayskaya97.Core.Model
         public virtual string Telephone { get; set; }
         public virtual string Type { get; set; } = UserType.Member;
         public virtual DateTime? LastMessageTime { get; set; }
+        public virtual bool? NoWalk { get; set; }
     }
 }

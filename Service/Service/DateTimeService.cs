@@ -16,5 +16,10 @@ namespace Telegram.Altayskaya97.Service
         {
             return DateTime.UtcNow;
         }
+
+        public DateTime GetDateTimeNow()
+        {
+            return DateTime.Now;
+        }
     }
 }
