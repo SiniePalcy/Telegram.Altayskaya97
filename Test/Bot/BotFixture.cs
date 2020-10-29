@@ -29,7 +29,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             Bot = new Altayskaya97.Bot.Bot(new Logger<Altayskaya97.Bot.Bot>(), 
                 _configMock.Object, 
-                new WelcomeService(), 
+                new ButtonsService(), 
                 new MenuService(), 
                 null, 
                 null, 
@@ -74,6 +74,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .Returns(configInactiveUserDaysMock.Object);
             configInactiveUserDaysMock.SetupGet(c => c.Value).Returns("3");
 
+            var configWalkingTimeMock = new Mock<IConfigurationSection>();
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "WalkingTime")))
+                .Returns(configWalkingTimeMock.Object);
+            configWalkingTimeMock.SetupGet(c => c.Value).Returns("10:30");
 
             var configBotCredsMock = new Mock<IConfigurationSection>();
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "altayskaya97_test_bot")))

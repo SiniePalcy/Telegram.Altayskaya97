@@ -58,7 +58,7 @@ namespace Telegram.Altayskaya97.Bot
         #endregion
 
         #region Services
-        public IWelcomeService WelcomeService { get; set; }
+        public IButtonsService WelcomeService { get; set; }
         public IMenuService MenuService { get; set; }
         public IUserService UserService { get; set; }
         public IChatService ChatService { get; set; }
@@ -67,7 +67,7 @@ namespace Telegram.Altayskaya97.Bot
         #endregion
 
         public Bot(ILogger<Bot> logger, IConfiguration configuration,
-            IWelcomeService welcomeService,
+            IButtonsService welcomeService,
             IMenuService menuService,
             IUserService userService,
             IChatService chatService,
@@ -99,12 +99,12 @@ namespace Telegram.Altayskaya97.Bot
         #region Initialize
         private void InitProps(IConfigurationSection configSection)
         {
-            PeriodEchoSec = ParseInt(configSection.GetSection("PeriodEchoSec").Value, PERIOD_ECHO_SEC_DEFAULT);
-            PeriodResetAccessMin = ParseInt(configSection.GetSection("PeriodResetAccessMin").Value, PERIOD_RESET_ACCESS_MIN_DEFAULT);
-            PeriodChatListMin = ParseInt(configSection.GetSection("PeriodChatListMin").Value, PERIOD_CHAT_LIST_MIN_DEFAULT);
-            PeriodClearPrivateChatMin = ParseInt(configSection.GetSection("PeriodClearPrivateChatMin").Value, PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
-            PeriodInactiveUserDays = ParseInt(configSection.GetSection("PeriodInactiveUserDays").Value, PERIOD_INACTIVE_USER_DAYS);
-            WalkingTime = ParseTimeSpan(configSection.GetSection("WalkingTime").Value, WALKING_TIME_DEFAULT);
+            PeriodEchoSec =  configSection.GetSection("PeriodEchoSec").Value.ParseInt(PERIOD_ECHO_SEC_DEFAULT);
+            PeriodResetAccessMin = configSection.GetSection("PeriodResetAccessMin").Value.ParseInt(PERIOD_RESET_ACCESS_MIN_DEFAULT);
+            PeriodChatListMin = configSection.GetSection("PeriodChatListMin").Value.ParseInt(PERIOD_CHAT_LIST_MIN_DEFAULT);
+            PeriodClearPrivateChatMin = configSection.GetSection("PeriodClearPrivateChatMin").Value.ParseInt(PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
+            PeriodInactiveUserDays = configSection.GetSection("PeriodInactiveUserDays").Value.ParseInt(PERIOD_INACTIVE_USER_DAYS);
+            WalkingTime = configSection.GetSection("WalkingTime").Value.ParseTimeSpan(WALKING_TIME_DEFAULT);
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -116,7 +116,13 @@ namespace Telegram.Altayskaya97.Bot
             BotClient.OnMessage += Bot_OnMessage;
             BotClient.OnCallbackQuery += BotClient_OnCallbackQuery;
             BotClient.OnInlineQuery += BotClient_OnInlineQuery;
+            BotClient.OnInlineResultChosen += BotClient_OnInlineResultChosen;
             BotClient.StartReceiving();
+        }
+
+        private void BotClient_OnInlineResultChosen(object sender, ChosenInlineResultEventArgs e)
+        {
+            _logger.LogInformation(e.ChosenInlineResult.Query);
         }
 
         private async void InitDb()
@@ -134,7 +140,7 @@ namespace Telegram.Altayskaya97.Bot
                     var adminsOfChat = await BotClient.GetChatAdministratorsAsync(adminChat.Id);
                     admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
                 }
-                catch(ApiRequestException)
+                catch (ApiRequestException)
                 {
                     _logger.LogWarning($"Chat {adminChat.Title} is unavailable and will be deleted");
                     await ChatService.DeleteChat(adminChat.Id);
@@ -163,7 +169,7 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             var users = await UserService.GetUserList();
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 _adminResetCounters.TryAdd(user.Id, 0);
             }
@@ -287,7 +293,7 @@ namespace Telegram.Altayskaya97.Bot
 
             var now = DateTimeService.GetDateTimeNow();
             if (now.DayOfWeek != DayOfWeek.Sunday)
-                return; 
+                return;
 
             if (now.TimeOfDay > WalkingTime && !_allKicked)
             {
@@ -306,7 +312,7 @@ namespace Telegram.Altayskaya97.Bot
                 foreach (var chatRepo in chatList)
                 {
                     var chat = await BotClient.GetChatAsync(chatRepo.Id);
-                    
+
                     try
                     {
                         int chatMembers = await BotClient.GetChatMembersCountAsync(chat.Id);
@@ -402,7 +408,7 @@ namespace Telegram.Altayskaya97.Bot
             var isAdmin = await UserService.IsAdmin(user.Id);
             if (userRepo == null)
             {
-                commandResult = command == Commands.Start ? 
+                commandResult = command == Commands.Start ?
                     new CommandResult("Who are you? Let's goodbye!", CommandResultType.Message) :
                     new CommandResult(INCORRECT_COMMAND);
             }
@@ -512,7 +518,7 @@ namespace Telegram.Altayskaya97.Bot
         public async Task<CommandResult> Start(User user)
         {
             bool isAdmin = await UserService.IsAdmin(user.Id);
-            return new CommandResult(MenuService.GetMenu(user.Username, isAdmin), CommandResultType.Message, 
+            return new CommandResult(MenuService.GetMenu(user.Username, isAdmin), CommandResultType.Message,
                 new InlineKeyboardMarkup(WelcomeService.GetWelcomeButtons(Core.Model.ChatType.Private)));
         }
 
@@ -606,7 +612,7 @@ namespace Telegram.Altayskaya97.Bot
 
             var dtNow = DateTimeService.GetDateTimeUTCNow();
             var userList = await UserService.GetUserList();
-            var inActiveUsers = userList.Where(u => (u.Type == UserType.Member || u.Type == UserType.Admin) && 
+            var inActiveUsers = userList.Where(u => (u.Type == UserType.Member || u.Type == UserType.Admin) &&
                 (u.LastMessageTime == null || (dtNow - u.LastMessageTime.Value).TotalDays >= PeriodInactiveUserDays));
 
             if (inActiveUsers.Any())
@@ -615,7 +621,7 @@ namespace Telegram.Altayskaya97.Bot
                 foreach (var user in inActiveUsers.OrderBy(u => u.Type).OrderBy(u => u.LastMessageTime))
                 {
                     var userType = user.Type;
-                    var lastDateTime =  DateTimeService.FormatToString(user.LastMessageTime);
+                    var lastDateTime = DateTimeService.FormatToString(user.LastMessageTime);
                     sb.AppendLine($"{user.Name,-20}{userType,-12}{lastDateTime,-16}");
                 }
                 sb.Append("</code>");
@@ -662,14 +668,14 @@ namespace Telegram.Altayskaya97.Bot
 
         public async Task<CommandResult> Ban(Command command)
         {
-            var commandContent = command.Text.Replace(command.Name,"").Trim().ToLower();
+            var commandContent = command.Text.Replace(command.Name, "").Trim().ToLower();
             if (string.IsNullOrEmpty(commandContent))
                 return new CommandResult(Messages.CheckCommand, CommandResultType.Message);
 
             UserRepo user;
             if (long.TryParse(commandContent, out long userId))
                 user = await UserService.GetUser(userId);
-            else 
+            else
                 user = await UserService.GetUser(commandContent);
 
             if (user == null)
@@ -785,10 +791,10 @@ namespace Telegram.Altayskaya97.Bot
 
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
-            
+
             if (message != null && chat.Type == ChatType.Private || content.ToLower() == Commands.NoWalk.Template)
                 await AddMessage(message);
-            
+
             return message;
         }
 
@@ -875,42 +881,6 @@ namespace Telegram.Altayskaya97.Bot
             var prevDay = now.Subtract(ts).Day;
             return currentDay != prevDay;
         }
-
-        private int ParseInt(string source, int defaultValue)
-        {
-            if (string.IsNullOrEmpty(source) || !int.TryParse(source, out int result))
-                result = defaultValue;
-
-            return result;
-        }
-
-        private TimeSpan ParseTimeSpan(string source, TimeSpan defaultValue)
-        {
-            if (string.IsNullOrEmpty(source))
-                return defaultValue;
-
-            var parts = source.Split(':');
-            if (parts.Length != 2 && parts.Length != 3)
-            {
-                parts = source.Split('.');
-                if (parts.Length != 2 && parts.Length != 3)
-                    return defaultValue;
-            }
-
-            int hours = 0;
-            int minutes = 0;
-            int seconds = 0;
-
-            if (!int.TryParse(parts[0], out hours) || !int.TryParse(parts[1], out minutes))
-                return defaultValue;
-            
-            if (parts.Length == 3)
-            {
-                if (!int.TryParse(parts[2], out seconds))
-                    return defaultValue;
-            }
-
-            return new TimeSpan(hours, minutes, seconds);
-        }
     }
+
 }
