@@ -7,12 +7,12 @@ namespace Telegram.Altayskaya97.Service
 {
     public abstract class BaseMenuService : IMenuService
     {
-        protected string MakeMenu(IEnumerable<MenuAction> commands)
+        protected string MakeMenu(IEnumerable<MenuAction> menuActions)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var command in commands)
+            foreach (var menuAction in menuActions)
             {
-                sb.Append($"\n<code><b>{command.Command}</b></code> - {command.Description};");
+                sb.Append($"\n<code><b>{menuAction.Command.Template}</b></code> - {menuAction.Command.Description};");
             }
             return sb.ToString();
         }

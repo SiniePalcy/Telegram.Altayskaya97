@@ -2,11 +2,11 @@
 {
     public class MenuAction
     {
-        public string Command { get; set; }
+        public Command Command { get; set; }
         public string Description { get; set; }
         public MenuAction(Command command)
         {
-            this.Command = command.Name;
+            this.Command = command;
             this.Description = command.Description;
         }
     }

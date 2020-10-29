@@ -34,7 +34,7 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
         {
             TEntity entity = await _dbContext.LoadAsync<TEntity>(id);
             if (entity == null)
-                return default(TModel);
+                return default;
 
             TModel model = _baseMapper.MapToModel(entity);
             return model;
