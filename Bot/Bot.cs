@@ -54,7 +54,7 @@ namespace Telegram.Altayskaya97.Bot
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
         private const int PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT = 30;
         private const int PERIOD_INACTIVE_USER_DAYS = 7;
-        private readonly TimeSpan WALKING_TIME_DEFAULT = new TimeSpan(13, 40, 00);
+        private readonly TimeSpan WALKING_TIME_DEFAULT = new TimeSpan(10, 40, 00);
         #endregion
 
         #region Services
