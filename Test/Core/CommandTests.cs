@@ -46,7 +46,7 @@ namespace Telegram.Altayskaya97.Test
             Assert.Equal(Commands.IWalk.Name, command.Name);
             Assert.True(command.IsValid);
 
-            commandText = "/sobachku";
+            commandText = "/triton";
             command = Commands.GetCommand(commandText);
             Assert.Equal(Commands.Return.Name, command.Name);
             Assert.True(command.IsValid);

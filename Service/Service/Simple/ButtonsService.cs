@@ -16,8 +16,7 @@ namespace Telegram.Altayskaya97.Service
             new LinkButton("Анонимность в Телеграм",  "https://telegra.ph/faq-09-08-4"),
             new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net"),
             new CallbackButton("Я гуляю", CallbackActions.IWalk),
-            new CallbackButton("Я не гуляю", CallbackActions.NoWalk),
-            new InlineQueryButton("Добавить объявление", "/post 123")
+            new CallbackButton("Я не гуляю", CallbackActions.NoWalk)
         };
 
 
@@ -40,9 +39,6 @@ namespace Telegram.Altayskaya97.Service
                         break;
                     case CallbackButton callbackButton:
                         inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName) });
-                        break;
-                    case InlineQueryButton inlineQueryButton:
-                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(inlineQueryButton.Title, inlineQueryButton.InlineQuery) });
                         break;
                 };
             }

@@ -12,7 +12,7 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
         public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); // secret word
         public static Command NoWalk { get; } = new Command("/nowalk", "/nowalk", "Я не гуляю"); // secret word
-        public static Command Return { get; } = new Command("/sobachku", "/sobachku", "", false, false); // secret word
+        public static Command Return { get; } = new Command("/triton", "/triton", "", false, false); // secret word
 
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post [chatId or all] text", "Отправить объявление в чат (chatId) или все чаты (all) с текстом text", true);
