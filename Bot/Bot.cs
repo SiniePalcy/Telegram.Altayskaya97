@@ -763,13 +763,13 @@ namespace Telegram.Altayskaya97.Bot
                     var chat = await BotClient.GetChatAsync(chatRepo.Id);
                     if (chat == null)
                         continue;
-
-                    var chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
-                    if (chatMember == null || chatMember.User.IsBot)
-                        continue;
-
+                        
                     try
                     {
+                        var chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
+                        if (chatMember == null || chatMember.User.IsBot)
+                            continue;
+                            
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                     }
                     catch (ApiRequestException ex)
