@@ -225,8 +225,15 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach (var message in messagesForDelete)
             {
-                await BotClient.DeleteMessageAsync(message.ChatId, (int)message.Id);
-                await UserMessageService.DeleteUserMessage(message.Id);
+                try
+                {
+                    await UserMessageService.DeleteUserMessage(message.Id);
+                    await BotClient.DeleteMessageAsync(message.ChatId, (int)message.Id);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning($"Can't delete message from user id='{message.UserId}': {ex.Message}");
+                }
             }
         }
 
@@ -290,7 +297,7 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             var now = DateTimeService.GetDateTimeNow();
-            if (now.DayOfWeek != DayOfWeek.Sunday)
+            if (now.DayOfWeek != DayOfWeek.Friday)
                 return;
 
             if (now.TimeOfDay > WalkingTime && !_allKicked)
