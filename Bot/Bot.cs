@@ -412,7 +412,8 @@ namespace Telegram.Altayskaya97.Bot
             }
             else if (userRepo.Type == UserType.Member)
             {
-                commandResult = command == Commands.Start ? await Start(user) :
+                commandResult = command == Commands.Help ? await Start(user) :
+                                command == Commands.Start ? await Start(user) :
                                 command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
                                 command == Commands.Return ? await Unban(user) :
                                 command == Commands.NoWalk ? await NoWalk(user) :
@@ -420,7 +421,8 @@ namespace Telegram.Altayskaya97.Bot
             }
             else if (command.IsAdmin && isAdmin) //commands for admin with permissions
             {
-                commandResult = command == Commands.Start ? await Start(user) :
+                commandResult = command == Commands.Help ? await Start(user) :
+                                command == Commands.Start ? await Start(user) :
                                 command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                                 command == Commands.ChatList ? await ChatList() :
                                 command == Commands.UserList ? await UserList() :
@@ -433,7 +435,8 @@ namespace Telegram.Altayskaya97.Bot
             }
             else  //commands for admin without permissions
             {
-                commandResult = command == Commands.Start ? await Start(user) :
+                commandResult = command == Commands.Help ? await Start(user) : 
+                                command == Commands.Start ? await Start(user) :
                                 command == Commands.ChatList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
                                 command == Commands.UserList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
                                 command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
