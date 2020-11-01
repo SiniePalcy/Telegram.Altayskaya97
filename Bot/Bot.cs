@@ -479,7 +479,11 @@ namespace Telegram.Altayskaya97.Bot
             {
                 var users = await UserService.GetUserList();
                 var newMembers = chatMessage.NewChatMembers.Where(c => !users.Any(u => u.Id == c.Id)).ToList();
-                newMembers.ForEach(async chatMember => await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType));
+                foreach(var chatMember in newMembers)
+                {
+                    await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType));
+                    await EnsureUserSaved(chatMember.User, chatRepo.ChatType);
+                }
                 return;
             }
 
