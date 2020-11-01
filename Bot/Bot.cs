@@ -175,10 +175,11 @@ namespace Telegram.Altayskaya97.Bot
             while (!stoppingToken.IsCancellationRequested)
             {
                 var now = DateTimeService.GetDateTimeUTCNow();
+                _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
+
                 await UpdateUsers();
                 await UpdateBotMessages();
 
-                _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
         }
