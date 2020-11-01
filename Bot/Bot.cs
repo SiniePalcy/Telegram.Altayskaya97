@@ -91,7 +91,7 @@ namespace Telegram.Altayskaya97.Bot
                 InitClient(configSection);
 
             if (shouldInitDb)
-                InitDb();
+                InitDb().Wait();
 
             InitProps(configSection);
         }
@@ -125,7 +125,7 @@ namespace Telegram.Altayskaya97.Bot
             _logger.LogInformation(e.ChosenInlineResult.Query);
         }
 
-        private async void InitDb()
+        private async Task InitDb()
         {
             var chatList = await ChatService.GetChatList();
             if (!chatList.Any())
