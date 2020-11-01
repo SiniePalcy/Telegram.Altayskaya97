@@ -482,7 +482,7 @@ namespace Telegram.Altayskaya97.Bot
                 foreach(var chatMember in newMembers)
                 {
                     await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType);
-                    await EnsureUserSaved(chatMember.User, chatRepo.ChatType);
+                    await EnsureUserSaved(chatMember, chatRepo.ChatType);
                 }
                 return;
             }
