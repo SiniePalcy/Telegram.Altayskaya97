@@ -152,6 +152,7 @@ namespace Telegram.Altayskaya97.Bot
                 var userInRepo = await UserService.GetUser(admin.User.Id);
                 if (userInRepo != null)
                 {
+                    _adminResetCounters.TryAdd(userInRepo.Id, 0);
                     _logger.LogInformation($"User with id={userInRepo.Id}, name={userInRepo.Name} is already exist");
                     continue;
                 }
@@ -166,6 +167,8 @@ namespace Telegram.Altayskaya97.Bot
                 };
                 await UserService.AddUser(newUser);
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, type={newUser.Type}");
+
+                _adminResetCounters.TryAdd(newUser.Id, 0);
             }
         }
         #endregion
@@ -194,16 +197,7 @@ namespace Telegram.Altayskaya97.Bot
         }
 
         private async Task UpdateUsersAccess()
-        {
-            if (!_adminResetCounters.Any())
-            {
-                var users = await UserService.GetUserList();
-                foreach (var user in users)
-                {
-                    _adminResetCounters.TryAdd(user.Id, 0);
-                }
-            }
-        
+        {      
             foreach (var userId in _adminResetCounters.Keys)
             {
                 bool got = _adminResetCounters.TryGetValue(userId, out int counterValue);
