@@ -167,12 +167,6 @@ namespace Telegram.Altayskaya97.Bot
                 await UserService.AddUser(newUser);
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, type={newUser.Type}");
             }
-
-            var users = await UserService.GetUserList();
-            foreach (var user in users)
-            {
-                _adminResetCounters.TryAdd(user.Id, 0);
-            }
         }
         #endregion
 
@@ -200,6 +194,15 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task UpdateUsersAccess()
         {
+            if (!_adminResetCounters.Any())
+            {
+                var users = await UserService.GetUserList();
+                foreach (var user in users)
+                {
+                    _adminResetCounters.TryAdd(user.Id, 0);
+                }
+            }
+        
             foreach (var userId in _adminResetCounters.Keys)
             {
                 bool got = _adminResetCounters.TryGetValue(userId, out int counterValue);
