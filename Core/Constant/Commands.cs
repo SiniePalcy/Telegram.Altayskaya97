@@ -8,7 +8,7 @@ namespace Telegram.Altayskaya97.Core.Constant
     {
         //common commands
         public static Command Help { get; } = new Command("/help", "/help", "Справка");
-        public static Command Helb { get; } = new Command("/helb", "/helb", "", false, false);
+        public static Command Helb { get; } = new Command("/xelb", "/xelb", "", false, false);
         public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
         public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); 
         public static Command NoWalk { get; } = new Command("/nowalk", "/nowalk", "Я не гуляю"); 
