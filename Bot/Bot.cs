@@ -250,12 +250,17 @@ namespace Telegram.Altayskaya97.Bot
                     User user = null;
                     foreach (var chatRepo in chatList)
                     {
-                        var chatMember = await BotClient.GetChatMemberAsync(chatRepo.Id, (int)userRepo.Id);
-                        if (chatMember != null)
+                        try
                         {
-                            user = chatMember.User;
-                            break;
+                            var chatMember = await BotClient.GetChatMemberAsync(chatRepo.Id, (int)userRepo.Id);
+                            if (chatMember != null)
+                            {
+                                user = chatMember.User;
+                                break;
+                            }
                         }
+                        catch (Exception ex)
+                        { }
                     }
 
                     if (user == null)
