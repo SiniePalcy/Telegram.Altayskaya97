@@ -170,6 +170,10 @@ namespace Telegram.Altayskaya97.Bot
 
                 _adminResetCounters.TryAdd(newUser.Id, 0);
             }
+
+            var users = await UserService.GetUserList();
+            var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
+            userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
         }
         #endregion
 
