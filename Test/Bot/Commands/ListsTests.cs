@@ -250,7 +250,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.IsAdmin(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.IsAdmin(It.Is<long>(_ => _ == user.Id)), Times.Never);
             userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);

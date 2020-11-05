@@ -419,48 +419,17 @@ namespace Telegram.Altayskaya97.Bot
 
             CommandResult commandResult;
             var userRepo = await UserService.GetUser(user.Id);
-            var isAdmin = await UserService.IsAdmin(user.Id);
             if (userRepo == null)
             {
-                commandResult = command == Commands.Start ?
-                    new CommandResult("Who are you? Let's goodbye!", CommandResultType.Message) :
-                    new CommandResult(INCORRECT_COMMAND);
+                commandResult = ExecuteCommandUnknownUser(command);
             }
             else if (userRepo.Type == UserType.Member)
             {
-                commandResult = command == Commands.Help ? await Start(user) :
-                                command == Commands.Start ? await Start(user) :
-                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command == Commands.Return ? await Unban(user) :
-                                command == Commands.NoWalk ? await NoWalk(user) :
-                                    new CommandResult(INCORRECT_COMMAND);
+                commandResult = await ExecuteCommandMember(command, user);
             }
-            else if (command.IsAdmin && isAdmin) //commands for admin with permissions
+            else
             {
-                commandResult = command == Commands.Help ? await Start(user) :
-                                command == Commands.Start ? await Start(user) :
-                                command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
-                                command == Commands.ChatList ? await ChatList() :
-                                command == Commands.UserList ? await UserList() :
-                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command == Commands.Ban ? await Ban(command) :
-                                command == Commands.BanAll ? await BanAll() :
-                                command == Commands.NoWalk ? await NoWalk(user) :
-                                command == Commands.InActive ? await InActiveUsers() :
-                                    new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
-            }
-            else  //commands for admin without permissions
-            {
-                commandResult = command == Commands.Help ? await Start(user) : 
-                                command == Commands.Start ? await Start(user) :
-                                command == Commands.ChatList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command == Commands.UserList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {userRepo.Id}")) :
-                                command == Commands.Ban ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command == Commands.BanAll ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
-                                command == Commands.NoWalk ? await NoWalk(user) :
-                                command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
-                                    new CommandResult(INCORRECT_COMMAND);
+                commandResult = await ExecuteCommandAdmin(command, user);
             }
 
             var recievers = commandResult.Recievers ?? new List<long>() { chatMessage.Chat.Id };
@@ -475,6 +444,60 @@ namespace Telegram.Altayskaya97.Bot
                         await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}");
                 }
             }
+        }
+
+        private CommandResult ExecuteCommandUnknownUser(Command command)
+        {
+            return command == Commands.Start ?
+                   new CommandResult("Who are you? Let's goodbye!", CommandResultType.Message) :
+                   new CommandResult(INCORRECT_COMMAND);
+        }
+
+        private async Task<CommandResult> ExecuteCommandMember(Command command, User user)
+        {
+            return command == Commands.Help ? await Start(user) :
+                   command == Commands.Start ? await Start(user) :
+                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
+                   command == Commands.Return ? await Unban(user) :
+                   command == Commands.NoWalk ? await NoWalk(user) :
+                   new CommandResult(INCORRECT_COMMAND);
+        }
+
+        private async Task<CommandResult> ExecuteCommandAdmin(Command command, User user)
+        {
+            var isAdmin = await UserService.IsAdmin(user.Id);
+            return command.IsAdmin && isAdmin ?
+                   await ExecuteCommandAdminGrant(command, user) :
+                   await ExecuteCommandAdminNonGrant(command, user);
+        }
+
+        private async Task<CommandResult> ExecuteCommandAdminGrant(Command command, User user)
+        {
+            return command == Commands.Help ? await Start(user) :
+                   command == Commands.Start ? await Start(user) :
+                   command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
+                   command == Commands.ChatList ? await ChatList() :
+                   command == Commands.UserList ? await UserList() :
+                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
+                   command == Commands.Ban ? await Ban(command) :
+                   command == Commands.BanAll ? await BanAll() :
+                   command == Commands.NoWalk ? await NoWalk(user) :
+                   command == Commands.InActive ? await InActiveUsers() :
+                   new CommandResult(INCORRECT_COMMAND, CommandResultType.Message);
+        }
+
+        private async Task<CommandResult> ExecuteCommandAdminNonGrant(Command command, User user)
+        {
+            return command == Commands.Help ? await Start(user) :
+                   command == Commands.Start ? await Start(user) :
+                   command == Commands.ChatList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                   command == Commands.UserList ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
+                   command == Commands.Ban ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                   command == Commands.BanAll ? new CommandResult(NO_PERMISSIONS, CommandResultType.Message) :
+                   command == Commands.NoWalk ? await NoWalk(user) :
+                   command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
+                   new CommandResult(INCORRECT_COMMAND);
         }
 
         public async Task ProcessChatMessage(Message chatMessage)
@@ -535,6 +558,8 @@ namespace Telegram.Altayskaya97.Bot
 
             return;
         }
+
+        #region Command methods
 
         public async Task<CommandResult> Start(User user)
         {
@@ -654,37 +679,7 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task<CommandResult> Post(Command command)
         {
-            ICollection<ChatRepo> chatsToPost = null;
-
-            var firstWord = command.GetFirstWord().ToLower();
-            if (firstWord == "all")
-            {
-                chatsToPost = await ChatService.GetChatList();
-            }
-            else
-            {
-                var chatId = command.GetFirstNumber();
-                if (chatId != null)
-                {
-                    var chat = await ChatService.GetChat(chatId.Value);
-                    if (chat != null)
-                    {
-                        chatsToPost = new List<ChatRepo>() { chat };
-                    }
-                }
-            }
-
-            if (chatsToPost == null || !chatsToPost.Any())
-                return new CommandResult(Messages.CheckCommand, CommandResultType.Message);
-
-            string contentToPost = command.Text.Replace(command.Name, "").Replace(firstWord, "").Trim();
-
-            var commandResult = new CommandResult(contentToPost, CommandResultType.Message)
-            {
-                Recievers = chatsToPost.Select(c => c.Id).ToList()
-            };
-
-            return commandResult;
+            return null;
         }
 
         public async Task<CommandResult> Ban(Command command)
@@ -804,6 +799,8 @@ namespace Telegram.Altayskaya97.Bot
 
             return new CommandResult(sb.ToString(), CommandResultType.Message);
         }
+
+        #endregion
 
         private async Task<Message> SendTextMessage(long chatId, string content, IReplyMarkup markUp = null)
         {
