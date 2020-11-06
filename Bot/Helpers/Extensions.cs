@@ -31,6 +31,15 @@ namespace Telegram.Altayskaya97.Bot.Helpers
             return result;
         }
 
+        public static string ParseString(this string source, string defaultValue)
+        {
+            string result = defaultValue;
+            if (!string.IsNullOrEmpty(source))
+                result = source;
+
+            return result;
+        }
+
         public static TimeSpan ParseTimeSpan(this string source, TimeSpan defaultValue)
         {
             if (string.IsNullOrEmpty(source))

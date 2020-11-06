@@ -79,6 +79,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .Returns(configWalkingTimeMock.Object);
             configWalkingTimeMock.SetupGet(c => c.Value).Returns("10:30");
 
+            var banDaysMock = new Mock<IConfigurationSection>();
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "BanDays")))
+                .Returns(banDaysMock.Object);
+            banDaysMock.SetupGet(c => c.Value).Returns("Sunday");
+
             var configBotCredsMock = new Mock<IConfigurationSection>();
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "altayskaya97_test_bot")))
                 .Returns(configBotCredsMock.Object);

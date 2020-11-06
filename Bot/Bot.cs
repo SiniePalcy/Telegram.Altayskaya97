@@ -40,7 +40,8 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodClearPrivateChatMin { get; private set; }
         public int PeriodInactiveUserDays { get; private set; }
         public TimeSpan WalkingTime { get; private set; }
-
+        public List<DayOfWeek> BanDays { get; private set; }
+        
         private readonly ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
         private readonly PostStateMachine _postStateMachine;
         private volatile int _chatListCounter = 0;
@@ -55,6 +56,7 @@ namespace Telegram.Altayskaya97.Bot
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
         private const int PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT = 30;
         private const int PERIOD_INACTIVE_USER_DAYS = 7;
+        private const string BAN_DAY_DEFAULT = "Sunday";
         private readonly TimeSpan WALKING_TIME_DEFAULT = new TimeSpan(10, 40, 00);
         #endregion
 
@@ -108,6 +110,8 @@ namespace Telegram.Altayskaya97.Bot
             PeriodClearPrivateChatMin = configSection.GetSection("PeriodClearPrivateChatMin").Value.ParseInt(PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
             PeriodInactiveUserDays = configSection.GetSection("PeriodInactiveUserDays").Value.ParseInt(PERIOD_INACTIVE_USER_DAYS);
             WalkingTime = configSection.GetSection("WalkingTime").Value.ParseTimeSpan(WALKING_TIME_DEFAULT);
+            var banDaysString = configSection.GetSection("BanDays").Value.ParseString(BAN_DAY_DEFAULT);
+            BanDays = banDaysString.Split(',').Select(s => Enum.Parse<DayOfWeek>(s.Trim(), true)).ToList();
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -309,7 +313,7 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             var now = DateTimeService.GetDateTimeNow();
-            if (now.DayOfWeek != DayOfWeek.Friday)
+            if (!BanDays.Contains(now.DayOfWeek))
                 return;
 
             if (now.TimeOfDay > WalkingTime && !_allKicked)
