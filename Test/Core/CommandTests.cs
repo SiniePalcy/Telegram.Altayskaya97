@@ -27,7 +27,7 @@ namespace Telegram.Altayskaya97.Test
             Assert.Equal(Commands.Post.Name, command.Name);
             Assert.True(command.IsValid);
             command.Text = "/post 123";
-            Assert.False(command.IsValid);
+            Assert.True(command.IsValid);
 
             commandText = "/ban";
             command = Commands.GetCommand(commandText);

@@ -9,6 +9,7 @@ namespace Telegram.Altayskaya97.Service.Interface
         Task<ICollection<Chat>> GetChatList();
         Task AddChat(Chat chat);
         Task<Chat> GetChat(long id);
+        Task<Chat> GetChat(string name);
         Task DeleteChat(long chatId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Model.Interface;
@@ -42,6 +43,12 @@ namespace Telegram.Altayskaya97.Service
         public async Task<ICollection<Chat>> GetChatList()
         {
             return await _repo.GetCollection();
+        }
+
+        public async Task<Chat> GetChat(string name)
+        {
+            var chatList = await GetChatList();
+            return chatList.FirstOrDefault(c => c.Title.Trim().ToLower() == name.Trim().ToLower());
         }
     }
 }

@@ -3,16 +3,19 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.Model
 {
-    public enum CommandResultType { None, Message, Links, Image }
+    public enum CommandResultType { None, TextMessage, Message, Links, Image, KeyboardButtons }
     public class CommandResult
     {
         public CommandResultType Type { get; set; } = CommandResultType.None;
-        public string Content { get; set; } = string.Empty;
+        public object Content { get; set; }
         public List<Link> Links { get; set; }
+        public List<KeyboardButtonWithId> KeyboardButtons { get; set; }
         public List<long> Recievers { get; set; }
         public IReplyMarkup ReplyMarkup { get; set; }
 
-        public CommandResult(string content, CommandResultType type = CommandResultType.None, IReplyMarkup replyMarkup = null)
+        public CommandResult(object content, 
+            CommandResultType type = CommandResultType.None, 
+            IReplyMarkup replyMarkup = null)
         {
             Content = content;
             Type = type;

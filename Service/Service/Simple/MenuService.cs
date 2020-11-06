@@ -16,6 +16,7 @@ namespace Telegram.Altayskaya97.Service
 
         private readonly IList<MenuAction> _adminCommands = new List<MenuAction>
         {
+            new MenuAction(Commands.Post),
             new MenuAction(Commands.UserList),
             new MenuAction(Commands.ChatList),
             new MenuAction(Commands.InActive),
