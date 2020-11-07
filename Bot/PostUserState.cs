@@ -5,15 +5,16 @@ using Telegram.Bot.Types;
 
 namespace Telegram.Altayskaya97.Bot
 {
-    public enum PostState { Start, Stop, ChatChoice, Message, PinChoice };
+    public enum PostState { Start, Stop, ChatChoice, Message, PinChoice, Confirmation };
 
-    public class PostProcessing
+    public class PostUserState
     {
         public long ChatId { get; set; }
         public Message Message { get; set; }
+        public bool IsPin { get; set; }
         public PostState? CurrentState { get; private set; }
         public long UserId { get; private set; }
-        public PostProcessing(long userId)
+        public PostUserState(long userId)
         {
             UserId = userId;
         }
@@ -38,6 +39,9 @@ namespace Telegram.Altayskaya97.Bot
                     CurrentState = PostState.PinChoice;
                     break;
                 case PostState.PinChoice:
+                    CurrentState = PostState.Confirmation;
+                    break;
+                case PostState.Confirmation:
                     CurrentState = PostState.Stop;
                     break;
             }
