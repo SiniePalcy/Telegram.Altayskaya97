@@ -27,7 +27,9 @@ namespace Telegram.Altayskaya97.Bot
 
             StringBuilder textBuilder = new StringBuilder(updatedText);
 
-            List<int> positionTags = new List<int>();
+            if (entities == null)
+                return textBuilder.ToString();
+
             for (int i = 0; i < entities.Length; i++)
             {
                 var entity = entities[i];
@@ -35,22 +37,22 @@ namespace Telegram.Altayskaya97.Bot
                 switch (entity.Type)
                 {
                     case MessageEntityType.Bold:
-                        positionTags.Add(InsertTag(textBuilder, "<b>", val, entity.Offset, entity.Length));
+                        InsertTag(textBuilder, "<b>", val, entity.Offset, entity.Length);
                         break;
                     case MessageEntityType.Italic:
-                        positionTags.Add(InsertTag(textBuilder, "<i>", val, entity.Offset, entity.Length));
+                        InsertTag(textBuilder, "<i>", val, entity.Offset, entity.Length);
                         break;
                     case MessageEntityType.Underline:
-                        positionTags.Add(InsertTag(textBuilder, "<u>", val, entity.Offset, entity.Length));
+                        InsertTag(textBuilder, "<u>", val, entity.Offset, entity.Length);
                         break;
                     case MessageEntityType.Strikethrough:
-                        positionTags.Add(InsertTag(textBuilder, "<s>", val, entity.Offset, entity.Length));
+                        InsertTag(textBuilder, "<s>", val, entity.Offset, entity.Length);
                         break;
                     case MessageEntityType.Code:
-                        positionTags.Add(InsertTag(textBuilder, "<code>", val, entity.Offset, entity.Length));
+                        InsertTag(textBuilder, "<code>", val, entity.Offset, entity.Length);
                         break;
                     case MessageEntityType.TextLink:
-                        positionTags.Add(InsertLinkTag(textBuilder, entity.Url, val, entity.Offset, entity.Length));
+                        InsertLinkTag(textBuilder, entity.Url, val, entity.Offset, entity.Length);
                         break;
                 }
             }
