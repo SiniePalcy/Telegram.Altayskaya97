@@ -542,6 +542,7 @@ namespace Telegram.Altayskaya97.Bot
                 var botMember = await BotClient.GetMeAsync();
                 if (chatMessage.LeftChatMember.Id == botMember.Id)
                     await ChatService.DeleteChat(chatMessage.Chat.Id);
+                return;
             }
 
             if (chatMessage.Type == MessageType.ChatMembersAdded)
