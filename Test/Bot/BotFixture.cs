@@ -69,6 +69,11 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .Returns(configClearPrivateChatMinMock.Object);
             configClearPrivateChatMinMock.SetupGet(c => c.Value).Returns("1");
 
+            var configClearGroupChatHoursMock = new Mock<IConfigurationSection>();
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodClearGroupChatHours")))
+                .Returns(configClearGroupChatHoursMock.Object);
+            configClearGroupChatHoursMock.SetupGet(c => c.Value).Returns("1");
+
             var configInactiveUserDaysMock = new Mock<IConfigurationSection>();
             configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "PeriodInactiveUserDays")))
                 .Returns(configInactiveUserDaysMock.Object);

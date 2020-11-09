@@ -39,6 +39,7 @@ namespace Telegram.Altayskaya97.Bot
         public int PeriodResetAccessMin { get; private set; }
         public int PeriodChatListMin { get; private set; }
         public int PeriodClearPrivateChatMin { get; private set; }
+        public int PeriodClearGroupChatHours { get; private set; }
         public int PeriodInactiveUserDays { get; private set; }
         public TimeSpan WalkingTime { get; private set; }
         public List<DayOfWeek> BanDays { get; private set; }
@@ -109,6 +110,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodResetAccessMin = configSection.GetSection("PeriodResetAccessMin").Value.ParseInt(PERIOD_RESET_ACCESS_MIN_DEFAULT);
             PeriodChatListMin = configSection.GetSection("PeriodChatListMin").Value.ParseInt(PERIOD_CHAT_LIST_MIN_DEFAULT);
             PeriodClearPrivateChatMin = configSection.GetSection("PeriodClearPrivateChatMin").Value.ParseInt(PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
+            PeriodClearGroupChatHours = configSection.GetSection("PeriodClearGroupChatHours").Value.ParseInt(PERIOD_CLEAR_PRIVATE_CHAT_MIN_DEFAULT);
             PeriodInactiveUserDays = configSection.GetSection("PeriodInactiveUserDays").Value.ParseInt(PERIOD_INACTIVE_USER_DAYS);
             WalkingTime = configSection.GetSection("WalkingTime").Value.ParseTimeSpan(WALKING_TIME_DEFAULT);
             var banDaysString = configSection.GetSection("BanDays").Value.ParseString(BAN_DAY_DEFAULT);
@@ -231,7 +233,13 @@ namespace Telegram.Altayskaya97.Bot
             foreach (var message in allMessages)
             {
                 var msgDateTime = message.When.ToUniversalTime();
-                if ((dtNow - msgDateTime).TotalMinutes >= PeriodClearPrivateChatMin)
+                var timePassed = dtNow - msgDateTime;
+                var hoursPassed = timePassed.TotalHours;
+                var minutePassed = timePassed.TotalMinutes;
+                if ((string.IsNullOrEmpty(message.ChatType) || message.ChatType == Core.Model.ChatType.Private) 
+                    && minutePassed >= PeriodClearPrivateChatMin)
+                    messagesForDelete.Add(message);
+                else if (hoursPassed >= PeriodClearGroupChatHours)
                     messagesForDelete.Add(message);
             }
 
@@ -415,12 +423,12 @@ namespace Telegram.Altayskaya97.Bot
                 chatMessage.Type == MessageType.Photo && chatMessage.Photo == null)
                 return;
 
-            await EnsureChatSaved(chatMessage.Chat, chatMessage.From);
+            var chat = await EnsureChatSaved(chatMessage.Chat, chatMessage.From);
 
             var user = chatMessage.From;
             _logger.LogInformation($"Recieved message from '{user.GetUserName()}', id={user.Id}");
 
-            await AddMessage(chatMessage);
+            await AddMessage(chatMessage, chat);
 
             if (!string.IsNullOrEmpty(commandText))
             {
@@ -542,6 +550,7 @@ namespace Telegram.Altayskaya97.Bot
             }
 
             await EnsureUserSaved(sender, chatRepo.ChatType);
+            await AddMessage(chatMessage, chatRepo);
 
             if (string.IsNullOrEmpty(chatMessage.Text))
                 return;
@@ -856,7 +865,7 @@ namespace Telegram.Altayskaya97.Bot
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
 
-            if (message != null && chat.Type == ChatType.Private || content.ToLower() == Commands.NoWalk.Template)
+            if (message != null)
                 await AddMessage(message);
 
             return message;
@@ -870,7 +879,7 @@ namespace Telegram.Altayskaya97.Bot
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendPhotoAsync(chatId: chat.Id, photo: fileId, caption: caption, parseMode: ParseMode.Html, replyMarkup: markUp);
 
-            if (message != null && chat.Type == ChatType.Private)
+            if (message != null)
                 await AddMessage(message);
 
             return message;
@@ -919,36 +928,41 @@ namespace Telegram.Altayskaya97.Bot
             await ChatService.AddChat(chatRepo);
         }
 
-        private async Task AddMessage(Message message)
+        private async Task AddMessage(Message message, ChatRepo chat = null)
         {
+            if (chat == null)
+                chat = await ChatService.GetChat(message.Chat.Id);
+
             var userMessage = new UserMessage
             {
                 Id = message.MessageId,
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
                 Text = message.Text,
+                ChatType = chat.ChatType,
                 When = DateTimeService.GetDateTimeUTCNow()
             };
             await UserMessageService.AddUserMessage(userMessage);
         }
 
-        private async Task EnsureChatSaved(Chat chat, User user = null)
+        private async Task<ChatRepo> EnsureChatSaved(Chat chat, User user = null)
         {
             var chatRepo = await ChatService.GetChat(chat.Id);
             if (chatRepo == null)
             {
-                var dbChat = new Core.Model.Chat
+                chatRepo = new Core.Model.Chat
                 {
                     Id = chat.Id,
                     Title = chat.Title,
                     ChatType = chat.Type == ChatType.Private ? Core.Model.ChatType.Private : Core.Model.ChatType.Public
                 };
 
-                if (dbChat.ChatType == Core.Model.ChatType.Private && user != null)
-                    dbChat.Title = user.Id.ToString();
+                if (chatRepo.ChatType == Core.Model.ChatType.Private && user != null)
+                    chatRepo.Title = user.Id.ToString();
 
-                await ChatService.AddChat(dbChat);
+                await ChatService.AddChat(chatRepo);
             }
+            return chatRepo;
         }
 
         private async Task EnsureUserSaved(User user, string chatType)
