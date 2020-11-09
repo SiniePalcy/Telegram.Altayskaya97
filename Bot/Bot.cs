@@ -537,6 +537,13 @@ namespace Telegram.Altayskaya97.Bot
             var chatRepo = await ChatService.GetChat(chat.Id);
             User sender = chatMessage.From;
 
+            if (chatMessage.Type == MessageType.ChatMemberLeft)
+            {
+                var botMember = await BotClient.GetMeAsync();
+                if (chatMessage.LeftChatMember.Id == botMember.Id)
+                    await ChatService.DeleteChat(chatMessage.Chat.Id);
+            }
+
             if (chatMessage.Type == MessageType.ChatMembersAdded)
             {
                 var users = await UserService.GetUserList();
