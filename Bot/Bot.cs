@@ -51,8 +51,6 @@ namespace Telegram.Altayskaya97.Bot
         private volatile bool _allKicked = false;
 
         #region Constant
-        private const string INCORRECT_COMMAND = "Incorrect command";
-        private const string NO_PERMISSIONS = "No permissions. Please, input secret command";
         private const int PERIOD_ECHO_SEC_DEFAULT = 20;
         private const int PERIOD_RESET_ACCESS_MIN_DEFAULT = 60;
         private const int PERIOD_CHAT_LIST_MIN_DEFAULT = 180;
@@ -470,7 +468,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             return command == Commands.Start ?
                    new CommandResult("Who are you? Let's goodbye!", CommandResultType.TextMessage) :
-                   new CommandResult(INCORRECT_COMMAND);
+                   new CommandResult(Messages.IncorrectCommand);
         }
 
         private async Task<CommandResult> ExecuteCommandMember(Command command, User user)
@@ -480,7 +478,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
                    command == Commands.Return ? await Unban(user) :
                    command == Commands.NoWalk ? await NoWalk(user) :
-                   new CommandResult(INCORRECT_COMMAND);
+                   new CommandResult(Messages.IncorrectCommand);
         }
 
         private async Task<CommandResult> ExecuteCommandAdmin(Command command, User user)
@@ -504,22 +502,22 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.BanAll ? await BanAll() :
                    command == Commands.NoWalk ? await NoWalk(user) :
                    command == Commands.InActive ? await InActiveUsers() :
-                   new CommandResult(INCORRECT_COMMAND, CommandResultType.TextMessage);
+                   new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
         private async Task<CommandResult> ExecuteCommandAdminNonGrant(Command command, User user)
         {
             return command == Commands.Help ? await Start(user) :
                    command == Commands.Start ? await Start(user) :
-                   command == Commands.Post ? new CommandResult(NO_PERMISSIONS, CommandResultType.TextMessage) :
-                   command == Commands.ChatList ? new CommandResult(NO_PERMISSIONS, CommandResultType.TextMessage) :
-                   command == Commands.UserList ? new CommandResult(NO_PERMISSIONS, CommandResultType.TextMessage) :
+                   command == Commands.Post ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.ChatList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.UserList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
-                   command == Commands.Ban ? new CommandResult(NO_PERMISSIONS, CommandResultType.TextMessage) :
-                   command == Commands.BanAll ? new CommandResult(NO_PERMISSIONS, CommandResultType.TextMessage) :
+                   command == Commands.Ban ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.BanAll ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.NoWalk ? await NoWalk(user) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
-                   new CommandResult(INCORRECT_COMMAND);
+                   new CommandResult(Messages.IncorrectCommand);
         }
 
         public async Task ProcessChatMessage(Message chatMessage)
@@ -902,9 +900,9 @@ namespace Telegram.Altayskaya97.Bot
 
             Message result = null;
             if (message.Type == MessageType.Text)
-                result = await SendTextMessage(chatId, text);
+                result = await SendTextMessage(chatId, text, message.ReplyMarkup);
             else if (message.Type == MessageType.Photo)
-                result = await SendImageMessage(chatId, message.Photo.First().FileId, text);
+                result = await SendImageMessage(chatId, message.Photo.First().FileId, text, message.ReplyMarkup);
 
             if (needPin && result != null)
             {

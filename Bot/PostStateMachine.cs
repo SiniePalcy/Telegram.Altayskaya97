@@ -31,9 +31,9 @@ namespace Telegram.Altayskaya97.Bot
         public async Task<CommandResult> CreatePostProcessing(long id)
         {
             if (!StopPostProcessing(id))
-                return new CommandResult($"Sorry, something got wrong", CommandResultType.TextMessage);
+                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            CommandResult result = new CommandResult($"Sorry, something got wrong", CommandResultType.TextMessage);
+            CommandResult result = new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
             
             PostUserState postProcessing = new PostUserState(id);
             
@@ -55,7 +55,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             PostUserState postProcessing = GetPostProcessing(id);
             if (postProcessing == null)
-                return new CommandResult($"Sorry, something got wrong", CommandResultType.TextMessage);
+                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             postProcessing.ExecuteNextStage();
 

@@ -13,6 +13,9 @@ namespace Telegram.Altayskaya97.Core.Constant
         public const string YouCantBanCoordinator = "You can't ban coordinator";
         public const string YouCantBanBot = "You can't ban bot";
         public const string GladToSeeYou = "Glad to see you:)";
+        public const string NoPermissions = "No permissions. Please, input secret command";
+        public const string IncorrectCommand = "Incorrect command";
+        public const string UnknownError = "Sorry, something got wrong";
 
     }
 }
