@@ -1,7 +1,6 @@
 ﻿using Moq;
 using System.Threading;
 using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Altayskaya97.Bot.Helpers;
 using Telegram.Bot.Types;

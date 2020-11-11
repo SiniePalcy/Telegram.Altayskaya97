@@ -1,12 +1,11 @@
 ﻿using Moq;
 using System.Threading;
-using Telegram.Altayskaya97.Model.Middleware;
+using Telegram.Altayskaya97.Bot;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
-
 
 namespace Telegram.Altayskaya97.Test.Bot
 {
@@ -54,6 +53,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
+            _bot.PostStateMachine = new PostStateMachine(chatServiceMock.Object);
 
             _bot.RecieveMessage(message).Wait();
 
