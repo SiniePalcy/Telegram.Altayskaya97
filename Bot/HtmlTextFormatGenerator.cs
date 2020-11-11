@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Telegram.Bot.Types;
@@ -10,7 +9,6 @@ namespace Telegram.Altayskaya97.Bot
     public class HtmlTextFormatGenerator
     {
         private int _shift = 0;
-        private string[] _tags = new string[] { "<b>", "<i>", "<u>", "<s>", "<code>"};
 
         public string GenerateHtmlText(Message message)
         {
@@ -23,6 +21,9 @@ namespace Telegram.Altayskaya97.Bot
 
         private string GenerateTextByEntities(string text, MessageEntity[] entities, IEnumerable<string> values)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
             var updatedText = UpdateSpecialLetters(text, entities);
 
             StringBuilder textBuilder = new StringBuilder(updatedText);
