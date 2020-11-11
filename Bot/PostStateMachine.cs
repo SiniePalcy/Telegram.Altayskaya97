@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Text;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace Telegram.Altayskaya97.Bot
 {
     public class PostStateMachine
     {
-        private readonly IChatService _chatService;
+        private IChatService _chatService;
         private readonly ConcurrentDictionary<long, PostUserState> _postProcessings = new ConcurrentDictionary<long, PostUserState>();
 
         public PostStateMachine(IChatService chatService)
         {
             _chatService = chatService;
         }
-        
 
         public PostUserState GetPostProcessing(long id)
         {
@@ -94,10 +90,10 @@ namespace Telegram.Altayskaya97.Bot
         {
             var chats = await _chatService.GetChatList();
             var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
-                .Select(c => new KeyboardButtonWithId(c.Id, c.Title)).ToList();
-            buttonsList.Add(new KeyboardButtonWithId(0, "Cancel"));
+                .Select(c => new KeyboardButton(c.Title)).ToList();
+            buttonsList.Add(new KeyboardButton("Cancel"));
 
-            var buttonsReplyList = buttonsList.Select(b => new KeyboardButtonWithId[1] { b });
+            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
             return new CommandResult("Please, select a chat", CommandResultType.KeyboardButtons, new ReplyKeyboardMarkup(buttonsReplyList, true, true))
             {
                 KeyboardButtons = buttonsList.ToList()
@@ -125,11 +121,11 @@ namespace Telegram.Altayskaya97.Bot
             var postProcessing = GetPostProcessing(id);
             postProcessing.Message = message;
 
-            KeyboardButtonWithId[] pinButtons = new KeyboardButtonWithId[]
+            KeyboardButton[] pinButtons = new KeyboardButton[]
             {
-                        new KeyboardButtonWithId(1, "Yes"),
-                        new KeyboardButtonWithId(2, "No"),
-                        new KeyboardButtonWithId(3, "Cancel")
+                        new KeyboardButton("Yes"),
+                        new KeyboardButton("No"),
+                        new KeyboardButton("Cancel")
             };
             return new CommandResult("Pin a message?", CommandResultType.KeyboardButtons, new ReplyKeyboardMarkup(pinButtons, true, true))
             {
@@ -144,10 +140,10 @@ namespace Telegram.Altayskaya97.Bot
             if (text == "Yes" || text == "No")
             {
                 postProcessing.IsPin = text == "Yes";
-                KeyboardButtonWithId[] confirmButtons = new KeyboardButtonWithId[]
+                KeyboardButton[] confirmButtons = new KeyboardButton[]
                 {
-                            new KeyboardButtonWithId(1, "OK"),
-                            new KeyboardButtonWithId(2, "Cancel")
+                            new KeyboardButton("OK"),
+                            new KeyboardButton("Cancel")
                 };
                 return new CommandResult("Confirm sending?", CommandResultType.KeyboardButtons, new ReplyKeyboardMarkup(confirmButtons, true, true));
             }

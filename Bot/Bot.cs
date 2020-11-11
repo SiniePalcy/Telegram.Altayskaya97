@@ -25,15 +25,14 @@ using Microsoft.Extensions.Configuration;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Bot.Exceptions;
 using System.Reflection;
-using Telegram.Bot.Types.InputFiles;
 
 namespace Telegram.Altayskaya97.Bot
 {
     public class Bot : BackgroundService
     {
         private readonly ILogger<Bot> _logger;
-        //private readonly IConfiguration _configuration;
         public ITelegramBotClient BotClient { get; set; }
+        public PostStateMachine PostStateMachine { get; set; }
 
         public int PeriodEchoSec { get; private set; }
         public int PeriodResetAccessMin { get; private set; }
@@ -45,7 +44,6 @@ namespace Telegram.Altayskaya97.Bot
         public List<DayOfWeek> BanDays { get; private set; }
 
         private readonly ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
-        private readonly PostStateMachine _postStateMachine;
         private volatile int _chatListCounter = 0;
         private volatile int _updateUserNameCounter = 0;
         private volatile bool _allKicked = false;
@@ -97,8 +95,6 @@ namespace Telegram.Altayskaya97.Bot
                 InitDb().Wait();
 
             InitProps(configSection);
-
-            _postStateMachine = new PostStateMachine(chatService);
         }
 
         #region Initialize
@@ -120,6 +116,7 @@ namespace Telegram.Altayskaya97.Bot
             string botName = GlobalEnvironment.BotName.StartsWith("@") ? GlobalEnvironment.BotName.Remove(0, 1) : GlobalEnvironment.BotName;
             string accessToken = configSection.GetSection(botName).Value;
             BotClient = new TelegramBotClient(accessToken);
+            PostStateMachine = new PostStateMachine(ChatService);
 
             BotClient.OnMessage += Bot_OnMessage;
             BotClient.OnCallbackQuery += BotClient_OnCallbackQuery;
@@ -438,7 +435,7 @@ namespace Telegram.Altayskaya97.Bot
                 }
             }
 
-            if (_postStateMachine.IsPostExecuting(user.Id))
+            if (PostStateMachine.IsPostExecuting(user.Id))
             {
                 await ProcessPostStage(chatMessage.Chat.Id, user.Id, chatMessage);
             }
@@ -590,7 +587,7 @@ namespace Telegram.Altayskaya97.Bot
 
         public async Task ProcessPostStage(long chatId, long userId, Message message)
         {
-            var commandResult = await _postStateMachine.ExecuteStage(userId, message);
+            var commandResult = await PostStateMachine.ExecuteStage(userId, message);
             await ReplyCommand(chatId, commandResult);
         }
 
@@ -741,7 +738,7 @@ namespace Telegram.Altayskaya97.Bot
             if (userRepo == null)
                 return new CommandResult($"User {userName} not found", CommandResultType.TextMessage);
 
-            return await _postStateMachine.CreatePostProcessing(user.Id);
+            return await PostStateMachine.CreatePostProcessing(user.Id);
         }
 
         public async Task<CommandResult> Ban(Command command)
