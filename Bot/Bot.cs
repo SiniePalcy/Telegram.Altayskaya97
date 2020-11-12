@@ -25,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Bot.Exceptions;
 using System.Reflection;
+using Telegram.Altayskaya97.Bot.StateMachines;
 
 namespace Telegram.Altayskaya97.Bot
 {
@@ -555,6 +556,9 @@ namespace Telegram.Altayskaya97.Bot
             await EnsureUserSaved(sender, chatRepo.ChatType);
             await AddMessage(chatMessage, chatRepo);
 
+            string userName = sender.GetUserName();
+            _logger.LogInformation($"Recieved message from {userName} in chat id={chat?.Id}, title={chat?.Title}, type={chat?.Type}");
+
             if (string.IsNullOrEmpty(chatMessage.Text))
                 return;
 
@@ -563,11 +567,6 @@ namespace Telegram.Altayskaya97.Bot
             var command = Commands.GetCommand(message);
             if (command == null || !command.IsValid)
                 return;
-
-            string userName = sender.GetUserName();
-
-            _logger.LogInformation($"Recieved message from {userName} in chat id={chat?.Id}, title={chat?.Title}, type={chat?.Type}");
-
 
             if (message == Commands.Help.Name)
                 await SendWelcomeGroupMessage(chatMessage.Chat, userName, chatRepo.ChatType, chatMessage.MessageId);
@@ -941,7 +940,7 @@ namespace Telegram.Altayskaya97.Bot
                 Id = message.MessageId,
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
-                Text = message.Text,
+                Text = message.Type == MessageType.Photo ? message.Caption : message.Text,
                 ChatType = chat.ChatType,
                 When = DateTimeService.GetDateTimeUTCNow()
             };
