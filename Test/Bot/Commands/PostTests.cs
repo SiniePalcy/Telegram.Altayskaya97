@@ -2,17 +2,14 @@
 using System.Threading;
 using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Altayskaya97.Bot.Helpers;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
-using System;
 using System.Linq;
 using Telegram.Altayskaya97.Core.Model;
-using System.Collections.Generic;
-using Telegram.Altayskaya97.Bot;
 using Telegram.Bot.Types.InputFiles;
+using Telegram.Altayskaya97.Bot.StateMachines;
 
 namespace Telegram.Altayskaya97.Test.Bot.Commands
 {

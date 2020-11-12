@@ -7,7 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.Altayskaya97.Bot.StateMachines
 {
     public class PostStateMachine
     {

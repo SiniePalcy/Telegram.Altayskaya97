@@ -1,6 +1,6 @@
 ﻿using Moq;
 using System.Threading;
-using Telegram.Altayskaya97.Bot;
+using Telegram.Altayskaya97.Bot.StateMachines;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

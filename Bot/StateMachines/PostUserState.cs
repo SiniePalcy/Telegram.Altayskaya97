@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.Altayskaya97.Bot.StateMachines
 {
     public enum PostState { Start, Stop, ChatChoice, Message, PinChoice, Confirmation };
 
