@@ -3,12 +3,15 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.Model
 {
-    public enum CommandResultType { None, TextMessage, Message, Links, Image, KeyboardButtons }
+    public enum CommandResultType { None, TextMessage, Message, Links, Image, KeyboardButtons, Pool }
     public class CommandResult
     {
         public CommandResultType Type { get; set; } = CommandResultType.None;
         public object Content { get; set; }
+        public ICollection<string> Cases { get; set; }
         public bool IsPin { get; set; }
+        public bool IsMultiAnswers { get; set; }
+        public bool IsAnonymous { get; set; }
         public ICollection<Link> Links { get; set; }
         public ICollection<KeyboardButton> KeyboardButtons { get; set; }
         public ICollection<long> Recievers { get; set; }

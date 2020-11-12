@@ -33,7 +33,7 @@ namespace Telegram.Altayskaya97.Bot
     {
         private readonly ILogger<Bot> _logger;
         public ITelegramBotClient BotClient { get; set; }
-        public PostStateMachine PostStateMachine { get; set; }
+        public ICollection<BaseStateMachine> StateMachines { get; set; }
 
         public int PeriodEchoSec { get; private set; }
         public int PeriodResetAccessMin { get; private set; }
@@ -109,7 +109,7 @@ namespace Telegram.Altayskaya97.Bot
             PeriodInactiveUserDays = configSection.GetSection("PeriodInactiveUserDays").Value.ParseInt(PERIOD_INACTIVE_USER_DAYS);
             WalkingTime = configSection.GetSection("WalkingTime").Value.ParseTimeSpan(WALKING_TIME_DEFAULT);
             var banDaysString = configSection.GetSection("BanDays").Value.ParseString(BAN_DAY_DEFAULT);
-            BanDays = banDaysString.Split(',').Select(s => Enum.Parse<DayOfWeek>(s.Trim(), true)).ToList();
+            BanDays = banDaysString.Split(',').Select(s => System.Enum.Parse<DayOfWeek>(s.Trim(), true)).ToList();
         }
 
         private void InitClient(IConfigurationSection configSection)
@@ -117,7 +117,11 @@ namespace Telegram.Altayskaya97.Bot
             string botName = GlobalEnvironment.BotName.StartsWith("@") ? GlobalEnvironment.BotName.Remove(0, 1) : GlobalEnvironment.BotName;
             string accessToken = configSection.GetSection(botName).Value;
             BotClient = new TelegramBotClient(accessToken);
-            PostStateMachine = new PostStateMachine(ChatService);
+            StateMachines = new BaseStateMachine[]
+            {
+                new PostStateMachine(ChatService),
+                new PollStateMachine(ChatService),
+            };
 
             BotClient.OnMessage += Bot_OnMessage;
             BotClient.OnCallbackQuery += BotClient_OnCallbackQuery;
@@ -436,10 +440,11 @@ namespace Telegram.Altayskaya97.Bot
                 }
             }
 
-            if (PostStateMachine.IsPostExecuting(user.Id))
+            foreach(var stateMachine in StateMachines)
             {
-                await ProcessPostStage(chatMessage.Chat.Id, user.Id, chatMessage);
-            }
+                if (stateMachine.IsExecuting(user.Id))
+                    await ProcessStage(stateMachine, chatMessage.Chat.Id, user.Id, chatMessage);
+            }    
         }
 
         private async Task ProcessCommandMessage(long chatId, Command command, User user)
@@ -492,6 +497,7 @@ namespace Telegram.Altayskaya97.Bot
             return command == Commands.Help ? await Start(user) :
                    command == Commands.Start ? await Start(user) :
                    command == Commands.Post ? await Post(user) :
+                   command == Commands.Poll ? await Poll(user) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                    command == Commands.ChatList ? await ChatList() :
                    command == Commands.UserList ? await UserList() :
@@ -584,9 +590,9 @@ namespace Telegram.Altayskaya97.Bot
             return;
         }
 
-        public async Task ProcessPostStage(long chatId, long userId, Message message)
+        public async Task ProcessStage(BaseStateMachine stateMachine, long chatId, long userId, Message message)
         {
-            var commandResult = await PostStateMachine.ExecuteStage(userId, message);
+            var commandResult = await stateMachine.ExecuteStage(userId, message);
             await ReplyCommand(chatId, commandResult);
         }
 
@@ -596,18 +602,36 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach (var reciever in recievers)
             {
+                Message result = null;
                 switch (commandResult.Type)
                 {
                     case CommandResultType.TextMessage:
                     case CommandResultType.KeyboardButtons:
-                        await SendTextMessage(reciever, commandResult.Content.ToString(), commandResult.ReplyMarkup);
+                        result = await SendTextMessage(
+                            reciever, 
+                            commandResult.Content.ToString(), 
+                            commandResult.ReplyMarkup);
                         break;
                     case CommandResultType.Links:
                         commandResult.Links.ToList().ForEach(async link => await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}"));
                         break;
-                    case CommandResultType.Message:
-                        await SendMessageObject(reciever, commandResult.Content as Message, commandResult.IsPin);
+                    case CommandResultType.Pool:
+                        result = await SendPollMessage(
+                            reciever,
+                            commandResult.Content.ToString(),
+                            commandResult.Cases,
+                            commandResult.IsMultiAnswers,
+                            commandResult.IsAnonymous,
+                            commandResult.ReplyMarkup);
                         break;
+                    case CommandResultType.Message:
+                        result = await SendMessageObject(reciever, commandResult);
+                        break;
+                }
+
+                if (commandResult.IsPin && result != null)
+                {
+                    await BotClient.PinChatMessageAsync(reciever, result.MessageId);
                 }
             }
         }
@@ -737,7 +761,19 @@ namespace Telegram.Altayskaya97.Bot
             if (userRepo == null)
                 return new CommandResult($"User {userName} not found", CommandResultType.TextMessage);
 
-            return await PostStateMachine.CreatePostProcessing(user.Id);
+            var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PostStateMachine));
+            return await postStateMachine.CreateProcessing(user.Id);
+        }
+
+        private async Task<CommandResult> Poll(User user)
+        {
+            var userName = user.GetUserName();
+            var userRepo = await UserService.GetUser(user.Id);
+            if (userRepo == null)
+                return new CommandResult($"User {userName} not found", CommandResultType.TextMessage);
+
+            var pollStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PollStateMachine));
+            return await pollStateMachine.CreateProcessing(user.Id);
         }
 
         public async Task<CommandResult> Ban(Command command)
@@ -887,8 +923,29 @@ namespace Telegram.Altayskaya97.Bot
             return message;
         }
 
-        private async Task<Message> SendMessageObject(long chatId, Message message, bool needPin)
+        private async Task<Message> SendPollMessage(long chatId, string content, IEnumerable<string> cases, bool isMultiAnswers, bool isAnonymous, IReplyMarkup markUp = null)
         {
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            var chat = await BotClient.GetChatAsync(chatId);
+            var message = await BotClient.SendPollAsync(
+                chatId: chat.Id, 
+                question: content, 
+                options: cases, 
+                replyMarkup: markUp,
+                isAnonymous: isAnonymous,
+                allowsMultipleAnswers: isMultiAnswers);
+
+            if (message != null)
+                await AddMessage(message);
+
+            return message;
+        }
+
+        private async Task<Message> SendMessageObject(long chatId, CommandResult commandResult)
+        {
+            var message = commandResult.Content as Message;
             if (message == null)
                 return null;
 
@@ -899,11 +956,6 @@ namespace Telegram.Altayskaya97.Bot
                 result = await SendTextMessage(chatId, text, message.ReplyMarkup);
             else if (message.Type == MessageType.Photo)
                 result = await SendImageMessage(chatId, message.Photo.First().FileId, text, message.ReplyMarkup);
-
-            if (needPin && result != null)
-            {
-                await BotClient.PinChatMessageAsync(chatId, result.MessageId);
-            }
 
             return result;
         }

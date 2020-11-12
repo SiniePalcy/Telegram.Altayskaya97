@@ -53,7 +53,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.PostStateMachine = new PostStateMachine(chatServiceMock.Object);
+            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             _bot.RecieveMessage(message).Wait();
 

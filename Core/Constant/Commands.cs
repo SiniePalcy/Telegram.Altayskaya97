@@ -16,6 +16,7 @@ namespace Telegram.Altayskaya97.Core.Constant
 
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post", "Отправить объявление", true);
+        public static Command Poll { get; } = new Command("/poll", "/poll", "Отправить опрос", true);
         public static Command ChatList { get; } = new Command("/chatlist", "/chatlist", "Показать список чатов бота", true);
         public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
         public static Command InActive { get; } = new Command("/inactive", "/inactive", "Неактивные пользователи", true);

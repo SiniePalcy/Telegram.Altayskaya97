@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Bot.Types;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public enum PostState { Start, Stop, ChatChoice, Message, PinChoice, Confirmation };
-
-    public class PostUserState
+    public class PostUserState : BaseUserState
     {
-        public long ChatId { get; set; }
         public Message Message { get; set; }
-        public bool IsPin { get; set; }
         public PostState? CurrentState { get; private set; }
-        public long UserId { get; private set; }
-        public PostUserState(long userId)
-        {
-            UserId = userId;
-        }
 
-        public void ExecuteNextStage()
+        public PostUserState(long userId) : base(userId) { }
+
+        public override void ExecuteNextStage()
         {
             if (CurrentState == null)
             {
@@ -47,11 +38,11 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
         }
 
-        public void End()
+        public override void End()
         {
             CurrentState = PostState.Stop;
         }
 
-        public bool IsFinished => CurrentState != null && CurrentState == PostState.Stop;
+        public override bool IsFinished => CurrentState != null && CurrentState == PostState.Stop;
     }
 }
