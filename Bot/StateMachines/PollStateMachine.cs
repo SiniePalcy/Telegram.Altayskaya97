@@ -205,6 +205,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                     Recievers = new long[] { processing.ChatId },
                     IsMultiAnswers = processing.IsMultiAnswers,
                     IsAnonymous = processing.IsAnonymous,
+                    IsPin = processing.IsPin,
                     Cases = processing.Cases
                 };
             else
