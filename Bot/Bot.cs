@@ -248,7 +248,8 @@ namespace Telegram.Altayskaya97.Bot
                 try
                 {
                     await UserMessageService.DeleteUserMessage(message.Id);
-                    await BotClient.DeleteMessageAsync(message.ChatId, (int)message.Id);
+                    var telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
+                    await BotClient.DeleteMessageAsync(telegramMessageId, (int)message.Id);
                 }
                 catch (Exception ex)
                 {
@@ -989,7 +990,7 @@ namespace Telegram.Altayskaya97.Bot
 
             var userMessage = new UserMessage
             {
-                Id = message.MessageId,
+                Id = IdMaker.MakeMessageId(message.Chat.Id, message.MessageId),
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
                 Text = message.Type == MessageType.Photo ? message.Caption : message.Text,
