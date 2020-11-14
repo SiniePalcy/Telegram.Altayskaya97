@@ -249,7 +249,7 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     await UserMessageService.DeleteUserMessage(message.Id);
                     var telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
-                    await BotClient.DeleteMessageAsync(telegramMessageId, (int)message.Id);
+                    await BotClient.DeleteMessageAsync(message.ChatId, telegramMessageId);
                 }
                 catch (Exception ex)
                 {
