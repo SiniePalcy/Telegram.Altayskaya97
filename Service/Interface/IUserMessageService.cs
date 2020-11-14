@@ -9,6 +9,7 @@ namespace Telegram.Altayskaya97.Service.Interface
         Task<ICollection<UserMessage>> GetUserMessageList();
         Task AddUserMessage(UserMessage chat);
         Task<UserMessage> GetUserMessage(long id);
+        Task UpdateUserMessage(UserMessage userMessage);
         Task DeleteUserMessage(long chatId);
     }
 }

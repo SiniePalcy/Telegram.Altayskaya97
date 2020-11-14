@@ -39,14 +39,14 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
 
         public async Task AddItem(UserMessage item)
         {
-            EntityUserMessage entityUser = _dynamoChatMapper.MapToEntity(item);
-            await _dbContext.SaveAsync(entityUser);
+            EntityUserMessage entityUserMessage = _dynamoChatMapper.MapToEntity(item);
+            await _dbContext.SaveAsync(entityUserMessage);
         }
 
         public async Task UpdateItem(UserMessage item)
         {
-            EntityUserMessage entityUser = _dynamoChatMapper.MapToEntity(item);
-            await _dbContext.SaveAsync(entityUser);
+            EntityUserMessage entityUserMessage = _dynamoChatMapper.MapToEntity(item);
+            await _dbContext.SaveAsync(entityUserMessage);
         }
 
         public async Task RemoveItem(long id)

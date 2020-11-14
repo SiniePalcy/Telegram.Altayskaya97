@@ -41,5 +41,10 @@ namespace Telegram.Altayskaya97.Service
         {
             return await _repo.GetCollection();
         }
+
+        public async Task UpdateUserMessage(UserMessage userMessage)
+        {
+            await _repo.UpdateItem(userMessage);
+        }
     }
 }

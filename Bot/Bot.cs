@@ -45,7 +45,6 @@ namespace Telegram.Altayskaya97.Bot
         public List<DayOfWeek> BanDays { get; private set; }
 
         private readonly ConcurrentDictionary<long, int> _adminResetCounters = new ConcurrentDictionary<long, int>();
-        private volatile int _chatListCounter = 0;
         private volatile int _updateUserNameCounter = 0;
         private volatile bool _allKicked = false;
 
@@ -184,6 +183,24 @@ namespace Telegram.Altayskaya97.Bot
             var users = await UserService.GetUserList();
             var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
+
+            #region For version > 0.7.0.2
+            var currentVers = Assembly.GetExecutingAssembly().GetName().Version;
+            if (currentVers.Major > 0 ||
+                currentVers.Minor > 7 ||
+                currentVers.Build > 0 ||
+                currentVers.Revision > 2)
+            {
+                var usermessages = await UserMessageService.GetUserMessageList();
+                var usermessagesToUpdate = usermessages.Where(m => m.Id >= 0 && m.Id <= 25000);
+                foreach (var msg in usermessagesToUpdate)
+                {
+                    await UserMessageService.DeleteUserMessage(msg.Id);
+                    msg.Id = IdMaker.MakeMessageId(msg.ChatId, (int)msg.Id);
+                    await UserMessageService.UpdateUserMessage(msg);
+                }
+            }
+            #endregion
         }
         #endregion
 
@@ -195,7 +212,7 @@ namespace Telegram.Altayskaya97.Bot
                 _logger.LogInformation($"[Echo] Bot v{Assembly.GetExecutingAssembly().GetName().Version} running at: {now}");
 
                 await UpdateUsers();
-                await UpdateBotMessages();
+                await UpdateMessages();
 
                 await Task.Delay(PeriodEchoSec * 1000, stoppingToken);
             }
@@ -224,7 +241,7 @@ namespace Telegram.Altayskaya97.Bot
             }
         }
 
-        private async Task UpdateBotMessages()
+        private async Task UpdateMessages()
         {
             var allMessages = await UserMessageService.GetUserMessageList();
 
@@ -248,7 +265,7 @@ namespace Telegram.Altayskaya97.Bot
                 try
                 {
                     await UserMessageService.DeleteUserMessage(message.Id);
-                    var telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
+                    int telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
                     await BotClient.DeleteMessageAsync(message.ChatId, telegramMessageId);
                 }
                 catch (Exception ex)
@@ -331,35 +348,6 @@ namespace Telegram.Altayskaya97.Bot
                 await BanAll(true);
                 _allKicked = true;
             }
-        }
-
-        private async Task UpdateChatList()
-        {
-            if (_chatListCounter == PeriodChatListMin * 60 / PeriodEchoSec)
-            {
-                _chatListCounter = 0;
-
-                var chatList = await ChatService.GetChatList();
-                foreach (var chatRepo in chatList)
-                {
-                    var chat = await BotClient.GetChatAsync(chatRepo.Id);
-
-                    try
-                    {
-                        int chatMembers = await BotClient.GetChatMembersCountAsync(chat.Id);
-                        if (chat == null || chatMembers <= 1)
-                        {
-                            await ChatService.DeleteChat(chatRepo.Id);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        await ChatService.DeleteChat(chat.Id);
-                    }
-                }
-            }
-
-            _chatListCounter++;
         }
         #endregion
 
@@ -975,8 +963,7 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task<Message> SendMessageObject(long chatId, CommandResult commandResult)
         {
-            var message = commandResult.Content as Message;
-            if (message == null)
+            if (!(commandResult.Content is Message message))
                 return null;
 
             var text = new HtmlTextFormatGenerator().GenerateHtmlText(message);
