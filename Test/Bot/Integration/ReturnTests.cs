@@ -1,13 +1,12 @@
 ﻿using Moq;
 using System.Threading;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
-namespace Telegram.Altayskaya97.Test.Bot.Commands
+
+namespace Telegram.Altayskaya97.Test.Bot
 {
     public class ReturnTests : IClassFixture<BotFixture>
     {

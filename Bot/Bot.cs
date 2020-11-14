@@ -441,11 +441,14 @@ namespace Telegram.Altayskaya97.Bot
                 }
             }
 
-            foreach(var stateMachine in StateMachines)
+            if (StateMachines != null && StateMachines.Any())
             {
-                if (stateMachine.IsExecuting(user.Id))
-                    await ProcessStage(stateMachine, chatMessage.Chat.Id, user.Id, chatMessage);
-            }    
+                foreach (var stateMachine in StateMachines)
+                {
+                    if (stateMachine.IsExecuting(user.Id))
+                        await ProcessStage(stateMachine, chatMessage.Chat.Id, user.Id, chatMessage);
+                }
+            }
         }
 
         private async Task ProcessCommandMessage(long chatId, Command command, User user)
@@ -506,6 +509,8 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.Ban ? await Ban(command) :
                    command == Commands.BanAll ? await BanAll() :
                    command == Commands.NoWalk ? await NoWalk(user) :
+                   command == Commands.NoWalk ? await NoWalk(user) :
+                   command == Commands.DeleteChat ? await DeleteChat(command) :
                    command == Commands.InActive ? await InActiveUsers() :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
@@ -521,6 +526,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.Ban ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.BanAll ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.NoWalk ? await NoWalk(user) :
+                   command == Commands.DeleteChat ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                    new CommandResult(Messages.IncorrectCommand);
         }
@@ -706,7 +712,7 @@ namespace Telegram.Altayskaya97.Bot
             foreach (var chat in chatList.Where(c => c.ChatType != Core.Model.ChatType.Private))
             {
                 if (chat.ChatType != Core.Model.ChatType.Private)
-                    sb.AppendLine($"id: {chat.Id,-20}title: <b>{chat.Title}</b>");
+                    sb.AppendLine($"type: {chat.ChatType,-8}name: <b>{chat.Title}</b>");
             }
             sb.Append("</code>");
 
@@ -894,6 +900,29 @@ namespace Telegram.Altayskaya97.Bot
             return new CommandResult(sb.ToString(), CommandResultType.TextMessage);
         }
 
+        public async Task<CommandResult> DeleteChat(Command command)
+        {
+            var commandContent = command.Text.Replace(command.Name, "").Trim().ToLower();
+            if (string.IsNullOrEmpty(commandContent))
+                return new CommandResult(Messages.CheckCommand, CommandResultType.TextMessage);
+
+            var chatName = commandContent;
+            var chatRepo = await ChatService.GetChat(chatName);
+            if (chatRepo == null)
+                return new CommandResult(Messages.ChatNotFound, CommandResultType.TextMessage);
+
+           try
+            {
+                await ChatService.DeleteChat(chatRepo.Id);
+                await BotClient.LeaveChatAsync(chatRepo.Id);
+                _logger.LogWarning($"Chat {chatName}, type={chatRepo.ChatType} deleted");
+            }
+            catch(Exception)
+            {
+                _logger.LogWarning($"Can't delete or leave chat {chatName}, propably has been deleted already");
+            }
+            return new CommandResult($"Chat {chatName} deleted", CommandResultType.TextMessage);
+        }
         #endregion
 
         private async Task<Message> SendTextMessage(long chatId, string content, IReplyMarkup markUp = null)

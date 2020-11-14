@@ -56,6 +56,25 @@ namespace Telegram.Altayskaya97.Test
             Assert.Equal(Commands.GrantAdmin.Name, command.Name);
             Assert.True(command.IsValid);
 
+            commandText = "/shpic";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.GrantAdmin.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/deletechat";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.DeleteChat.Name, command.Name);
+            Assert.False(command.IsValid);
+
+            commandText = "/deletechat newchat";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.DeleteChat.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/deletechat newchat sometext";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.DeleteChat.Name, command.Name);
+            Assert.True(command.IsValid);
         }
     }
 }

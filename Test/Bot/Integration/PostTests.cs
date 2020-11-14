@@ -11,7 +11,7 @@ using Telegram.Altayskaya97.Core.Model;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Altayskaya97.Bot.StateMachines;
 
-namespace Telegram.Altayskaya97.Test.Bot.Commands
+namespace Telegram.Altayskaya97.Test.Bot
 {
     public class PostTests : IClassFixture<BotFixture>
     {

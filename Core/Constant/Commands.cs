@@ -22,6 +22,7 @@ namespace Telegram.Altayskaya97.Core.Constant
         public static Command InActive { get; } = new Command("/inactive", "/inactive", "Неактивные пользователи", true);
         public static Command Ban { get; } = new Command("/ban", "/ban [username|id]", "Забанить пользователя с username или id", true);
         public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
+        public static Command DeleteChat { get; } = new Command("/deletechat", "/deletechat chatname", "Удалить чат", true);
         public static Command GrantAdmin { get; } = new Command("/shpic", "/shpic", "", true, false); // secret word
 
         public static string ExtractCommandName(string command)
