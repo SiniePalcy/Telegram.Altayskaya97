@@ -392,7 +392,7 @@ namespace Telegram.Altayskaya97.Bot
 
             if (data == CallbackActions.IWalk)
             {
-                var result = await Ban(Commands.GetCommand($"/ban {userRepo.Id}"));
+                var result = await Ban($"{userRepo.Id}");
                 if (chat.Type == ChatType.Private)
                     await SendTextMessage(chat.Id, result.Content.ToString());
             }
@@ -470,7 +470,7 @@ namespace Telegram.Altayskaya97.Bot
         {
             return command == Commands.Help ? await Start(user) :
                    command == Commands.Start ? await Start(user) :
-                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
+                   command == Commands.IWalk ? await Ban($"{user.Id}") :
                    command == Commands.Return ? await Unban(user) :
                    command == Commands.NoWalk ? await NoWalk(user) :
                    new CommandResult(Messages.IncorrectCommand);
@@ -493,8 +493,8 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(user) :
                    command == Commands.ChatList ? await ChatList() :
                    command == Commands.UserList ? await UserList() :
-                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
-                   command == Commands.Ban ? await Ban(command) :
+                   command == Commands.IWalk ? await Ban($"{user.Id}") :
+                   command == Commands.Ban ? await Ban(command.Content) :
                    command == Commands.BanAll ? await BanAll() :
                    command == Commands.NoWalk ? await NoWalk(user) :
                    command == Commands.NoWalk ? await NoWalk(user) :
@@ -510,7 +510,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.Post ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.ChatList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.UserList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
-                   command == Commands.IWalk ? await Ban(Commands.GetCommand($"/ban {user.Id}")) :
+                   command == Commands.IWalk ? await Ban($"{user.Id}") :
                    command == Commands.Ban ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.BanAll ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.NoWalk ? await NoWalk(user) :
@@ -580,7 +580,7 @@ namespace Telegram.Altayskaya97.Bot
             else if (message == Commands.Helb.Name)
                 await BotClient.SendPhotoAsync(chatMessage.Chat, "https://i.ytimg.com/vi/gpEtNGeM3zE/maxresdefault.jpg");
             else if (message == Commands.IWalk.Name)
-                await Ban(Commands.GetCommand($"/ban {sender.Id}"));
+                await Ban($"{sender.Id}");
             else if (message == Commands.NoWalk.Name)
             {
                 var commandResult = await NoWalk(sender);
@@ -777,17 +777,13 @@ namespace Telegram.Altayskaya97.Bot
             return await pollStateMachine.CreateProcessing(user.Id);
         }
 
-        public async Task<CommandResult> Ban(Command command)
+        public async Task<CommandResult> Ban(string userIdOrName)
         {
-            var commandContent = command.Content;
-            if (string.IsNullOrEmpty(commandContent))
-                return new CommandResult(Messages.CheckCommand, CommandResultType.TextMessage);
-
             UserRepo user;
-            if (long.TryParse(commandContent, out long userId))
+            if (long.TryParse(userIdOrName, out long userId))
                 user = await UserService.Get(userId);
             else
-                user = await UserService.GetUser(commandContent);
+                user = await UserService.GetUser(userIdOrName);
 
             if (user == null)
                 return new CommandResult(Messages.UserNotFound, CommandResultType.TextMessage);
