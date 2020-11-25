@@ -46,7 +46,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private async Task<CommandResult> StartState()
         {
-            var chats = await ChatService.GetChatList();
+            var chats = await ChatService.GetList();
             var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
                 .Select(c => new KeyboardButton(c.Title)).ToList();
             buttonsList.Add(new KeyboardButton("Cancel"));
@@ -60,7 +60,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private async Task<CommandResult> ChatChoiceState(long id, string chatTitle)
         {
-            var chat = await ChatService.GetChat(chatTitle);
+            var chat = await ChatService.Get(chatTitle);
             if (chat == null)
             {
                 StopProcessing(id);

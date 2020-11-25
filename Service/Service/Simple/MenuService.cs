@@ -23,7 +23,8 @@ namespace Telegram.Altayskaya97.Service
             new MenuAction(Commands.InActive),
             new MenuAction(Commands.Ban),
             new MenuAction(Commands.BanAll),
-            new MenuAction(Commands.DeleteChat)
+            new MenuAction(Commands.DeleteChat),
+            new MenuAction(Commands.Clear)
         };
         public MenuService()
         {

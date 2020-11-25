@@ -7,12 +7,12 @@ using Telegram.Altayskaya97.Model.Middleware;
 
 namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
 {
-    public class BaseRepository<TEntity, TModel> : IRepository<TModel> where TModel: IObject
+    public class DynamoDbRepository<TEntity, TModel> : IRepository<TModel> where TModel: IObject
     {
         private readonly static BaseMapper<TModel, TEntity> _baseMapper = new BaseMapper<TModel, TEntity>();
         private readonly DynamoDBContext _dbContext;
 
-        public BaseRepository(DynamoDBContext dbContext)
+        public DynamoDbRepository(DynamoDBContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -27,10 +27,10 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
         public virtual async Task ClearCollection()
         {
             var collection = await GetCollection();
-            var result = Parallel.ForEach(collection, async item => await RemoveItem(item.Id));
+            var result = Parallel.ForEach(collection, async item => await Remove(item.Id));
         }
 
-        public virtual async Task<TModel> GetItem(long id)
+        public virtual async Task<TModel> Get(long id)
         {
             TEntity entity = await _dbContext.LoadAsync<TEntity>(id);
             if (entity == null)
@@ -40,19 +40,19 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
             return model;
         }
 
-        public virtual async Task AddItem(TModel item)
+        public virtual async Task Add(TModel item)
         {
             TEntity entity = _baseMapper.MapToEntity(item);
             await _dbContext.SaveAsync(entity);
         }
 
-        public virtual async Task UpdateItem(TModel item)
+        public virtual async Task Update(long id, TModel item)
         {
-            TEntity entity = _baseMapper.MapToEntity(item);
-            await _dbContext.SaveAsync(entity);
+            await Remove(id);
+            await Add(item);
         }
 
-        public virtual async Task RemoveItem(long id)
+        public virtual async Task Remove(long id)
         {
             await _dbContext.DeleteAsync<TEntity>(id);
         }

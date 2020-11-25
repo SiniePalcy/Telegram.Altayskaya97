@@ -50,14 +50,14 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
             _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Never);
+            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
@@ -103,15 +103,15 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == 1)), Times.Once);
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == 1)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == 1)), Times.Once);
+            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == 1)), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.Is<ChatId>(_ => _.Identifier == chat.Id),

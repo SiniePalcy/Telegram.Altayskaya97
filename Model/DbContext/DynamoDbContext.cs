@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Model.Interface;
+using Telegram.Altayskaya97.Model.Repository.DynamoDb;
 
 namespace Telegram.Altayskaya97.Model.DbContext
 {
@@ -22,9 +23,9 @@ namespace Telegram.Altayskaya97.Model.DbContext
         public DynamoDbContext(string connectionString)
         {
             Init(connectionString);
-            UserRepository = new Repository.DynamoDb.UserRepository(_dbContext);
-            ChatRepository = new Repository.DynamoDb.ChatRepository(_dbContext);
-            UserMessageRepository = new Repository.DynamoDb.UserMessageRepository(_dbContext);
+            UserRepository = new DynamoDbRepository<Entity.DynamoDb.User, User>(_dbContext);
+            ChatRepository = new DynamoDbRepository<Entity.DynamoDb.Chat, Chat>(_dbContext);
+            UserMessageRepository = new DynamoDbRepository<Entity.DynamoDb.UserMessage, UserMessage>(_dbContext);
         }
 
         public void Init(string connectionString)

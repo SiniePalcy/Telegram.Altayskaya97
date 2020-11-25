@@ -46,12 +46,12 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.IsAny<long>()))
+            userServiceMock.Setup(s => s.Get(It.IsAny<long>()))
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
 
@@ -60,10 +60,10 @@ namespace Telegram.Altayskaya97.Test.Bot
             message.Text = "/chatlist";
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
                  It.IsAny<string>(),
@@ -101,12 +101,12 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+            userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
 
@@ -115,10 +115,10 @@ namespace Telegram.Altayskaya97.Test.Bot
             message.Text = "/chatlist";
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
                  It.IsAny<string>(),
@@ -174,15 +174,15 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user1.Id)))
+            userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(userRepo1);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(true);
-            userServiceMock.Setup(s => s.GetUserList())
+            userServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(new Core.Model.User[] { userRepo1, userRepo2 });
             _bot.UserService = userServiceMock.Object;
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChatList())
+            chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
 
@@ -191,10 +191,10 @@ namespace Telegram.Altayskaya97.Test.Bot
             message.Text = "/chatlist";
             _bot.RecieveMessage(message).Wait();
             
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user1.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Once);
-            chatServiceMock.Verify(mock => mock.GetChatList(), Times.Once);
+            userServiceMock.Verify(mock => mock.GetList(), Times.Once);
+            chatServiceMock.Verify(mock => mock.GetList(), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.Is<ChatId>(_ => _.Identifier == chat1.Id),
                  It.IsAny<string>(),
@@ -234,7 +234,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.SetupSequence(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+            userServiceMock.SetupSequence(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(default(Core.Model.User))
                 .ReturnsAsync(userRepo);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
@@ -242,7 +242,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
 
@@ -251,10 +251,10 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.IsAdmin(It.Is<long>(_ => _ == user.Id)), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            chatServiceMock.Verify(mock => mock.GetChat(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),
                  It.IsAny<string>(),
@@ -308,16 +308,16 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+            userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(true);
-            userServiceMock.Setup(s => s.GetUserList())
+            userServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(new Core.Model.User[] { userRepo, userRepo1, userRepo2, userRepo3, userRepo4, userRepo5, userRepo6, userRepo7 });
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
 
@@ -345,9 +345,9 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.IsAdmin(It.Is<long>(_ => _ == user.Id)), Times.Once);
-            userServiceMock.Verify(mock => mock.GetUser(It.Is<long>(_ => _ == user.Id)), Times.Once);
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Once);
+            userServiceMock.Verify(mock => mock.GetList(), Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.Is<ChatId>(_ => _.Identifier == chatRepo.Id),
                  It.Is<string>(_ => _.Contains("user1") && _.Contains("user3") && _.Contains("user4") && _.Contains("user5") && 

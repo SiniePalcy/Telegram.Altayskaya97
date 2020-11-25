@@ -4,12 +4,7 @@ using Telegram.Altayskaya97.Core.Model;
 
 namespace Telegram.Altayskaya97.Service.Interface
 {
-    public interface IUserMessageService : IService
+    public interface IUserMessageService : IRepositoryService<UserMessage>
     {
-        Task<ICollection<UserMessage>> GetUserMessageList();
-        Task AddUserMessage(UserMessage chat);
-        Task<UserMessage> GetUserMessage(long id);
-        Task UpdateUserMessage(UserMessage userMessage);
-        Task DeleteUserMessage(long chatId);
     }
 }

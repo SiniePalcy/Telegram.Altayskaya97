@@ -8,9 +8,8 @@ using Telegram.Altayskaya97.Service.Interface;
 
 namespace Telegram.Altayskaya97.Service
 {
-    public class ChatService : IChatService
+    public class ChatService : RepositoryService<Chat>, IChatService
     {
-        private readonly IRepository<Chat> _repo;
         private readonly ILogger<ChatService> _logger;
 
         public ChatService(IDbContext dbContext, ILogger<ChatService> logger)
@@ -19,36 +18,31 @@ namespace Telegram.Altayskaya97.Service
             _logger = logger;
         }
 
-        public async Task AddChat(Chat chat)
+        public override async Task Add(Chat chat)
         {
-            await _repo.AddItem(chat);
+            await base.Add(chat);
             _logger.LogInformation($"Chat {chat.Title} has been added");
         }
-
-        public async Task<Chat> GetChat(long id)
+        
+        public override async Task<Chat> Delete(long chatId)
         {
-            return await _repo.GetItem(id);
+            var chat = await base.Delete(chatId);
+            if (chat != null)
+                _logger.LogInformation($"Chat {chat.Title} has been deleted");
+            return chat;
+            
         }
 
-        public async Task DeleteChat(long chatId)
+        public async Task<Chat> Get(string name)
         {
-            var chat = await GetChat(chatId);
-            if (chat == null)
-                return;
-
-            await _repo.RemoveItem(chatId);
-            _logger.LogInformation($"Chat {chat.Title} has been deleted");
-        }
-
-        public async Task<ICollection<Chat>> GetChatList()
-        {
-            return await _repo.GetCollection();
-        }
-
-        public async Task<Chat> GetChat(string name)
-        {
-            var chatList = await GetChatList();
+            var chatList = await GetList();
             return chatList.FirstOrDefault(c => c.Title.Trim().ToLower() == name.Trim().ToLower());
+        }
+
+        public override async Task Update(long id, Chat updatedItem)
+        {
+            await base.Update(id, updatedItem);
+            _logger.LogInformation($"Chat was updated: {updatedItem}");
         }
     }
 }

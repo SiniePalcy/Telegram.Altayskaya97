@@ -8,6 +8,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public string Template { get; }
         public string Description { get; }
         public string Text { get; set; }
+        public string Content => Text.Replace(Name, "").Trim();
         public bool IsShown { get; }
         public bool IsAdmin { get; }
         public Command(string name, string template, string description, bool isAdmin = false, bool isShown = true)

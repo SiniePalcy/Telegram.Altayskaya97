@@ -6,9 +6,8 @@ using Telegram.Altayskaya97.Model.Interface;
 using Telegram.Altayskaya97.Service.Interface;
 namespace Telegram.Altayskaya97.Service
 {
-    public class UserMessageService : IUserMessageService
+    public class UserMessageService : RepositoryService<UserMessage>, IUserMessageService
     {
-        private readonly IRepository<UserMessage> _repo;
         private readonly ILogger<UserMessageService> _logger;
 
         public UserMessageService(IDbContext dbContext, ILogger<UserMessageService> logger)
@@ -17,34 +16,16 @@ namespace Telegram.Altayskaya97.Service
             _logger = logger;
         }
 
-        public async Task AddUserMessage(UserMessage userMessage)
+        public override async Task Add(UserMessage userMessage)
         {
-            await _repo.AddItem(userMessage);
+            await base.Add(userMessage);
             _logger.LogInformation($"Added message from {userMessage.UserId} in chat {userMessage.ChatId}'");
         }
 
-        public async Task DeleteUserMessage(long id)
+        public override async Task Update(long id, UserMessage updatedItem)
         {
-            var userMessage = await GetUserMessage(id);
-            if (userMessage == null)
-                return;
-
-            await _repo.RemoveItem(id);
-        }
-
-        public async Task<UserMessage> GetUserMessage(long id)
-        {
-            return await _repo.GetItem(id);
-        }
-
-        public async Task<ICollection<UserMessage>> GetUserMessageList()
-        {
-            return await _repo.GetCollection();
-        }
-
-        public async Task UpdateUserMessage(UserMessage userMessage)
-        {
-            await _repo.UpdateItem(userMessage);
+            await _repo.Update(id, updatedItem);
+            _logger.LogInformation($"Updated message from {updatedItem.UserId} in chat {updatedItem.ChatId}'");
         }
     }
 }

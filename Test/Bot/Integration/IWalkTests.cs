@@ -65,7 +65,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<long>(_ => _ == user.Id)))
+            userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
             userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _.ToLower() == user.Username.ToLower())))
                 .ReturnsAsync(userRepo);
@@ -74,9 +74,9 @@ namespace Telegram.Altayskaya97.Test.Bot
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
-            chatServiceMock.Setup(s => s.GetChat(It.Is<long>(_ => _ == chat1.Id)))
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat1.Id)))
                 .ReturnsAsync(chatRepo1);
-            chatServiceMock.SetupSequence(s => s.GetChatList())
+            chatServiceMock.SetupSequence(s => s.GetList())
                 .ReturnsAsync(new Core.Model.Chat[0])
                 .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
@@ -93,10 +93,10 @@ namespace Telegram.Altayskaya97.Test.Bot
             
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.GetUser(It.IsAny<long>()), Times.Exactly(4));
+            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Exactly(4));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
-            userServiceMock.Verify(mock => mock.GetUserList(), Times.Never);
-            chatServiceMock.Verify(mock => mock.GetChatList(), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
+            chatServiceMock.Verify(mock => mock.GetList(), Times.Exactly(2));
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
                 It.Is<int>(_ => _ == userRepo.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),

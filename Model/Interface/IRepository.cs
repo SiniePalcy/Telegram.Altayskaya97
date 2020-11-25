@@ -8,9 +8,9 @@ namespace Telegram.Altayskaya97.Model.Interface
     {
         Task<ICollection<T>> GetCollection();
         Task ClearCollection();
-        Task<T> GetItem(long id);
-        Task AddItem(T item);
-        Task UpdateItem(T item);
-        Task RemoveItem(long id);
+        Task<T> Get(long id);
+        Task Add(T item);
+        Task Update(long id, T item);
+        Task Remove(long id);
     }
 }

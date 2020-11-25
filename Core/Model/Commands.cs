@@ -2,7 +2,7 @@
 using System.Reflection;
 using Telegram.Altayskaya97.Core.Model;
 
-namespace Telegram.Altayskaya97.Core.Constant
+namespace Telegram.Altayskaya97.Core.Model
 {
     public static class Commands
     {
@@ -17,15 +17,16 @@ namespace Telegram.Altayskaya97.Core.Constant
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post", "Отправить объявление", true);
         public static Command Poll { get; } = new Command("/poll", "/poll", "Отправить опрос", true);
-        public static Command ChatList { get; } = new Command("/chatlist", "/chatlist", "Показать список чатов бота", true);
+        public static Command ChatList { get; } = new Command("/chatlist", "/chatlist", "Список чатов бота", true);
         public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
         public static Command InActive { get; } = new Command("/inactive", "/inactive", "Неактивные пользователи", true);
         public static Command Ban { get; } = new Command("/ban", "/ban [username|id]", "Забанить пользователя с username или id", true);
         public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
         public static Command DeleteChat { get; } = new Command("/deletechat", "/deletechat chatname", "Удалить чат", true);
+        public static Command Clear { get; } = new Command("/clear", "/clear", "Очистка чата", true);
         public static Command GrantAdmin { get; } = new Command("/shpic", "/shpic", "", true, false); // secret word
 
-        public static string ExtractCommandName(string command)
+        private static string ExtractCommandName(string command)
         {
             command = command.Trim().ToLower();
             var spaceInd =command.IndexOf(' ');
