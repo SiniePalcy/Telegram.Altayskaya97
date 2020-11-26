@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Bot.Enum
+﻿namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public abstract class BaseUserState
     {

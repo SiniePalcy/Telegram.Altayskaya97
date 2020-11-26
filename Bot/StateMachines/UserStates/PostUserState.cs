@@ -1,7 +1,7 @@
 ﻿using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Bot.StateMachines
+namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public class PostUserState : BaseUserState
     {

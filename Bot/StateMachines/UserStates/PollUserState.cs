@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Telegram.Altayskaya97.Bot.Enum;
-using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Bot.StateMachines
+namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public class PollUserState : BaseUserState
     {
