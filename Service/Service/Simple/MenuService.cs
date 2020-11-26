@@ -24,6 +24,7 @@ namespace Telegram.Altayskaya97.Service
             new MenuAction(Commands.Ban),
             new MenuAction(Commands.BanAll),
             new MenuAction(Commands.DeleteChat),
+            new MenuAction(Commands.DeleteUser),
             new MenuAction(Commands.Clear)
         };
         public MenuService()
