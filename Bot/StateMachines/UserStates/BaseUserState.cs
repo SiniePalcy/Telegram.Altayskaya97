@@ -3,7 +3,6 @@
     public abstract class BaseUserState<T> where T: System.Enum
     {
         public long ChatId { get; set; }
-        public bool IsPin { get; set; }
         public T CurrentState { get; set; }
         public BaseUserState()
         {

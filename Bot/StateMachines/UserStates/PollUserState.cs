@@ -5,6 +5,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public class PollUserState : BaseUserState<PollState>
     {
+        public bool IsPin { get; set; }
         public string Question { get; set; }
         public ICollection<string> Cases { get; set; }
         public bool IsAnonymous { get; set; }

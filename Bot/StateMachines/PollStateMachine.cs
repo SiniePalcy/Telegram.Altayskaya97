@@ -52,7 +52,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return commandResult;
         }
 
-        protected override BaseUserState<PollState> CreateUserState(long userId) => new PollUserState(userId);
+        protected override BaseUserState<PollState> CreateUserState(long userId) => new PollUserState();
 
         private async Task<CommandResult> StartState()
         {
@@ -165,8 +165,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult PinChoiceState(long id, string text)
         {
-            var processing = GetProcessing(id);
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == "Yes" || text == "No")

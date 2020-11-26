@@ -5,6 +5,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public class PostUserState : BaseUserState<PostState>
     {
+        public bool IsPin { get; set; }
         public Message Message { get; set; }
 
         public PostUserState() { }
