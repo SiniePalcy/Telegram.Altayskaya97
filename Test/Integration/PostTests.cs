@@ -11,7 +11,7 @@ using Telegram.Altayskaya97.Core.Model;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Altayskaya97.Bot.StateMachines;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class PostTests : IClassFixture<BotFixture>
     {
@@ -33,7 +33,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Member
@@ -89,7 +89,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -151,7 +151,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -171,10 +171,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private"};
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private"};
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -243,7 +243,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -263,10 +263,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -341,7 +341,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -361,10 +361,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -457,7 +457,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -477,10 +477,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -570,7 +570,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -590,10 +590,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -689,7 +689,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -709,10 +709,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -810,7 +810,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -830,10 +830,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -936,7 +936,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -956,10 +956,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,
@@ -1067,7 +1067,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Username = userName + "1",
             };
-            var userRepo = new Core.Model.User
+            var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
                 Type = UserType.Admin
@@ -1087,10 +1087,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Core.Model.Chat { Id = chat1.Id, ChatType = Core.Model.ChatType.Private, Title = "Private" };
-            var chatRepo2 = new Core.Model.Chat { Id = chat2.Id, ChatType = Core.Model.ChatType.Public, Title = "Public" };
-            var chatRepo3 = new Core.Model.Chat { Id = chat3.Id, ChatType = Core.Model.ChatType.Admin, Title = "Admin" };
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
+            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
+            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
             var message = new Message
             {
                 Chat = chat1,

@@ -9,7 +9,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 using System;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class BanTests : IClassFixture<BotFixture>
     {
@@ -37,6 +37,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 1,
                 Type = ChatType.Private
             };
+            var chatRepo = new Altayskaya97.Core.Model.Chat { Id = chat.Id };
             var message = new Message
             {
                 Chat = chat,
@@ -51,9 +52,15 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(userRepo);
             _bot.UserService = userServiceMock.Object;
 
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(chatRepo);
+            _bot.ChatService = chatServiceMock.Object;
+
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
+            chatServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat.Id),
@@ -78,7 +85,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2 };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
             string userName = "TestUser";
             var user1 = new User
@@ -93,9 +100,9 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
-            userRepo1.Type = Core.Model.UserType.Admin;
+            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
             var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-            var users = new Core.Model.User[] { userRepo1, userRepo2 };
+            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
             
             var chatMember = new ChatMember { Status = ChatMemberStatus.Member };
 
@@ -123,8 +130,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat1.Id)))
                 .ReturnsAsync(chatRepo1);
             chatServiceMock.SetupSequence(s => s.GetList())
-                .ReturnsAsync(new Core.Model.Chat[0])
-                .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[0])
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
 
             _fixture.MockBotClient.SetupSequence(s => s.GetChatAsync(It.IsAny<ChatId>(), It.IsAny<CancellationToken>()))
@@ -143,13 +150,13 @@ namespace Telegram.Altayskaya97.Test.Bot
             message.Text = "/ban testuser2";
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.Type = Core.Model.UserType.Coordinator;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Coordinator;
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.Type = Core.Model.UserType.Bot;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Bot;
             _bot.RecieveMessage(message).Wait();
 
-            userRepo2.Type = Core.Model.UserType.Member;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Member;
             _bot.RecieveMessage(message).Wait();
 
             userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Exactly(5));
@@ -207,8 +214,14 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(userRepo);
             _bot.UserService = userServiceMock.Object;
 
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat { Id = 1 });
+            _bot.ChatService = chatServiceMock.Object;
+
             _bot.RecieveMessage(message).Wait();
 
+            chatServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Never);
@@ -234,7 +247,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2 };
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
             string userName = "TestUser";
             var user1 = new User
@@ -249,9 +262,9 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
-            userRepo1.Type = Core.Model.UserType.Admin;
+            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
             var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-            var users = new Core.Model.User[] { userRepo1, userRepo2 };
+            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
 
             var chatMember1 = new ChatMember { User = user1 };
             var chatMember2 = new ChatMember { User = user2 };
@@ -304,7 +317,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
 
-            userRepo2.Type = Core.Model.UserType.Coordinator;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Coordinator;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
@@ -315,7 +328,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
 
-            userRepo2.Type = Core.Model.UserType.Bot;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Bot;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
@@ -326,7 +339,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.Is<int>(_ => _ == userRepo2.Id), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
                 Times.Exactly(2));
 
-            userRepo2.Type = Core.Model.UserType.Member;
+            userRepo2.Type = Altayskaya97.Core.Model.UserType.Member;
             _bot.RecieveMessage(message).Wait();
             _fixture.MockBotClient.Verify(mock => mock.KickChatMemberAsync(
                 It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),

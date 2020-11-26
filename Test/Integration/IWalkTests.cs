@@ -9,7 +9,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class IWalkTests : IClassFixture<BotFixture>
     {
@@ -36,10 +36,10 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Type = ChatType.Group
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo1.ChatType = Core.Model.ChatType.Admin;
+            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo1.ChatType = Core.Model.ChatType.Public;
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2 };
+            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Public;
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
             string userName = "TestUser";
             var user = new User
@@ -49,9 +49,9 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
 
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Core.Model.UserType.Member;
+            userRepo.Type = Altayskaya97.Core.Model.UserType.Member;
             userRepo.Name = user.GetUserName();
-            var users = new Core.Model.User[] { userRepo };
+            var users = new Altayskaya97.Core.Model.User[] { userRepo };
 
             ChatMember chatMember = new ChatMember { Status = ChatMemberStatus.Member };
 
@@ -81,8 +81,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat1.Id)))
                 .ReturnsAsync(chatRepo1);
             chatServiceMock.SetupSequence(s => s.GetList())
-                .ReturnsAsync(new Core.Model.Chat[0])
-                .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[0])
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
 
             _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == 1),

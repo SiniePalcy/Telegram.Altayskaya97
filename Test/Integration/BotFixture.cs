@@ -7,7 +7,7 @@ using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class BotFixture : IDisposable
     {
@@ -16,8 +16,8 @@ namespace Telegram.Altayskaya97.Test.Bot
         //private Mock<IConfiguration> _configMock;
 
         public Mock<ITelegramBotClient> MockBotClient { get; }// = new Mock<ITelegramBotClient>();
-        public BaseMapper<User, Core.Model.User> UserMapper => new BaseMapper<User, Core.Model.User>();
-        public BaseMapper<Chat, Core.Model.Chat> ChatMapper => new BaseMapper<Chat, Core.Model.Chat>();
+        public BaseMapper<User, Altayskaya97.Core.Model.User> UserMapper => new BaseMapper<User, Altayskaya97.Core.Model.User>();
+        public BaseMapper<Chat, Altayskaya97.Core.Model.Chat> ChatMapper => new BaseMapper<Chat, Altayskaya97.Core.Model.Chat>();
 
         public BotFixture()
         {

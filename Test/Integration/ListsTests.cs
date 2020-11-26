@@ -8,7 +8,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class ListsTests : IClassFixture<BotFixture>
     {
@@ -47,7 +47,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.IsAny<long>()))
-                .ReturnsAsync(default(Core.Model.User));
+                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
@@ -146,7 +146,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
             var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
             userRepo1.IsAdmin = true;
-            userRepo1.Type = Core.Model.UserType.Admin;
+            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
             var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
             var chat1 = new Chat
             {
@@ -179,11 +179,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(true);
             userServiceMock.Setup(s => s.GetList())
-                .ReturnsAsync(new Core.Model.User[] { userRepo1, userRepo2 });
+                .ReturnsAsync(new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 });
             _bot.UserService = userServiceMock.Object;
             var chatServiceMock = new Mock<IChatService>();
             chatServiceMock.Setup(s => s.GetList())
-                .ReturnsAsync(new Core.Model.Chat[] { chatRepo1, chatRepo2 });
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 });
             _bot.ChatService = chatServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
@@ -216,7 +216,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Id = 0,
                 Username = userName,
             };
-            var userRepo = new Core.Model.User { Id = 0 };
+            var userRepo = new Altayskaya97.Core.Model.User { Id = 0 };
 
             var chat = new Chat
             {
@@ -235,7 +235,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.SetupSequence(s => s.Get(It.Is<long>(_ => _ == user.Id)))
-                .ReturnsAsync(default(Core.Model.User))
+                .ReturnsAsync(default(Altayskaya97.Core.Model.User))
                 .ReturnsAsync(userRepo);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(false);
@@ -274,23 +274,23 @@ namespace Telegram.Altayskaya97.Test.Bot
             DateTime dt1 = dt.AddHours(-72);
             DateTime dt2 = dt.AddHours(-71);
             DateTime dt3 = dt.AddHours(-73);
-            var member = Core.Model.UserType.Member;
-            var bot = Core.Model.UserType.Bot;
-            var admin = Core.Model.UserType.Admin;
-            var coordinator = Core.Model.UserType.Coordinator;
+            var member = Altayskaya97.Core.Model.UserType.Member;
+            var bot = Altayskaya97.Core.Model.UserType.Bot;
+            var admin = Altayskaya97.Core.Model.UserType.Admin;
+            var coordinator = Altayskaya97.Core.Model.UserType.Coordinator;
 
             var user = new User  { Id = 0 };
             var user1 = new User { Id = 1 };
             var user2 = new User { Id = 2 };
             var user3 = new User { Id = 3 };
-            var userRepo = new Core.Model.User { Id = 0, Name = "user0", Type = Core.Model.UserType.Admin, LastMessageTime = dt0 };
-            var userRepo1 = new Core.Model.User { Id = 1, LastMessageTime = dt1, Name = "user1", Type = member };
-            var userRepo2 = new Core.Model.User { Id = 2, LastMessageTime = dt2, Name = "user2", Type = member };
-            var userRepo3 = new Core.Model.User { Id = 3, LastMessageTime = dt3, Name = "user3", Type = member };
-            var userRepo4 = new Core.Model.User { Id = 4, LastMessageTime = null, Name = "user4", Type = member };
-            var userRepo5= new Core.Model.User { Id = 5, LastMessageTime = null, Name = "user5", Type = admin };
-            var userRepo6 = new Core.Model.User { Id = 6, LastMessageTime = null, Name = "user6", Type = coordinator };
-            var userRepo7 = new Core.Model.User { Id = 7, LastMessageTime = null, Name = "user7", Type = bot };
+            var userRepo = new Altayskaya97.Core.Model.User { Id = 0, Name = "user0", Type = Altayskaya97.Core.Model.UserType.Admin, LastMessageTime = dt0 };
+            var userRepo1 = new Altayskaya97.Core.Model.User { Id = 1, LastMessageTime = dt1, Name = "user1", Type = member };
+            var userRepo2 = new Altayskaya97.Core.Model.User { Id = 2, LastMessageTime = dt2, Name = "user2", Type = member };
+            var userRepo3 = new Altayskaya97.Core.Model.User { Id = 3, LastMessageTime = dt3, Name = "user3", Type = member };
+            var userRepo4 = new Altayskaya97.Core.Model.User { Id = 4, LastMessageTime = null, Name = "user4", Type = member };
+            var userRepo5= new Altayskaya97.Core.Model.User { Id = 5, LastMessageTime = null, Name = "user5", Type = admin };
+            var userRepo6 = new Altayskaya97.Core.Model.User { Id = 6, LastMessageTime = null, Name = "user6", Type = coordinator };
+            var userRepo7 = new Altayskaya97.Core.Model.User { Id = 7, LastMessageTime = null, Name = "user7", Type = bot };
 
             var chat = new Chat 
             {
@@ -313,7 +313,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(true);
             userServiceMock.Setup(s => s.GetList())
-                .ReturnsAsync(new Core.Model.User[] { userRepo, userRepo1, userRepo2, userRepo3, userRepo4, userRepo5, userRepo6, userRepo7 });
+                .ReturnsAsync(new Altayskaya97.Core.Model.User[] { userRepo, userRepo1, userRepo2, userRepo3, userRepo4, userRepo5, userRepo6, userRepo7 });
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();

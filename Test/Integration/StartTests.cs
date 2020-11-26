@@ -7,7 +7,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class StartTests : IClassFixture<BotFixture>
     {
@@ -46,7 +46,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
-                .ReturnsAsync(default(Core.Model.User));
+                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
@@ -99,7 +99,7 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
-                .ReturnsAsync(default(Core.Model.User));
+                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();

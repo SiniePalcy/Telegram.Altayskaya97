@@ -6,7 +6,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class GrantAdminTests : IClassFixture<BotFixture>
     {
@@ -44,11 +44,17 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.IsAny<long>()))
-                .ReturnsAsync(default(Core.Model.User));
+                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
             _bot.UserService = userServiceMock.Object;
+
+            var chatServiceMock = new Mock<IChatService>();
+            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
+                .ReturnsAsync(new Altayskaya97.Core.Model.Chat { Id = 1 });
+            _bot.ChatService = chatServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
 
+            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Never);
@@ -73,7 +79,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Core.Model.UserType.Admin;
+            userRepo.Type = Altayskaya97.Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -90,12 +96,12 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Type = ChatType.Supergroup
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
-            chatRepo1.ChatType = Core.Model.ChatType.Private;
+            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo2.ChatType = Core.Model.ChatType.Admin;
+            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo3.ChatType = Core.Model.ChatType.Public;
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
             var chatMember = new ChatMember { User = user, Status = ChatMemberStatus.Kicked };
             var message = new Message
@@ -167,7 +173,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Core.Model.UserType.Admin;
+            userRepo.Type = Altayskaya97.Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -184,12 +190,12 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Type = ChatType.Supergroup
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
-            chatRepo1.ChatType = Core.Model.ChatType.Private;
+            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo2.ChatType = Core.Model.ChatType.Admin;
+            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo3.ChatType = Core.Model.ChatType.Public;
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
             var chatMember = new ChatMember { User = user, Status = ChatMemberStatus.Left };
             var message = new Message

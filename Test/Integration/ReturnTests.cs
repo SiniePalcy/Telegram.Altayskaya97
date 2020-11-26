@@ -6,7 +6,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.Altayskaya97.Test.Integration
 {
     public class ReturnTests : IClassFixture<BotFixture>
     {
@@ -29,7 +29,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Core.Model.UserType.Member;
+            userRepo.Type = Altayskaya97.Core.Model.UserType.Member;
             var chat1 = new Chat
             {
                 Id = 1,
@@ -72,14 +72,14 @@ namespace Telegram.Altayskaya97.Test.Bot
             };
 
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo1.ChatType = Core.Model.ChatType.Private;
+            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo2.ChatType = Core.Model.ChatType.Public;
+            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Public;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat3);
-            chatRepo3.ChatType = Core.Model.ChatType.Public;
+            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
             var chatRepo4 = _fixture.ChatMapper.MapToEntity(chat4);
-            chatRepo4.ChatType = Core.Model.ChatType.Admin;
-            var chats = new Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3, chatRepo4 };
+            chatRepo4.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
+            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3, chatRepo4 };
 
             var message = new Message
             {
