@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Core.Model;
@@ -18,7 +17,7 @@ namespace Telegram.Altayskaya97.Service
             _logger = logger;
         }
 
-        public async Task<User> GetUser(string userName)
+        public async Task<User> GetByName(string userName)
         {
             var users = await _repo.GetCollection();
             return users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower().Trim());
@@ -75,6 +74,15 @@ namespace Telegram.Altayskaya97.Service
         {
             await base.Update(id, updatedItem);
             _logger.LogInformation($"User was updated: {updatedItem}");
+        }
+
+        public async Task<User> GetByIdOrName(string userIdOrName)
+        {
+            User userById = null;
+            if (long.TryParse(userIdOrName, out long userId))
+                userById = await Get(userId);
+
+            return userById ?? await GetByName(userIdOrName);
         }
     }
 }

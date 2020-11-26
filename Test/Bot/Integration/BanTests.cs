@@ -113,7 +113,9 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(userRepo1);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(true);
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
+                .ReturnsAsync(userRepo2);
+            userServiceMock.Setup(s => s.GetByIdOrName(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
                 .ReturnsAsync(userRepo2);
             _bot.UserService = userServiceMock.Object;
 
@@ -268,7 +270,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 .ReturnsAsync(userRepo1);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(true);
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
                 .ReturnsAsync(userRepo2);
             userServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(users);

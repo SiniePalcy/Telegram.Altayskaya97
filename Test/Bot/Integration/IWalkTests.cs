@@ -67,7 +67,11 @@ namespace Telegram.Altayskaya97.Test.Bot
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _.ToLower() == user.Username.ToLower())))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _.ToLower() == user.Username.ToLower())))
+                .ReturnsAsync(userRepo);
+            userServiceMock.Setup(s => s.GetByIdOrName(It.Is<string>(_ => _.ToLower() == user.Username.ToLower())))
+                .ReturnsAsync(userRepo);
+            userServiceMock.Setup(s => s.GetByIdOrName(It.Is<string>(_ => _ == user.Id.ToString())))
                 .ReturnsAsync(userRepo);
             userServiceMock.Setup(s => s.IsAdmin(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(false);
@@ -93,7 +97,8 @@ namespace Telegram.Altayskaya97.Test.Bot
             
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Exactly(4));
+            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Exactly(2));
+            userServiceMock.Verify(mock => mock.GetByIdOrName(It.IsAny<string>()), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetList(), Times.Exactly(2));

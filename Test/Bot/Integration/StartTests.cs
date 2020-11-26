@@ -45,7 +45,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.IsAny<string>()))
+            userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
@@ -98,7 +98,7 @@ namespace Telegram.Altayskaya97.Test.Bot
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat);
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.IsAny<string>()))
+            userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
                 .ReturnsAsync(default(Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 

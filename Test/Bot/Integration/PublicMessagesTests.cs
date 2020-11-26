@@ -49,7 +49,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == userName)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
@@ -105,7 +105,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == userName)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
@@ -161,7 +161,7 @@ namespace Telegram.Altayskaya97.Test.Bot
             _fixture.MockBotClient.Reset();
 
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUser(It.Is<string>(_ => _ == userName)))
+            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == userName)))
                 .ReturnsAsync(default(Core.Model.User));
             var chatServiceMock = new Mock<IChatService>();
             chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
