@@ -3,11 +3,10 @@ using Telegram.Altayskaya97.Bot.Enum;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
-    public class PollUserState : BaseUserState
+    public class PollUserState : BaseUserState<PollState>
     {
         public string Question { get; set; }
         public ICollection<string> Cases { get; set; }
-        public PollState? CurrentState { get; set; }
         public bool IsAnonymous { get; set; }
         public bool IsMultiAnswers { get; set; }
 
@@ -18,7 +17,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 
         public override void ExecuteNextStage()
         {
-            if (CurrentState == null)
+            if (CurrentState == PollState.None)
             {
                 CurrentState = PollState.Start;
                 return;
@@ -61,6 +60,6 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
             CurrentState = PollState.Stop;
         }
 
-        public override bool IsFinished => CurrentState != null && CurrentState == PollState.Stop;
+        public override bool IsFinished => CurrentState == PollState.Stop;
     }
 }

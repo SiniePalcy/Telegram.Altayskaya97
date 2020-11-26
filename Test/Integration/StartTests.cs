@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System.Threading;
+using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.StateMachines;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
@@ -53,7 +54,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
                 .ReturnsAsync(chatRepo);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             _bot.RecieveMessage(message).Wait();
 

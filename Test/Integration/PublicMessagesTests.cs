@@ -11,8 +11,8 @@ namespace Telegram.Altayskaya97.Test.Integration
 {
     public class PublicMessagesTests : IClassFixture<BotFixture>
     {
-        private BotFixture _fixture = null;
-        private Altayskaya97.Bot.Bot _bot = null;
+        private readonly BotFixture _fixture = null;
+        private readonly Altayskaya97.Bot.Bot _bot = null;
 
         public PublicMessagesTests(BotFixture fixture)
         {

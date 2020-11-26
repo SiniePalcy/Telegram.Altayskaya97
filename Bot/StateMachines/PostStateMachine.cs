@@ -9,14 +9,13 @@ using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public class PostStateMachine : BaseStateMachine
+    public class PostStateMachine : BaseStateMachine<PostState>
     {
         public PostStateMachine(IChatService chatService) : base(chatService)  {}
 
         public async override Task<CommandResult> ExecuteStage(long id, Message message = null)
         {
-            PostUserState postProcessing = GetProcessing(id) as PostUserState;
-            if (postProcessing == null)
+            if (!(GetProcessing(id) is PostUserState postProcessing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             postProcessing.ExecuteNextStage();
@@ -43,7 +42,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return commandResult;
         }
 
-        protected override BaseUserState CreateUserState(long userId) => new PostUserState(userId);
+        protected override BaseUserState<PostState> CreateUserState(long userId) => new PostUserState(userId);
 
         private async Task<CommandResult> StartState()
         {
@@ -77,8 +76,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult MessageState(long id, Message message)
         {
-            PostUserState postProcessing = GetProcessing(id) as PostUserState;
-            if (postProcessing == null)
+            if (!(GetProcessing(id) is PostUserState postProcessing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             postProcessing.Message = message;
@@ -118,8 +116,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult ConfirmationState(long id, string messageText)
         {
-            PostUserState postProcessing = GetProcessing(id) as PostUserState;
-            if (postProcessing == null)
+            if (!(GetProcessing(id) is PostUserState postProcessing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             CommandResult commandResult;

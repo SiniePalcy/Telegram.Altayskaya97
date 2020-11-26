@@ -3,16 +3,15 @@ using Telegram.Bot.Types;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
-    public class PostUserState : BaseUserState
+    public class PostUserState : BaseUserState<PostState>
     {
         public Message Message { get; set; }
-        public PostState? CurrentState { get; private set; }
 
         public PostUserState(long userId) : base(userId) { }
 
         public override void ExecuteNextStage()
         {
-            if (CurrentState == null)
+            if (CurrentState == PostState.None)
             {
                 CurrentState = PostState.Start;
                 return;
@@ -43,6 +42,6 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
             CurrentState = PostState.Stop;
         }
 
-        public override bool IsFinished => CurrentState != null && CurrentState == PostState.Stop;
+        public override bool IsFinished => CurrentState == PostState.Stop;
     }
 }

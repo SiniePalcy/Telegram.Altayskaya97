@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Bot.Enum;
+using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Service.Interface;
@@ -11,14 +12,14 @@ using Telegram.Bot.Types;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public abstract class BaseStateMachine
+    public abstract class BaseStateMachine<State> : IStateMachine where State : System.Enum
     {
-        protected ConcurrentDictionary<long, BaseUserState> Processings { get; set; }
+        protected ConcurrentDictionary<long, BaseUserState<State>> Processings { get; set; }
         public IChatService ChatService { get; protected set; }
         public BaseStateMachine(IChatService chatService) 
         {
             ChatService = chatService;
-            Processings = new ConcurrentDictionary<long, BaseUserState>();
+            Processings = new ConcurrentDictionary<long, BaseUserState<State>>();
         }
 
         public async Task<CommandResult> CreateProcessing(long userId)
@@ -28,7 +29,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             CommandResult result = new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            BaseUserState postProcessing = CreateUserState(userId);
+            var postProcessing = CreateUserState(userId);
 
             if (Processings.TryAdd(userId, postProcessing))
             {
@@ -38,9 +39,9 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return result;
         }
 
-        protected BaseUserState GetProcessing(long id)
+        protected BaseUserState<State> GetProcessing(long id)
         {
-            return Processings.TryGetValue(id, out BaseUserState postProcessing) ? postProcessing : null;
+            return Processings.TryGetValue(id, out BaseUserState<State> postProcessing) ? postProcessing : null;
         }
 
         public bool IsExecuting(long id)
@@ -51,7 +52,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         public bool StopProcessing(long id)
         {
-            BaseUserState postProcessing = GetProcessing(id);
+            BaseUserState<State> postProcessing = GetProcessing(id);
             if (postProcessing == null)
                 return true;
 
@@ -60,6 +61,6 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         public abstract Task<CommandResult> ExecuteStage(long id, Message message = null);
 
-        protected abstract BaseUserState CreateUserState(long userId);
+        protected abstract BaseUserState<State> CreateUserState(long userId);
     }
 }

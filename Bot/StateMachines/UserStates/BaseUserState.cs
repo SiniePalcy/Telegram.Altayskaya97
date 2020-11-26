@@ -1,9 +1,10 @@
 ﻿namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
-    public abstract class BaseUserState
+    public abstract class BaseUserState<T> where T: System.Enum
     {
         public long ChatId { get; set; }
         public bool IsPin { get; set; }
+        public T CurrentState { get; set; }
         public virtual long UserId { get; protected set; }
         public BaseUserState(long userId)
         {

@@ -2,6 +2,7 @@
 {
     public enum PollState 
     { 
+        None,
         Start, 
         Stop, 
         ChatChoice, 

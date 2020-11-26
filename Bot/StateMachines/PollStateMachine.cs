@@ -9,14 +9,13 @@ using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public class PollStateMachine : BaseStateMachine
+    public class PollStateMachine : BaseStateMachine<PollState>
     {
         public PollStateMachine(IChatService chatService) : base(chatService) { }
 
         public override async Task<CommandResult> ExecuteStage(long id, Message message = null)
         {
-            var processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (processing.CurrentState != PollState.AddCase)
@@ -53,7 +52,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return commandResult;
         }
 
-        protected override BaseUserState CreateUserState(long userId) => new PollUserState(userId);
+        protected override BaseUserState<PollState> CreateUserState(long userId) => new PollUserState(userId);
 
         private async Task<CommandResult> StartState()
         {
@@ -87,8 +86,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult AddQuestionState(long id, string question)
         {
-            PollUserState processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             processing.Question = question;
@@ -97,8 +95,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult AddCaseState(long id, string nextCase)
         {
-            PollUserState processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (nextCase == "/done")
@@ -122,8 +119,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult MultiAnswersChoiceState(long id, string text)
         {
-            var processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == "Yes" || text == "No")
@@ -146,8 +142,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult AnonymousChoiceState(long id, string text)
         {
-            var processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == "Yes" || text == "No")
@@ -193,8 +188,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult ConfirmationState(long id, string messageText)
         {
-            var processing = GetProcessing(id) as PollUserState;
-            if (processing == null)
+            if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             CommandResult commandResult;

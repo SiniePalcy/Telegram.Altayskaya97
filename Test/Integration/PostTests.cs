@@ -10,6 +10,7 @@ using System.Linq;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Altayskaya97.Bot.StateMachines;
+using Telegram.Altayskaya97.Bot.Interface;
 
 namespace Telegram.Altayskaya97.Test.Integration
 {
@@ -197,7 +198,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -295,7 +296,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -393,7 +394,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[]
+            _bot.StateMachines = new IStateMachine[]
             {
                 new PostStateMachine(chatServiceMock.Object)
             };
@@ -509,7 +510,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -622,7 +623,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -743,7 +744,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -866,7 +867,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -992,7 +993,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;
@@ -1123,7 +1124,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
-            _bot.StateMachines = new BaseStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
+            _bot.StateMachines = new IStateMachine[] { new PostStateMachine(chatServiceMock.Object) };
 
             var userMessageServiceMock = new Mock<IUserMessageService>();
             _bot.UserMessageService = userMessageServiceMock.Object;

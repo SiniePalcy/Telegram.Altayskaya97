@@ -26,6 +26,7 @@ using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Bot.Exceptions;
 using System.Reflection;
 using Telegram.Altayskaya97.Bot.StateMachines;
+using Telegram.Altayskaya97.Bot.Interface;
 
 namespace Telegram.Altayskaya97.Bot
 {
@@ -33,7 +34,7 @@ namespace Telegram.Altayskaya97.Bot
     {
         private readonly ILogger<Bot> _logger;
         public ITelegramBotClient BotClient { get; set; }
-        public ICollection<BaseStateMachine> StateMachines { get; set; }
+        public ICollection<IStateMachine> StateMachines { get; set; }
 
         public int PeriodEchoSec { get; private set; }
         public int PeriodResetAccessMin { get; private set; }
@@ -116,7 +117,7 @@ namespace Telegram.Altayskaya97.Bot
             string botName = GlobalEnvironment.BotName.StartsWith("@") ? GlobalEnvironment.BotName.Remove(0, 1) : GlobalEnvironment.BotName;
             string accessToken = configSection.GetSection(botName).Value;
             BotClient = new TelegramBotClient(accessToken);
-            StateMachines = new BaseStateMachine[]
+            StateMachines = new IStateMachine[]
             {
                 new PostStateMachine(ChatService),
                 new PollStateMachine(ChatService),
@@ -593,7 +594,7 @@ namespace Telegram.Altayskaya97.Bot
             return;
         }
 
-        public async Task ProcessStage(BaseStateMachine stateMachine, long chatId, long userId, Message message)
+        public async Task ProcessStage(IStateMachine stateMachine, long chatId, long userId, Message message)
         {
             var commandResult = await stateMachine.ExecuteStage(userId, message);
             await ReplyCommand(chatId, commandResult);
