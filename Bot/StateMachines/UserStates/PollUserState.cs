@@ -10,7 +10,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
         public bool IsAnonymous { get; set; }
         public bool IsMultiAnswers { get; set; }
 
-        public PollUserState(long userId) : base(userId) 
+        public PollUserState() 
         {
             Cases = new List<string>();
         }

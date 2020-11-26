@@ -5,9 +5,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
 {
     public class ClearUserState : BaseUserState<ClearState>
     {
-        public ClearUserState(long userId) : base(userId)
-        {
-        }
+        public ClearUserState() { }
 
         public override void ExecuteNextStage()
         {

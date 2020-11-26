@@ -7,7 +7,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
     {
         public Message Message { get; set; }
 
-        public PostUserState(long userId) : base(userId) { }
+        public PostUserState() { }
 
         public override void ExecuteNextStage()
         {

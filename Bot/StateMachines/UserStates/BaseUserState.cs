@@ -5,10 +5,8 @@
         public long ChatId { get; set; }
         public bool IsPin { get; set; }
         public T CurrentState { get; set; }
-        public virtual long UserId { get; protected set; }
-        public BaseUserState(long userId)
+        public BaseUserState()
         {
-            UserId = userId;
         }
 
         public abstract void ExecuteNextStage();
