@@ -1030,7 +1030,7 @@ namespace Telegram.Altayskaya97.Bot
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogWarning($"Can't delete message '{msg.Text}' from chat '{chat.Title}'");
+                    _logger.LogWarning($"Can't delete message '{msg.Text}' from chat '{chat.Title}': {ex.Message}");
                 }
             }
 
