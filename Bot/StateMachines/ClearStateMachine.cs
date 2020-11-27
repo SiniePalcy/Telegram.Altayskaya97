@@ -56,7 +56,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                             new KeyboardButton("OK"),
                             new KeyboardButton("Cancel")
             };
-            return new CommandResult("Confirm sending?", CommandResultType.TextMessage, 
+            return new CommandResult("Confirm removing?", CommandResultType.TextMessage, 
                 new ReplyKeyboardMarkup(confirmButtons, true, true));
         }
 

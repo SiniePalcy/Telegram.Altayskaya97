@@ -1021,10 +1021,11 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach(var msg in messagesToDelete)
             {
-                int messageId = IdMaker.GetTelegramMessageId(msg.Id, chatId);
+                int tgMessageId = IdMaker.GetTelegramMessageId(msg.Id, chatId);
                 try
                 {
-                    await BotClient.DeleteMessageAsync(chatId, messageId);
+                    await UserMessageService.Delete(msg.Id);
+                    await BotClient.DeleteMessageAsync(chatId, tgMessageId);
                 }
                 catch(Exception ex)
                 {

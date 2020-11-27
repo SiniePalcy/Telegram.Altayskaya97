@@ -1190,7 +1190,6 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<CancellationToken>()), Times.Never);
         }
 
-
         private bool KeyboardMarkupActionButtons(IReplyMarkup markup, int buttonsCount)
         {
             return markup is ReplyKeyboardMarkup keyboardMarkup &&
