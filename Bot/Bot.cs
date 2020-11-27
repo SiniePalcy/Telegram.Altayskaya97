@@ -121,6 +121,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 new PostStateMachine(ChatService),
                 new PollStateMachine(ChatService),
+                new ClearStateMachine(ChatService)
             };
 
             BotClient.OnMessage += Bot_OnMessage;
@@ -491,13 +492,13 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.Start ? await Start(from) :
                    command == Commands.Post ? await Post(from) :
                    command == Commands.Poll ? await Poll(from) :
+                   command == Commands.Clear ? await Clear(from) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(from) :
                    command == Commands.ChatList ? await ChatList() :
                    command == Commands.UserList ? await UserList() :
                    command == Commands.IWalk ? await Ban($"{from.Id}") :
                    command == Commands.Ban ? await Ban(command.Content) :
                    command == Commands.BanAll ? await BanAll() :
-                   command == Commands.NoWalk ? await NoWalk(from) :
                    command == Commands.NoWalk ? await NoWalk(from) :
                    command == Commands.DeleteChat ? await DeleteChat(command.Content) :
                    command == Commands.DeleteUser ? await DeleteUser(command.Content) :
@@ -510,6 +511,8 @@ namespace Telegram.Altayskaya97.Bot
             return command == Commands.Help ? await Start(from) :
                    command == Commands.Start ? await Start(from) :
                    command == Commands.Post ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.Poll ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.Clear ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.ChatList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.UserList ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.IWalk ? await Ban($"{from.Id}") :
@@ -610,14 +613,14 @@ namespace Telegram.Altayskaya97.Bot
                 switch (commandResult.Type)
                 {
                     case CommandResultType.TextMessage:
-                    case CommandResultType.KeyboardButtons:
                         result = await SendTextMessage(
                             reciever, 
                             commandResult.Content.ToString(), 
                             commandResult.ReplyMarkup);
                         break;
                     case CommandResultType.Links:
-                        commandResult.Links.ToList().ForEach(async link => await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}"));
+                        commandResult.Links.ToList().ForEach(async link => 
+                            await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}"));
                         break;
                     case CommandResultType.Pool:
                         result = await SendPollMessage(
@@ -630,6 +633,9 @@ namespace Telegram.Altayskaya97.Bot
                         break;
                     case CommandResultType.Message:
                         result = await SendMessageObject(reciever, commandResult);
+                        break;
+                    case CommandResultType.Delete:
+                        result = await DeleteMessages(reciever, commandResult.Content.ToString());
                         break;
                 }
 
@@ -760,24 +766,20 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task<CommandResult> Post(User user)
         {
-            var userName = user.GetUserName();
-            var userRepo = await UserService.Get(user.Id);
-            if (userRepo == null)
-                return new CommandResult($"User {userName} not found", CommandResultType.TextMessage);
-
             var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PostStateMachine));
             return await postStateMachine.CreateProcessing(user.Id);
         }
 
         private async Task<CommandResult> Poll(User user)
         {
-            var userName = user.GetUserName();
-            var userRepo = await UserService.Get(user.Id);
-            if (userRepo == null)
-                return new CommandResult($"User {userName} not found", CommandResultType.TextMessage);
-
             var pollStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PollStateMachine));
             return await pollStateMachine.CreateProcessing(user.Id);
+        }
+
+        private async Task<CommandResult> Clear(User user)
+        {
+            var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ClearStateMachine));
+            return await postStateMachine.CreateProcessing(user.Id);
         }
 
         public async Task<CommandResult> Ban(string userIdOrName)
@@ -1010,6 +1012,33 @@ namespace Telegram.Altayskaya97.Bot
             );
         }
 
+        private async Task<Message> DeleteMessages(long chatId, string message)
+        {
+            var chat = await ChatService.Get(chatId);
+
+            var messages = await UserMessageService.GetList();
+            var messagesToDelete = messages.Where(m => m.ChatId == chatId).ToList();
+
+            foreach(var msg in messagesToDelete)
+            {
+                int messageId = IdMaker.GetTelegramMessageId(msg.Id, chatId);
+                try
+                {
+                    await BotClient.DeleteMessageAsync(chatId, messageId);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogWarning($"Can't delete message '{msg.Text}' from chat '{chat.Title}'");
+                }
+            }
+
+            return await BotClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: message,
+                    parseMode: ParseMode.Html
+            );
+        }
+
         private async Task AddGroup(Chat chat)
         {
             var chatRepo = new ChatRepo
@@ -1107,5 +1136,4 @@ namespace Telegram.Altayskaya97.Bot
             return currentDay != prevDay;
         }
     }
-
 }

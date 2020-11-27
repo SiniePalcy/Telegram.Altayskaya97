@@ -1,32 +1,35 @@
 ﻿using Moq;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 using System.Threading;
+using Telegram.Altayskaya97.Bot.Interface;
+using Telegram.Altayskaya97.Bot.StateMachines;
 using Telegram.Altayskaya97.Core.Constant;
+using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bot.Types.Enums;
 using Xunit;
-using System.Linq;
-using Telegram.Altayskaya97.Core.Model;
 using Telegram.Bot.Types.InputFiles;
-using Telegram.Altayskaya97.Bot.StateMachines;
-using Telegram.Altayskaya97.Bot.Interface;
 
 namespace Telegram.Altayskaya97.Test.Integration
 {
-    public class PostTests : IClassFixture<BotFixture>
+    public class ClearTests : IClassFixture<BotFixture>
     {
         private readonly BotFixture _fixture = null;
         private readonly Altayskaya97.Bot.Bot _bot = null;
 
-        public PostTests(BotFixture fixture)
+        public ClearTests(BotFixture fixture)
         {
             _fixture = fixture;
             _bot = fixture.Bot;
         }
 
         [Fact]
-        public void PostNonAdmin()
+        public void ClearNonAdmin()
         {
             string userName = "TestUser";
             var user1 = new Telegram.Bot.Types.User
@@ -37,7 +40,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
-                Type = UserType.Member
+                Type = Altayskaya97.Core.Model.UserType.Member
             };
             var chat = new Telegram.Bot.Types.Chat
             {
@@ -49,7 +52,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -82,7 +85,7 @@ namespace Telegram.Altayskaya97.Test.Integration
         }
 
         [Fact]
-        public void PostAdminWithoutPermissions()
+        public void ClearAdminWithoutPermissions()
         {
             string userName = "TestUser";
             var user1 = new Telegram.Bot.Types.User
@@ -93,7 +96,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             var userRepo = new Altayskaya97.Core.Model.User
             {
                 Id = user1.Id,
-                Type = UserType.Admin
+                Type = Altayskaya97.Core.Model.UserType.Admin
             };
             var chat = new Telegram.Bot.Types.Chat
             {
@@ -105,7 +108,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -172,7 +175,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 Id = 3,
                 Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
             };
-            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private"};
+            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
             var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
             var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
             var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
@@ -180,11 +183,11 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
-            
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user1.Id)))
                 .ReturnsAsync(userRepo);
@@ -222,7 +225,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), 
+                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 3)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
@@ -230,7 +233,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), 
+                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -272,7 +275,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -328,7 +331,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), 
+                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -370,7 +373,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -444,8 +447,8 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.IsAny<ChatId>(),
-                It.Is<string>(_ => _ != "Cancelled" && _ != "Pin a message?" && _ != "Please, input a message" && _ != "Please, select a chat"), 
-                It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), 
+                It.Is<string>(_ => _ != "Cancelled" && _ != "Pin a message?" && _ != "Please, input a message" && _ != "Please, select a chat"),
+                It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(),
                 It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -486,7 +489,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -599,7 +602,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -718,7 +721,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -839,7 +842,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -919,8 +922,8 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 2)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat3.Id),
-                It.Is<string>(_ => _ == "Text to post"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), 
-                It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), 
+                It.Is<string>(_ => _ == "Text to post"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(),
+                It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.IsAny<ChatId>(),
                 It.Is<string>(_ => _ != "Confirm sending?" && _ != "Pin a message?" && _ != "Please, input a message" && _ != "Please, select a chat" && _ != "Text to post"),
@@ -965,7 +968,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -1049,7 +1052,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.Is<string>(_ => _ == messageWithPhoto.Caption), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(),
                 It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
-            _fixture.MockBotClient.Verify(mock => mock.SendPhotoAsync(It.Is<ChatId>(_ => _.Identifier == chat3.Id),   
+            _fixture.MockBotClient.Verify(mock => mock.SendPhotoAsync(It.Is<ChatId>(_ => _.Identifier == chat3.Id),
                 It.Is<InputOnlineFile>(_ => _.FileId == photo[0].FileId), It.Is<string>(_ => _ == messageWithPhoto.Caption),
                 It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
@@ -1096,7 +1099,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user1,
-                Text = "/post"
+                Text = "/clear"
             };
 
             _fixture.MockBotClient.Reset();
@@ -1194,9 +1197,10 @@ namespace Telegram.Altayskaya97.Test.Integration
         private bool KeyboardMarkupActionButtons(IReplyMarkup markup, int buttonsCount)
         {
             return markup is ReplyKeyboardMarkup keyboardMarkup &&
-                    keyboardMarkup.Keyboard.Any(k =>  k.Any(b => b.Text == "Cancel")) &&
-                    (keyboardMarkup.Keyboard.Count() == buttonsCount || 
+                    keyboardMarkup.Keyboard.Any(k => k.Any(b => b.Text == "Cancel")) &&
+                    (keyboardMarkup.Keyboard.Count() == buttonsCount ||
                     keyboardMarkup.Keyboard.First().Count() == buttonsCount);
         }
     }
+
 }
