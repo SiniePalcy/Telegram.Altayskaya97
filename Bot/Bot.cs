@@ -877,7 +877,8 @@ namespace Telegram.Altayskaya97.Bot
                         var chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
                         if (chatMember == null || chatMember.User.IsBot)
                             continue;
-                            
+
+                        await Task.Delay(200);
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                         sb.AppendLine($"User <b>{user.Name}</b> has been deleted from chat <b>{chatRepo.Title}</b>");
                     }
