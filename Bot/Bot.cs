@@ -185,24 +185,6 @@ namespace Telegram.Altayskaya97.Bot
             var users = await UserService.GetList();
             var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
-
-            #region For version > 0.7.0.2
-            var currentVers = Assembly.GetExecutingAssembly().GetName().Version;
-            if (currentVers.Major > 0 ||
-                currentVers.Minor > 7 ||
-                currentVers.Build > 0 ||
-                currentVers.Revision > 2)
-            {
-                var usermessages = await UserMessageService.GetList();
-                var usermessagesToUpdate = usermessages.Where(m => m.Id >= 0 && m.Id <= 25000);
-                foreach (var msg in usermessagesToUpdate)
-                {
-                    await UserMessageService.Delete(msg.Id);
-                    msg.Id = IdMaker.MakeMessageId(msg.ChatId, (int)msg.Id);
-                    await UserMessageService.Update(msg);
-                }
-            }
-            #endregion
         }
         #endregion
 
@@ -266,9 +248,9 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    await UserMessageService.Delete(message.Id);
                     int telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
                     await BotClient.DeleteMessageAsync(message.ChatId, telegramMessageId);
+                    await UserMessageService.Delete(message.Id);
                 }
                 catch (Exception ex)
                 {
@@ -1025,8 +1007,8 @@ namespace Telegram.Altayskaya97.Bot
                 int tgMessageId = IdMaker.GetTelegramMessageId(msg.Id, chatId);
                 try
                 {
-                    await UserMessageService.Delete(msg.Id);
                     await BotClient.DeleteMessageAsync(chatId, tgMessageId);
+                    await UserMessageService.Delete(msg.Id);
                 }
                 catch(Exception ex)
                 {
