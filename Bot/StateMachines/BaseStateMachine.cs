@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -39,28 +37,42 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return result;
         }
 
-        protected BaseUserState<State> GetProcessing(long id)
+        protected BaseUserState<State> GetProcessing(long userId)
         {
-            return Processings.TryGetValue(id, out BaseUserState<State> postProcessing) ? postProcessing : null;
+            return Processings.TryGetValue(userId, out BaseUserState<State> postProcessing) ? postProcessing : null;
         }
 
-        public bool IsExecuting(long id)
+        public bool IsExecuting(long userId)
         {
-            var processing = GetProcessing(id);
+            var processing = GetProcessing(userId);
             return processing != null && !processing.IsFinished;
         }
 
-        public bool StopProcessing(long id)
+        public bool StopProcessing(long userId)
         {
-            BaseUserState<State> postProcessing = GetProcessing(id);
+            BaseUserState<State> postProcessing = GetProcessing(userId);
             if (postProcessing == null)
                 return true;
 
-            return Processings.TryRemove(id, out _);
+            return Processings.TryRemove(userId, out _);
         }
 
-        public abstract Task<CommandResult> ExecuteStage(long id, Message message = null);
+        public abstract Task<CommandResult> ExecuteStage(long userId, Message message = null);
 
         protected abstract BaseUserState<State> CreateUserState(long userId);
+
+        protected async Task<CommandResult> StartState()
+        {
+            var chats = await ChatService.GetList();
+            var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
+                .Select(c => new KeyboardButton(c.Title)).ToList();
+            buttonsList.Add(new KeyboardButton("Cancel"));
+
+            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
+            return new CommandResult("Please, select a chat", CommandResultType.TextMessage, new ReplyKeyboardMarkup(buttonsReplyList, true, true))
+            {
+                KeyboardButtons = buttonsList.ToList()
+            };
+        }
     }
 }

@@ -4,10 +4,7 @@
     {
         public long ChatId { get; set; }
         public T CurrentState { get; set; }
-        public BaseUserState()
-        {
-        }
-
+        public BaseUserState() { }
         public abstract void ExecuteNextStage();
         public abstract void End();
         public abstract bool IsFinished { get; }
