@@ -488,22 +488,22 @@ namespace Telegram.Altayskaya97.Test.Integration
 
             var userMessage1 = new UserMessage
             {
-                Id = IdMaker.MakeMessageId(chat1.Id, 1),
+                Id = 1,
                 ChatId = chat1.Id
             };
             var userMessage2 = new UserMessage
             {
-                Id = IdMaker.MakeMessageId(chat2.Id, 2),
+                Id = 2,
                 ChatId = chat2.Id
             };
             var userMessage3 = new UserMessage
             {
-                Id = IdMaker.MakeMessageId(chat2.Id, 3),
+                Id = 3,
                 ChatId = chat2.Id
             };
             var userMessage4 = new UserMessage
             {
-                Id = IdMaker.MakeMessageId(chat3.Id, 4),
+                Id = 4,
                 ChatId = chat3.Id
             };
 

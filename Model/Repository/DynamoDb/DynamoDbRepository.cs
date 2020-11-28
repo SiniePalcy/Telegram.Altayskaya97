@@ -48,7 +48,8 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
 
         public virtual async Task Update(long id, TModel item)
         {
-            await Remove(id);
+            if (id != item.Id)
+                await Remove(id);
             await Add(item);
         }
 

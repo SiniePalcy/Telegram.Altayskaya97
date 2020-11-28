@@ -6,6 +6,7 @@ namespace Telegram.Altayskaya97.Bot.Helpers
 {
     public static class IdMaker
     {
+        /*
         public static long MakeMessageId(long chatId, int messageId)
         {
             string sChatId = chatId.ToString();
@@ -21,6 +22,6 @@ namespace Telegram.Altayskaya97.Bot.Helpers
             string sTelegramMessageId = sMessageId.Replace(sChatId, "");
             return int.Parse(sTelegramMessageId);
         }
-
+        */
     }
 }

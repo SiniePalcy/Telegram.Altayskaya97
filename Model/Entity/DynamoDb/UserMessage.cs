@@ -14,6 +14,8 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         [DynamoDBHashKey]
         public long Id { get; set; }
         [DynamoDBProperty]
+        public long TelegramId { get; set; }
+        [DynamoDBProperty]
         public long UserId { get; set; }
         [DynamoDBProperty]
         public long ChatId { get; set; }

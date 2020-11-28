@@ -248,8 +248,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    int telegramMessageId = IdMaker.GetTelegramMessageId(message.Id, message.ChatId);
-                    await BotClient.DeleteMessageAsync(message.ChatId, telegramMessageId);
+                    await BotClient.DeleteMessageAsync(message.ChatId, message.TelegramId);
                     await UserMessageService.Delete(message.Id);
                 }
                 catch (Exception ex)
@@ -522,6 +521,11 @@ namespace Telegram.Altayskaya97.Bot
             if (chatMessage.Type == MessageType.MigratedToSupergroup)
             {
                 await UpdateChatId(chat.Id, chatMessage.MigrateToChatId);
+                return;
+            }
+
+            if (chatMessage.Type == MessageType.MigratedFromGroup)
+            {
                 return;
             }
 
@@ -1004,10 +1008,9 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach(var msg in messagesToDelete)
             {
-                int tgMessageId = IdMaker.GetTelegramMessageId(msg.Id, chatId);
                 try
                 {
-                    await BotClient.DeleteMessageAsync(chatId, tgMessageId);
+                    await BotClient.DeleteMessageAsync(chatId, msg.TelegramId);
                     await UserMessageService.Delete(msg.Id);
                 }
                 catch(Exception ex)
@@ -1041,7 +1044,8 @@ namespace Telegram.Altayskaya97.Bot
 
             var userMessage = new UserMessage
             {
-                Id = IdMaker.MakeMessageId(message.Chat.Id, message.MessageId),
+                Id = DateTimeService.GetDateTimeUTCNow().Ticks,
+                TelegramId = message.MessageId,
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
                 Text = message.Type == MessageType.Photo ? message.Caption : message.Text,
@@ -1102,12 +1106,8 @@ namespace Telegram.Altayskaya97.Bot
             var msgToModify = messages.Where(m => m.ChatId == oldId);
             foreach (var msg in msgToModify)
             {
-                var oldMsgId = msg.Id;
-                var tgMsgId = IdMaker.GetTelegramMessageId(oldMsgId, oldId);
-
                 msg.ChatId = newId;
-                msg.Id = IdMaker.MakeMessageId(newId, tgMsgId);
-                await UserMessageService.Update(oldMsgId, msg);
+                await UserMessageService.Update(msg.Id, msg);
             }
         }
 
