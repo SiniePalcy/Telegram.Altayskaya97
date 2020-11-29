@@ -808,6 +808,7 @@ namespace Telegram.Altayskaya97.Bot
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                         _logger.LogInformation($"User '{user.Name}' kicked from chat '{chatRepo.Title}'");
                         buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
+                        await Task.Delay(200);
                     }
                 }
                 catch (ApiRequestException ex)
