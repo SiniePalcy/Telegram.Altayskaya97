@@ -788,15 +788,15 @@ namespace Telegram.Altayskaya97.Bot
             StringBuilder buffer = new StringBuilder();
             foreach (var chatRepo in chats)
             {
-                var chat = await BotClient.GetChatAsync(chatRepo.Id);
-                if (chat == null)
-                {
-                    _logger.LogInformation($"Chat '{chatRepo.Title}' not found");
-                    continue;
-                }
-
                 try
                 {
+                    var chat = await BotClient.GetChatAsync(chatRepo.Id);
+                    if (chat == null)
+                    {
+                        _logger.LogInformation($"Chat '{chatRepo.Title}' not found");
+                        continue;
+                    }
+
                     if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member ||
                         chatRepo.ChatType == Core.Model.ChatType.Private)
                         continue;
