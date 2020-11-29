@@ -285,6 +285,10 @@ namespace Telegram.Altayskaya97.Test.Integration
                 .ReturnsAsync(true);
             userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == user2.GetUserName().ToLower())))
                 .ReturnsAsync(userRepo2);
+            userServiceMock.Setup(s => s.GetByIdOrName(It.Is<string>(_ => _ == user1.Id.ToString())))
+                .ReturnsAsync(userRepo1);
+            userServiceMock.Setup(s => s.GetByIdOrName(It.Is<string>(_ => _ == user2.Id.ToString())))
+                .ReturnsAsync(userRepo2);
             userServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(users);
             _bot.UserService = userServiceMock.Object;
@@ -352,7 +356,7 @@ namespace Telegram.Altayskaya97.Test.Integration
 
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Exactly(4));
-            chatServiceMock.Verify(mock => mock.GetList(), Times.Exactly(4));
+            chatServiceMock.Verify(mock => mock.GetList(), Times.Exactly(6));
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
                 It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),

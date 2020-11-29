@@ -842,38 +842,15 @@ namespace Telegram.Altayskaya97.Bot
         public async Task<CommandResult> BanAll(bool onlyWalking = false)
         {
             var users = await UserService.GetList();
-            var chats = await ChatService.GetList();
 
             StringBuilder sb = new StringBuilder();
             foreach (var user in users)
             {
-                if (user.Type == UserType.Coordinator || user.Type == UserType.Bot)
-                    continue;
-
                 if (onlyWalking && user.NoWalk.HasValue && user.NoWalk.Value)
                     continue;
 
-                foreach (var chatRepo in chats.Where(c => c.ChatType != Core.Model.ChatType.Private))
-                {
-                    try
-                    {
-                        var chat = await BotClient.GetChatAsync(chatRepo.Id);
-                        if (chat == null)
-                            continue;
-
-                        var chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
-                        if (chatMember == null || chatMember.User.IsBot)
-                            continue;
-
-                        await Task.Delay(200);
-                        await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
-                        sb.AppendLine($"User <b>{user.Name}</b> has been deleted from chat <b>{chatRepo.Title}</b>");
-                    }
-                    catch (ApiRequestException ex)
-                    {
-                        _logger.LogWarning(ex.Message);
-                    }
-                }
+                var commandResult = await Ban(user.Id.ToString());
+                sb.AppendLine(commandResult.Content.ToString());
             }
 
             return new CommandResult(sb.ToString(), CommandResultType.TextMessage);
