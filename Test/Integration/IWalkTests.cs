@@ -111,7 +111,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _.Contains("deleted from chat")), It.IsAny<ParseMode>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _.Contains("kicked from chat")), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }

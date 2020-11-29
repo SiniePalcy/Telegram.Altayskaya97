@@ -788,6 +788,10 @@ namespace Telegram.Altayskaya97.Bot
             StringBuilder buffer = new StringBuilder();
             foreach (var chatRepo in chats)
             {
+                if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member ||
+                    chatRepo.ChatType == Core.Model.ChatType.Private)
+                    continue;
+
                 try
                 {
                     var chat = await BotClient.GetChatAsync(chatRepo.Id);
@@ -797,17 +801,13 @@ namespace Telegram.Altayskaya97.Bot
                         continue;
                     }
 
-                    if (chatRepo.ChatType == Core.Model.ChatType.Admin && user.Type == UserType.Member ||
-                        chatRepo.ChatType == Core.Model.ChatType.Private)
-                        continue;
-
                     ChatMember chatMember = await BotClient.GetChatMemberAsync(chat.Id, (int)user.Id);
                     _logger.LogInformation($"For chat='{chat.Title}', user={user.Name}, status={chatMember.Status}");
                     if (chatMember.Status != ChatMemberStatus.Kicked && chatMember.Status != ChatMemberStatus.Left)
                     {
                         await BotClient.KickChatMemberAsync(chat.Id, (int)user.Id);
                         _logger.LogInformation($"User '{user.Name}' kicked from chat '{chatRepo.Title}'");
-                        buffer.AppendLine($"User <b>{user.Name}</b> deleted from chat <b>{chatRepo.Title}</b>");
+                        buffer.AppendLine($"User <b>{user.Name}</b> kicked from chat <b>{chatRepo.Title}</b>");
                         await Task.Delay(200);
                     }
                 }
