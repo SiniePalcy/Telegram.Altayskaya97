@@ -69,10 +69,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             buttonsList.Add(new KeyboardButton("Cancel"));
 
             var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
-            return new CommandResult("Please, select a chat", CommandResultType.TextMessage, new ReplyKeyboardMarkup(buttonsReplyList, true, true))
-            {
-                KeyboardButtons = buttonsList.ToList()
-            };
+            return new CommandResult("Please, select a chat", CommandResultType.TextMessage,
+                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
         }
     }
 }

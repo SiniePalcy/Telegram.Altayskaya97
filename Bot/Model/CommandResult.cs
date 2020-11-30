@@ -13,7 +13,6 @@ namespace Telegram.Altayskaya97.Bot.Model
         public bool IsMultiAnswers { get; set; }
         public bool IsAnonymous { get; set; }
         public ICollection<Link> Links { get; set; }
-        public ICollection<KeyboardButton> KeyboardButtons { get; set; }
         public ICollection<long> Recievers { get; set; }
         public IReplyMarkup ReplyMarkup { get; set; }
 

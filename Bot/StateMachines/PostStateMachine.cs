@@ -73,10 +73,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         new KeyboardButton("No"),
                         new KeyboardButton("Cancel")
             };
-            return new CommandResult("Pin a message?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(pinButtons, true, true))
-            {
-                KeyboardButtons = pinButtons
-            };
+            return new CommandResult("Pin a message?", CommandResultType.TextMessage,
+                new ReplyKeyboardMarkup(pinButtons, true, true));
         }
 
         private CommandResult PinChoiceState(long id, string text)

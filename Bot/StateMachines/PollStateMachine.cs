@@ -93,10 +93,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         new KeyboardButton("No"),
                         new KeyboardButton("Cancel")
                 };
-                return new CommandResult("Is the pool with multiple answers?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(pinButtons, true, true))
-                {
-                    KeyboardButtons = pinButtons
-                };
+                return new CommandResult("Is the pool with multiple answers?", CommandResultType.TextMessage,
+                    new ReplyKeyboardMarkup(pinButtons, true, true));
             }
             
             processing.Cases.Add(nextCase);
