@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Telegram.Altayskaya97.Bot.Model;
+﻿using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Threading.Tasks;
@@ -86,6 +85,11 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             if (nextCase == "/done")
             {
+                if (processing.Cases.Count < 2)
+                {
+                    processing.CurrentState = PollState.Stop;
+                    return new CommandResult($"Cancelled: cases must be minimum 2", CommandResultType.TextMessage);
+                }
                 processing.CurrentState = PollState.FinishCase;
                 KeyboardButton[] pinButtons = new KeyboardButton[]
                 {

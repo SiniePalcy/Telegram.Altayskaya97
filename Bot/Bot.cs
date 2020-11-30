@@ -908,7 +908,8 @@ namespace Telegram.Altayskaya97.Bot
                 return null;
 
             var chat = await BotClient.GetChatAsync(chatId);
-            var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, parseMode: ParseMode.Html, replyMarkup: markUp);
+            var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, 
+                parseMode: ParseMode.Html, replyMarkup: markUp);
 
             if (message != null)
                 await AddMessage(message);
