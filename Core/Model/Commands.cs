@@ -12,7 +12,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
         public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); 
         public static Command NoWalk { get; } = new Command("/nowalk", "/nowalk", "Я не гуляю"); 
-        public static Command Return { get; } = new Command("/triton", "/triton", "", false, false); // secret word
+        public static Command Return { get; } = new Command("/notirt", "/notirt", "", false, false); // secret word
 
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post", "Отправить объявление", true);
@@ -25,7 +25,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command DeleteChat { get; } = new Command("/deletechat", "/deletechat chatname", "Удалить чат", true);
         public static Command DeleteUser { get; } = new Command("/deleteuser", "/deleteuser [username|id]", "Удалить пользователя", true);
         public static Command Clear { get; } = new Command("/clear", "/clear", "Очистка чата", true);
-        public static Command GrantAdmin { get; } = new Command("/shpic", "/shpic", "", true, false); // secret word
+        public static Command GrantAdmin { get; } = new Command("/ciphs", "/ciphs", "", true, false); // secret word
 
         private static string ExtractCommandName(string command)
         {
