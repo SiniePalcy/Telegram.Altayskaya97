@@ -8,11 +8,8 @@ namespace Telegram.Altayskaya97.Bot.Model
     {
         public CommandResultType Type { get; set; } = CommandResultType.None;
         public object Content { get; set; }
-        public ICollection<string> Cases { get; set; }
-        public bool IsPin { get; set; }
-        public bool IsMultiAnswers { get; set; }
-        public bool IsAnonymous { get; set; }
-        public ICollection<Link> Links { get; set; }
+        public IDictionary<string, object> Properties { get; set; } =
+            new Dictionary<string, object>();
         public ICollection<long> Recievers { get; set; }
         public IReplyMarkup ReplyMarkup { get; set; }
 
@@ -22,8 +19,6 @@ namespace Telegram.Altayskaya97.Bot.Model
         {
             Content = content;
             Type = type;
-            if (type == CommandResultType.Links)
-                Links = new List<Link>();
             ReplyMarkup = replyMarkup;
         }
     }

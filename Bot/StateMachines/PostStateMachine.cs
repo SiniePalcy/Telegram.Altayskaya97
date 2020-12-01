@@ -6,6 +6,7 @@ using Telegram.Bot.Types;
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
+using System.Collections.Generic;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -110,7 +111,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                 commandResult = new CommandResult(postProcessing.Message, CommandResultType.Message)
                 {
                     Recievers = new long[] { postProcessing.ChatId },
-                    IsPin = postProcessing.IsPin
+                    Properties = new Dictionary<string, object> 
+                    { { "IsPin", postProcessing.IsPin} }
                 };
             else
                 commandResult = new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);

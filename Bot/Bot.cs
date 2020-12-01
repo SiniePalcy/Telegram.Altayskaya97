@@ -546,8 +546,9 @@ namespace Telegram.Altayskaya97.Bot
                 var newMembers = chatMessage.NewChatMembers.Where(c => !users.Any(u => u.Id == c.Id)).ToList();
                 foreach(var chatMember in newMembers)
                 {
-                    await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType);
+                    Message msg = await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType);
                     await EnsureUserSaved(chatMember, chatRepo.ChatType);
+                    await AddMessage(msg, chatRepo);
                 }
                 return;
             }
@@ -605,16 +606,15 @@ namespace Telegram.Altayskaya97.Bot
                             commandResult.ReplyMarkup);
                         break;
                     case CommandResultType.Links:
-                        commandResult.Links.ToList().ForEach(async link => 
-                            await SendTextMessage(reciever, $"{link.Description}{Environment.NewLine}{link.Url}"));
+                        await SendLinksList(reciever, commandResult.Properties["Links"] as IEnumerable<Link>);
                         break;
                     case CommandResultType.Pool:
                         result = await SendPollMessage(
                             reciever,
                             commandResult.Content.ToString(),
-                            commandResult.Cases,
-                            commandResult.IsMultiAnswers,
-                            commandResult.IsAnonymous,
+                            commandResult.Properties["Cases"] as List<string>,
+                            commandResult.Properties["IsMultiAnswers"] as bool?,
+                            commandResult.Properties["IsAnonymous"] as bool?,
                             commandResult.ReplyMarkup);
                         break;
                     case CommandResultType.Message:
@@ -625,9 +625,11 @@ namespace Telegram.Altayskaya97.Bot
                         break;
                 }
 
-                if (commandResult.IsPin && result != null)
+                if (commandResult.Properties.ContainsKey("IsPin") && result != null)
                 {
-                    await BotClient.PinChatMessageAsync(reciever, result.MessageId);
+                    var isPin = commandResult.Properties["IsPin"] as bool?;
+                    if (isPin.HasValue && isPin.Value)
+                        await BotClient.PinChatMessageAsync(reciever, result.MessageId);
                 }
             }
         }
@@ -656,6 +658,7 @@ namespace Telegram.Altayskaya97.Bot
 
             var chatList = await ChatService.GetList();
             List<Core.Model.Chat> chatsToDelete = new List<ChatRepo>();
+            var links = new List<Link>();
             foreach (var chat in chatList)
             {
                 try
@@ -672,7 +675,7 @@ namespace Telegram.Altayskaya97.Bot
                         if (chatMember.Status == ChatMemberStatus.Kicked)
                             await BotClient.UnbanChatMemberAsync(chat.Id, user.Id);
                         var inviteLink = await BotClient.ExportChatInviteLinkAsync(chat.Id);
-                        result.Links.Add(new Link
+                        links.Add(new Link
                         {
                             Url = inviteLink,
                             Description = $"Chat <b>{chat.Title}</b>"
@@ -686,6 +689,8 @@ namespace Telegram.Altayskaya97.Bot
                     chatsToDelete.Add(chat);
                 }
             }
+
+            result.Properties["Links"] = links;
 
             foreach (var chat in chatsToDelete)
                 await ChatService.Delete(chat.Id);
@@ -931,7 +936,7 @@ namespace Telegram.Altayskaya97.Bot
             return message;
         }
 
-        private async Task<Message> SendPollMessage(long chatId, string content, IEnumerable<string> cases, bool isMultiAnswers, bool isAnonymous, IReplyMarkup markUp = null)
+        private async Task<Message> SendPollMessage(long chatId, string content, IEnumerable<string> cases, bool? isMultiAnswers, bool? isAnonymous, IReplyMarkup markUp = null)
         {
             if (string.IsNullOrEmpty(content))
                 return null;
@@ -949,6 +954,14 @@ namespace Telegram.Altayskaya97.Bot
                 await AddMessage(message);
 
             return message;
+        }
+
+        private async Task SendLinksList(long chatId, IEnumerable<Link> links, IReplyMarkup markUp = null)
+        {
+            foreach(var link in links)
+            {
+                await SendTextMessage(chatId, $"{link.Description}{Environment.NewLine}{link.Url}");
+            }
         }
 
         private async Task<Message> SendMessageObject(long chatId, CommandResult commandResult)

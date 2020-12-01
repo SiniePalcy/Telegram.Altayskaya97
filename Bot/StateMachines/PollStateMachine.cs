@@ -6,6 +6,7 @@ using Telegram.Bot.Types;
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
+using System.Collections.Generic;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -185,10 +186,13 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                 commandResult = new CommandResult(processing.Question, CommandResultType.Pool)
                 {
                     Recievers = new long[] { processing.ChatId },
-                    IsMultiAnswers = processing.IsMultiAnswers,
-                    IsAnonymous = processing.IsAnonymous,
-                    IsPin = processing.IsPin,
-                    Cases = processing.Cases
+                    Properties = new Dictionary<string, object>
+                    {
+                        { "IsMultiAnswers", processing.IsMultiAnswers },
+                        { "IsAnonymous", processing.IsAnonymous },
+                        { "IsPin", processing.IsPin },
+                        { "Cases", processing.Cases }
+                    }
                 };
             else
                 commandResult = new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
