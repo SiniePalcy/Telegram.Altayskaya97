@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
+using Telegram.Altayskaya97.Core.Constant;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -59,7 +60,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (chat == null)
             {
                 StopProcessing(id);
-                return new CommandResult($"Cancelled", CommandResultType.TextMessage);
+                return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
             else
             {
@@ -93,9 +94,9 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                 processing.CurrentState = PollState.FinishCase;
                 KeyboardButton[] pinButtons = new KeyboardButton[]
                 {
-                        new KeyboardButton("Yes"),
-                        new KeyboardButton("No"),
-                        new KeyboardButton("Cancel")
+                        new KeyboardButton(Messages.Yes),
+                        new KeyboardButton(Messages.No),
+                        new KeyboardButton(Messages.Cancel)
                 };
                 return new CommandResult("Is the pool with multiple answers?", CommandResultType.TextMessage,
                     new ReplyKeyboardMarkup(pinButtons, true, true));
@@ -110,21 +111,21 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            if (text == "Yes" || text == "No")
+            if (text == Messages.Yes || text == Messages.No)
             {
-                processing.IsMultiAnswers = text == "Yes";
+                processing.IsMultiAnswers = text == Messages.Yes;
                 KeyboardButton[] confirmButtons = new KeyboardButton[]
                 {
-                        new KeyboardButton("Yes"),
-                        new KeyboardButton("No"),
-                        new KeyboardButton("Cancel")
+                        new KeyboardButton(Messages.Yes),
+                        new KeyboardButton(Messages.No),
+                        new KeyboardButton(Messages.Cancel)
                 };
                 return new CommandResult("Is the pool anonymous?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
             }
             else
             {
                 StopProcessing(id);
-                return new CommandResult("Cancelled", CommandResultType.TextMessage);
+                return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
@@ -133,21 +134,21 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            if (text == "Yes" || text == "No")
+            if (text == Messages.Yes || text == Messages.No)
             {
-                processing.IsAnonymous = text == "Yes";
+                processing.IsAnonymous = text == Messages.Yes;
                 KeyboardButton[] confirmButtons = new KeyboardButton[]
                 {
-                        new KeyboardButton("Yes"),
-                        new KeyboardButton("No"),
-                        new KeyboardButton("Cancel")
+                        new KeyboardButton(Messages.Yes),
+                        new KeyboardButton(Messages.No),
+                        new KeyboardButton(Messages.Cancel)
                 };
                 return new CommandResult("Pin the pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
             }
             else
             {
                 StopProcessing(id);
-                return new CommandResult("Cancelled", CommandResultType.TextMessage);
+                return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
@@ -156,20 +157,20 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (!(GetProcessing(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            if (text == "Yes" || text == "No")
+            if (text == Messages.Yes || text == Messages.No)
             {
-                processing.IsPin = text == "Yes";
+                processing.IsPin = text == Messages.Yes;
                 KeyboardButton[] confirmButtons = new KeyboardButton[]
                 {
-                            new KeyboardButton("OK"),
-                            new KeyboardButton("Cancel")
+                            new KeyboardButton(Messages.OK),
+                            new KeyboardButton(Messages.Cancel)
                 };
                 return new CommandResult("Confirm sending pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
             }
             else
             {
                 StopProcessing(id);
-                return new CommandResult("Cancelled", CommandResultType.TextMessage);
+                return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
@@ -180,7 +181,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             CommandResult commandResult;
 
-            if (messageText == "OK")
+            if (messageText == Messages.OK)
                 commandResult = new CommandResult(processing.Question, CommandResultType.Pool)
                 {
                     Recievers = new long[] { processing.ChatId },
@@ -190,7 +191,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                     Cases = processing.Cases
                 };
             else
-                commandResult = new CommandResult("Cancelled", CommandResultType.TextMessage);
+                commandResult = new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
 
             StopProcessing(id);
 

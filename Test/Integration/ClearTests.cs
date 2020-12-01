@@ -10,7 +10,6 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.Enums;
 using Xunit;
-using Telegram.Altayskaya97.Bot.Helpers;
 
 namespace Telegram.Altayskaya97.Test.Integration
 {
@@ -209,7 +208,7 @@ namespace Telegram.Altayskaya97.Test.Integration
 
             _bot.RecieveMessage(message).Wait();
 
-            message.Text = "Cancel";
+            message.Text = Messages.Cancel;
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "Any message";
@@ -222,15 +221,15 @@ namespace Telegram.Altayskaya97.Test.Integration
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.SelectChat), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 3)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ != Messages.SelectChat && _ != Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -320,15 +319,15 @@ namespace Telegram.Altayskaya97.Test.Integration
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.SelectChat), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 3)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ != "Please, select a chat" && _ != "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ != Messages.SelectChat && _ != Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
@@ -408,7 +407,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             message.Text = "Public";
             _bot.RecieveMessage(message).Wait();
 
-            message.Text = "Cancel";
+            message.Text = Messages.Cancel;
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "Nain";
@@ -423,11 +422,11 @@ namespace Telegram.Altayskaya97.Test.Integration
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.SelectChat), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 3)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
@@ -439,7 +438,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.IsAny<ChatId>(),
-                It.Is<string>(_ => _ != "Cancelled" && _ != "Please, select a chat" && _ != "Confirm removing?"),
+                It.Is<string>(_ => _ != Messages.Cancelled && _ != Messages.SelectChat && _ != "Confirm removing?"),
                 It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(),
                 It.IsAny<CancellationToken>()), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.DeleteMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
@@ -544,7 +543,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             message.Text = "Public";
             _bot.RecieveMessage(message).Wait();
 
-            message.Text = "OK";
+            message.Text = Messages.OK;
             _bot.RecieveMessage(message).Wait();
 
             message.Text = "Nain";
@@ -559,7 +558,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);
 
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Please, select a chat"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.SelectChat), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.Is<IReplyMarkup>(m => KeyboardMarkupActionButtons(m, 3)), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
@@ -567,7 +566,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
-                It.Is<string>(_ => _ == "Cancelled"), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
+                It.Is<string>(_ => _ == Messages.Cancelled), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(),
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
@@ -575,7 +574,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(It.IsAny<ChatId>(),
-                It.Is<string>(_ => _ != "Cleared" && _ != "Cancelled" && _ != "Please, select a chat" && _ != "Confirm removing?"),
+                It.Is<string>(_ => _ != "Cleared" && _ != Messages.Cancelled && _ != Messages.SelectChat && _ != "Confirm removing?"),
                 It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(),
                 It.IsAny<CancellationToken>()), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.DeleteMessageAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
@@ -585,7 +584,7 @@ namespace Telegram.Altayskaya97.Test.Integration
         private bool KeyboardMarkupActionButtons(IReplyMarkup markup, int buttonsCount)
         {
             return markup is ReplyKeyboardMarkup keyboardMarkup &&
-                    keyboardMarkup.Keyboard.Any(k => k.Any(b => b.Text == "Cancel")) &&
+                    keyboardMarkup.Keyboard.Any(k => k.Any(b => b.Text == Messages.Cancel)) &&
                     (keyboardMarkup.Keyboard.Count() == buttonsCount ||
                     keyboardMarkup.Keyboard.First().Count() == buttonsCount);
         }

@@ -2,6 +2,7 @@
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
+using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -45,7 +46,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (chat == null)
             {
                 StopProcessing(userId);
-                return new CommandResult($"Cancelled", CommandResultType.TextMessage);
+                return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
 
             var postProcessing = GetProcessing(userId);
@@ -53,8 +54,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             KeyboardButton[] confirmButtons = new KeyboardButton[]
             {
-                            new KeyboardButton("OK"),
-                            new KeyboardButton("Cancel")
+                            new KeyboardButton(Messages.OK),
+                            new KeyboardButton(Messages.Cancel)
             };
             return new CommandResult("Confirm removing?", CommandResultType.TextMessage, 
                 new ReplyKeyboardMarkup(confirmButtons, true, true));
@@ -65,12 +66,12 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             if (!(GetProcessing(userId) is ClearUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            CommandResult commandResult = messageText == "OK" ?
+            CommandResult commandResult = messageText == Messages.OK ?
                 new CommandResult("Cleared", CommandResultType.Delete)
                 {
                     Recievers = new long[] { processing.ChatId }
                 } :
-                new CommandResult("Cancelled", CommandResultType.TextMessage);
+                new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
 
             StopProcessing(userId);
 

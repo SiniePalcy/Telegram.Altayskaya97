@@ -37,7 +37,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/shpic"
+                Text = "/ciphs"
             };
 
             _fixture.MockBotClient.Reset();
@@ -108,7 +108,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/shpic"
+                Text = "/ciphs"
             };
 
             _fixture.MockBotClient.Reset();
@@ -202,7 +202,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/shpic"
+                Text = "/ciphs"
             };
 
             _fixture.MockBotClient.Reset();

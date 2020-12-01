@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
+using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -66,10 +67,10 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             var chats = await ChatService.GetList();
             var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
                 .Select(c => new KeyboardButton(c.Title)).ToList();
-            buttonsList.Add(new KeyboardButton("Cancel"));
+            buttonsList.Add(new KeyboardButton(Messages.Cancel));
 
             var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
-            return new CommandResult("Please, select a chat", CommandResultType.TextMessage,
+            return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
                 new ReplyKeyboardMarkup(buttonsReplyList, true, true));
         }
     }

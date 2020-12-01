@@ -85,7 +85,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user,
-                Text = "/triton"
+                Text = "/notirt"
             };
 
             _fixture.MockBotClient.Reset();
