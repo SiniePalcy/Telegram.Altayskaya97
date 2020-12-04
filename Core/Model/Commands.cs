@@ -6,28 +6,45 @@ namespace Telegram.Altayskaya97.Core.Model
 {
     public static class Commands
     {
-        public static Command Unknown { get; } = new Command("/unsaved", "/unsaved", "", false, false);
+        public static Command Unknown => new Command(name: "/unsaved", isShown: false);
 
         //common commands
-        public static Command Help { get; } = new Command("/help", "/help", "Справка");
-        public static Command Helb { get; } = new Command("/xelb", "/xelb", "", false, false);
-        public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
-        public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); 
-        public static Command NoWalk { get; } = new Command("/nowalk", "/nowalk", "Я не гуляю"); 
-        public static Command Return { get; } = new Command("/return", "/return", "", false, false, true); // secret word
+        public static Command Help => new Command(name: "/help", description: "Справка");
+        public static Command Helb => new Command(name: "/xelb", isShown: false);
+        public static Command Start => new Command(name: "/start", 
+            description: "Вызов этого меню");
+        public static Command IWalk => new Command(name: "/Iwalk", 
+            description: "Я гуляю"); 
+        public static Command NoWalk => new Command(name: "/nowalk", 
+            description: "Я не гуляю"); 
+        public static Command Return => new Command(name: "/return", 
+            isShown: false, isSecret: true);
 
         //admin commands
-        public static Command Post { get; } = new Command("/post", "/post", "Отправить объявление", true);
-        public static Command Poll { get; } = new Command("/poll", "/poll", "Отправить опрос", true);
-        public static Command ChatList { get; } = new Command("/chatlist", "/chatlist", "Список чатов бота", true);
-        public static Command UserList { get; } = new Command("/userlist", "/userlist", "Список пользователей", true);
-        public static Command InActive { get; } = new Command("/inactive", "/inactive", "Неактивные пользователи", true);
-        public static Command Ban { get; } = new Command("/ban", "/ban [username|id]", "Забанить пользователя с username или id", true);
-        public static Command BanAll { get; } = new Command("/banall", "/banall", "Забанить всех пользователей", true);
-        public static Command DeleteChat { get; } = new Command("/deletechat", "/deletechat chatname", "Удалить чат", true);
-        public static Command DeleteUser { get; } = new Command("/deleteuser", "/deleteuser [username|id]", "Удалить пользователя", true);
-        public static Command Clear { get; } = new Command("/clear", "/clear", "Очистка чата", true);
-        public static Command GrantAdmin { get; } = new Command("/grantadmin", "/grantadmin", "", true, false, true); // secret word
+        public static Command Post => new Command(name: "/post", 
+            description: "Отправить объявление", isAdmin: true);
+        public static Command Poll => new Command(name: "/poll", 
+            description: "Отправить опрос", isAdmin: true);
+        public static Command ChatList => new Command(name: "/chatlist", 
+            description: "Список чатов бота", isAdmin: true);
+        public static Command UserList => new Command(name: "/userlist", 
+            description: "Список пользователей", isAdmin: true);
+        public static Command InActive => new Command(name: "/inactive", 
+            description: "Неактивные пользователи", isAdmin: true);
+        public static Command Ban => new Command(name: "/ban", template: "/ban [username|id]", 
+            description: "Забанить пользователя с username или id", isAdmin: true);
+        public static Command BanAll => new Command(name: "/banall", 
+            description: "Забанить всех пользователей", isAdmin: true);
+        public static Command DeleteChat => new Command(name: "/deletechat", 
+            description: "Удалить чат", isAdmin: true);
+        public static Command DeleteUser => new Command(name: "/deleteuser", 
+            template: "/deleteuser [username|id]", description: "Удалить пользователя", isAdmin: true);
+        public static Command Clear => new Command(name: "/clear", 
+            description: "Очистка чата", isAdmin: true);
+        public static Command ChangePassword => new Command(name: "/changepass", 
+            description: "Сменить пароль чата", isAdmin: true);
+        public static Command GrantAdmin => new Command(name: "/grantadmin", 
+            isAdmin: true, isShown: false, isSecret: true);
 
         private static string ExtractCommandName(string command)
         {

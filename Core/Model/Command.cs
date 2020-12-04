@@ -12,11 +12,11 @@ namespace Telegram.Altayskaya97.Core.Model
         public bool IsShown { get; }
         public bool IsAdmin { get; }
         public bool IsSecret { get; }
-        public Command(string name, string template, string description, 
+        public Command(string name, string template = null, string description = null, 
             bool isAdmin = false, bool isShown = true, bool isSecret = false)
         {
             Name = name.Trim();
-            Template = template.Trim();
+            Template = string.IsNullOrWhiteSpace(template) ? Name : template.Trim();
             Description = description;
             IsAdmin = isAdmin;
             IsShown = isShown;
