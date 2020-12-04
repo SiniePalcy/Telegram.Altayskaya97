@@ -65,6 +65,7 @@ namespace Telegram.Altayskaya97.Bot
         public IUserService UserService { get; set; }
         public IChatService ChatService { get; set; }
         public IUserMessageService UserMessageService { get; set; }
+        public IPasswordService PasswordService { get; set; }
         public IDateTimeService DateTimeService { get; set; }
         #endregion
 
@@ -74,6 +75,7 @@ namespace Telegram.Altayskaya97.Bot
             IUserService userService,
             IChatService chatService,
             IUserMessageService userMessageService,
+            IPasswordService passwordService,
             IDateTimeService dateTimeService,
             bool shouldInitClient = true,
             bool shouldInitDb = true)
@@ -85,6 +87,7 @@ namespace Telegram.Altayskaya97.Bot
             this.UserService = userService;
             this.ChatService = chatService;
             this.UserMessageService = userMessageService;
+            this.PasswordService = passwordService;
             this.DateTimeService = dateTimeService;
 
             var configSection = configuration.GetSection("Configuration");
@@ -185,6 +188,28 @@ namespace Telegram.Altayskaya97.Bot
             var users = await UserService.GetList();
             var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
+
+            var passwords = await PasswordService.GetList();
+            var maxId = !passwords.Any()? 0 :passwords.Select(p => p.Id).Max();
+            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Admin))
+            {
+                await PasswordService.Add(new Password
+                {
+                    Id = ++maxId,
+                    ChatType = Core.Model.ChatType.Admin,
+                    Value = "/admin"
+                });
+            }
+            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Public))
+            {
+                await PasswordService.Add(new Password
+                {
+                    Id = ++maxId,
+                    ChatType = Core.Model.ChatType.Public,
+                    Value = "/public"
+                });
+            }
+
         }
         #endregion
 
@@ -402,23 +427,20 @@ namespace Telegram.Altayskaya97.Bot
 
             await AddMessage(chatMessage, chat);
 
-            if (!string.IsNullOrEmpty(commandText))
+            if (StateMachines != null && StateMachines.Any())
             {
-                var command = Commands.GetCommand(commandText);
-                if (command != null && command.IsValid)
+                var executingSm = StateMachines.FirstOrDefault(sm => sm.IsExecuting(user.Id));
+                if (executingSm != null)
                 {
-                    await ProcessCommandMessage(chatMessage.Chat.Id, command, user);
+                    await ProcessStage(executingSm, chatMessage.Chat.Id, user.Id, chatMessage);
                     return;
                 }
             }
 
-            if (StateMachines != null && StateMachines.Any())
+            var command = Commands.GetCommand(commandText);
+            if (command != null && command.IsValid)
             {
-                foreach (var stateMachine in StateMachines)
-                {
-                    if (stateMachine.IsExecuting(user.Id))
-                        await ProcessStage(stateMachine, chatMessage.Chat.Id, user.Id, chatMessage);
-                }
+                await ProcessCommandMessage(chatMessage.Chat.Id, command, user);
             }
         }
 
@@ -434,9 +456,13 @@ namespace Telegram.Altayskaya97.Bot
             {
                 commandResult = await ExecuteCommandMember(command, user);
             }
-            else
+            else if (userRepo.Type == UserType.Admin || userRepo.Type == UserType.Coordinator)
             {
                 commandResult = await ExecuteCommandAdmin(command, user);
+            }
+            else
+            {
+                return;
             }
 
             await ReplyCommand(chatId, commandResult);
@@ -451,6 +477,9 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task<CommandResult> ExecuteCommandMember(Command command, User from)
         {
+            if (command == Commands.Unknown && await PasswordService.IsMemberPass(command.Text))
+                command = Commands.Return;
+
             return command == Commands.Help ? await Start(from) :
                    command == Commands.Start ? await Start(from) :
                    command == Commands.IWalk ? await Ban($"{from.Id}") :
@@ -462,6 +491,10 @@ namespace Telegram.Altayskaya97.Bot
         private async Task<CommandResult> ExecuteCommandAdmin(Command command, User user)
         {
             var isAdmin = await UserService.IsAdmin(user.Id);
+ 
+            if (command == Commands.Unknown && await PasswordService.IsAdminPass(command.Text))
+                command = Commands.GrantAdmin;
+
             return command.IsAdmin && isAdmin ?
                    await ExecuteCommandAdminGrant(command, user) :
                    await ExecuteCommandAdminNonGrant(command, user);

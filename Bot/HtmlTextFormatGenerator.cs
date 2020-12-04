@@ -13,13 +13,13 @@ namespace Telegram.Altayskaya97.Bot
         public string GenerateHtmlText(Message message)
         {
             if (message.Type == MessageType.Text)
-                return GenerateTextByEntities(message.Text, message.Entities, message.EntityValues);
+                return GenerateTextByEntities(message.Text, message.Entities);
             else if (message.Type == MessageType.Photo)
-                return GenerateTextByEntities(message.Caption, message.CaptionEntities, message.CaptionEntityValues);
+                return GenerateTextByEntities(message.Caption, message.CaptionEntities);
             return string.Empty;
         }
 
-        private string GenerateTextByEntities(string text, MessageEntity[] entities, IEnumerable<string> values)
+        private string GenerateTextByEntities(string text, MessageEntity[] entities)
         {
             if (string.IsNullOrEmpty(text))
                 return text;

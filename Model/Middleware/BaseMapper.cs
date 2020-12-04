@@ -6,8 +6,8 @@ namespace Telegram.Altayskaya97.Model.Middleware
 {
     public class BaseMapper<TModel, TEntity> : IModelEntityMapper<TModel, TEntity>
     {
-        public MapperConfiguration ModelToEntityConfig { get; }
-        public MapperConfiguration EntityToModelConfig { get; }
+        public MapperConfiguration ModelToEntityConfig { get; protected set; }
+        public MapperConfiguration EntityToModelConfig { get; protected set; }
         public BaseMapper()
         {
             ModelToEntityConfig = new MapperConfiguration(cfg => cfg.CreateMap<TModel, TEntity>());
@@ -17,7 +17,7 @@ namespace Telegram.Altayskaya97.Model.Middleware
         public virtual TEntity MapToEntity(TModel item)
         {
             if (item == null)
-                return default(TEntity);
+                return default;
 
             var mapper = new Mapper(ModelToEntityConfig);
             var entity = mapper.Map<TEntity>(item);
@@ -27,7 +27,7 @@ namespace Telegram.Altayskaya97.Model.Middleware
         public virtual TModel MapToModel(TEntity item)
         {
             if (item == null)
-                return default(TModel);
+                return default;
 
             var mapper = new Mapper(EntityToModelConfig);
             var model = mapper.Map<TModel>(item);

@@ -58,7 +58,7 @@ namespace Telegram.Altayskaya97.Test.Integration
 
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Never);
+            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
                  It.IsAny<ChatId>(),

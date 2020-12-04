@@ -37,7 +37,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/ciphs"
+                Text = "/password"
             };
 
             _fixture.MockBotClient.Reset();
@@ -108,7 +108,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/ciphs"
+                Text = "/password"
             };
 
             _fixture.MockBotClient.Reset();
@@ -133,6 +133,11 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
+
+            var passwordServiceMock = new Mock<IPasswordService>();
+            passwordServiceMock.Setup(s => s.IsAdminPass(message.Text))
+                .ReturnsAsync(true);
+            _bot.PasswordService = passwordServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
 
@@ -202,7 +207,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat,
                 From = user,
-                Text = "/ciphs"
+                Text = "/password"
             };
 
             _fixture.MockBotClient.Reset();
@@ -216,7 +221,6 @@ namespace Telegram.Altayskaya97.Test.Integration
             _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat2.Id),
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat2);
 
-
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
@@ -228,6 +232,11 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
+
+            var passwordServiceMock = new Mock<IPasswordService>();
+            passwordServiceMock.Setup(s => s.IsAdminPass(message.Text))
+                .ReturnsAsync(true);
+            _bot.PasswordService = passwordServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
 

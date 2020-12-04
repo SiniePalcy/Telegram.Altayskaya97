@@ -11,13 +11,16 @@ namespace Telegram.Altayskaya97.Core.Model
         public string Content => Text.Replace(Name, "").Trim();
         public bool IsShown { get; }
         public bool IsAdmin { get; }
-        public Command(string name, string template, string description, bool isAdmin = false, bool isShown = true)
+        public bool IsSecret { get; }
+        public Command(string name, string template, string description, 
+            bool isAdmin = false, bool isShown = true, bool isSecret = false)
         {
             Name = name.Trim();
             Template = template.Trim();
             Description = description;
             IsAdmin = isAdmin;
             IsShown = isShown;
+            IsSecret = isSecret;
         }
 
         public bool IsValid

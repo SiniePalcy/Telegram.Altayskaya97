@@ -6,13 +6,15 @@ namespace Telegram.Altayskaya97.Core.Model
 {
     public static class Commands
     {
+        public static Command Unknown { get; } = new Command("/unsaved", "/unsaved", "", false, false);
+
         //common commands
         public static Command Help { get; } = new Command("/help", "/help", "Справка");
         public static Command Helb { get; } = new Command("/xelb", "/xelb", "", false, false);
         public static Command Start { get; } = new Command("/start", "/start", "Вызов этого меню");
         public static Command IWalk { get; } = new Command("/Iwalk", "/Iwalk", "Я гуляю"); 
         public static Command NoWalk { get; } = new Command("/nowalk", "/nowalk", "Я не гуляю"); 
-        public static Command Return { get; } = new Command("/notirt", "/notirt", "", false, false); // secret word
+        public static Command Return { get; } = new Command("/return", "/return", "", false, false, true); // secret word
 
         //admin commands
         public static Command Post { get; } = new Command("/post", "/post", "Отправить объявление", true);
@@ -25,7 +27,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command DeleteChat { get; } = new Command("/deletechat", "/deletechat chatname", "Удалить чат", true);
         public static Command DeleteUser { get; } = new Command("/deleteuser", "/deleteuser [username|id]", "Удалить пользователя", true);
         public static Command Clear { get; } = new Command("/clear", "/clear", "Очистка чата", true);
-        public static Command GrantAdmin { get; } = new Command("/ciphs", "/ciphs", "", true, false); // secret word
+        public static Command GrantAdmin { get; } = new Command("/grantadmin", "/grantadmin", "", true, false, true); // secret word
 
         private static string ExtractCommandName(string command)
         {
@@ -37,16 +39,23 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command GetCommand(string commandText)
         {
             string commandName = ExtractCommandName(commandText);
+            if (!IsCommand(commandName))
+                return null;
 
             var props = typeof(Commands).GetProperties(BindingFlags.Public | BindingFlags.Static);
             var commands = props.Where(p => p.PropertyType == typeof(Command)).Select(p => (Command) p.GetValue(null));
 
-            var command =  commands.FirstOrDefault(c => c.Name.ToLower() == commandName);
+            var command =  commands.FirstOrDefault(c => !c.IsSecret && c.Name.ToLower() == commandName);
             if (command == null)
-                return null;
+                command = Commands.Unknown;
 
             command.Text = commandText;
             return command;
+        }
+
+        private static bool IsCommand(string commandName)
+        {
+            return commandName.StartsWith("/");
         }
     }
 }

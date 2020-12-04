@@ -21,7 +21,8 @@ namespace Telegram.Altayskaya97.Test.Core
 
             commandText = "/sturt";
             command = Commands.GetCommand(commandText);
-            Assert.Null(command);
+            Assert.Equal(Commands.Unknown.Name, command.Name);
+            Assert.True(command.IsValid);
         }
 
         [Fact]
@@ -65,24 +66,24 @@ namespace Telegram.Altayskaya97.Test.Core
         [Fact]
         public void SecretCommandTest()
         {
-            var commandText = "/notirt";
+            var commandText = "/unknown";
             var command = Commands.GetCommand(commandText);
-            Assert.Equal(Commands.Return.Name, command.Name);
+            Assert.Equal(Commands.Unknown.Name, command.Name);
             Assert.True(command.IsValid);
 
-            commandText = "/treton";
+            commandText = "/admin";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.Unknown.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/return";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.Unknown.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "simple text";
             command = Commands.GetCommand(commandText);
             Assert.Null(command);
-
-            commandText = "/ciphs";
-            command = Commands.GetCommand(commandText);
-            Assert.Equal(Commands.GrantAdmin.Name, command.Name);
-            Assert.True(command.IsValid);
-
-            commandText = "/ciphs";
-            command = Commands.GetCommand(commandText);
-            Assert.Equal(Commands.GrantAdmin.Name, command.Name);
-            Assert.True(command.IsValid);
         }
 
         [Fact]

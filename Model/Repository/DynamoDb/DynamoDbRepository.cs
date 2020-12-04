@@ -7,21 +7,25 @@ using Telegram.Altayskaya97.Model.Middleware;
 
 namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
 {
-    public class DynamoDbRepository<TEntity, TModel> : IRepository<TModel> where TModel: IObject
+    public class DynamoDbRepository<TEntity, TModel, TMapper> : IRepository<TModel> 
+        where TModel: IObject, new()
+        where TMapper: IModelEntityMapper<TModel, TEntity>, new()
     {
-        private readonly static BaseMapper<TModel, TEntity> _baseMapper = new BaseMapper<TModel, TEntity>();
+        private static TMapper _mapper;
         private readonly DynamoDBContext _dbContext;
 
         public DynamoDbRepository(DynamoDBContext dbContext)
         {
             _dbContext = dbContext;
+            _mapper = new TMapper();
+
         }
 
         public virtual async Task<ICollection<TModel>> GetCollection()
         {
             var conditions = new List<ScanCondition>();
             var list = await _dbContext.ScanAsync<TEntity>(conditions).GetRemainingAsync();
-            return _baseMapper.MapToModelList(list);
+            return _mapper.MapToModelList(list);
         }
 
         public virtual async Task ClearCollection()
@@ -36,13 +40,13 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
             if (entity == null)
                 return default;
 
-            TModel model = _baseMapper.MapToModel(entity);
+            TModel model = _mapper.MapToModel(entity);
             return model;
         }
 
         public virtual async Task Add(TModel item)
         {
-            TEntity entity = _baseMapper.MapToEntity(item);
+            TEntity entity = _mapper.MapToEntity(item);
             await _dbContext.SaveAsync(entity);
         }
 

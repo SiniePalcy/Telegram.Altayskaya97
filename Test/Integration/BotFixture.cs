@@ -34,6 +34,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 null, 
                 null, 
                 null,
+                null,
                 dateTimeServiceMock.Object,
                 false, 
                 false);

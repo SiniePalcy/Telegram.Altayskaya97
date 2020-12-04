@@ -1,10 +1,10 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Model.Interface;
+using Telegram.Altayskaya97.Model.Middleware;
+using Telegram.Altayskaya97.Model.Middleware.DynamoDb;
 using Telegram.Altayskaya97.Model.Repository.DynamoDb;
 
 namespace Telegram.Altayskaya97.Model.DbContext
@@ -19,13 +19,15 @@ namespace Telegram.Altayskaya97.Model.DbContext
         public IRepository<User> UserRepository { get; }
         public IRepository<Chat> ChatRepository { get; }
         public IRepository<UserMessage> UserMessageRepository { get; }
+        public IRepository<Password> PasswordRepository { get; }
         #endregion
         public DynamoDbContext(string connectionString)
         {
             Init(connectionString);
-            UserRepository = new DynamoDbRepository<Entity.DynamoDb.User, User>(_dbContext);
-            ChatRepository = new DynamoDbRepository<Entity.DynamoDb.Chat, Chat>(_dbContext);
-            UserMessageRepository = new DynamoDbRepository<Entity.DynamoDb.UserMessage, UserMessage>(_dbContext);
+            UserRepository = new DynamoDbRepository<Entity.DynamoDb.User, User, BaseMapper<User, Entity.DynamoDb.User>>(_dbContext);
+            ChatRepository = new DynamoDbRepository<Entity.DynamoDb.Chat, Chat, BaseMapper<Chat, Entity.DynamoDb.Chat>>(_dbContext);
+            UserMessageRepository = new DynamoDbRepository<Entity.DynamoDb.UserMessage, UserMessage, BaseMapper<UserMessage, Entity.DynamoDb.UserMessage>>(_dbContext);
+            PasswordRepository = new DynamoDbRepository<Entity.DynamoDb.Password, Password, PasswordMapper>(_dbContext);
         }
 
         public void Init(string connectionString)

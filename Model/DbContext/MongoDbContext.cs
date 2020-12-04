@@ -13,6 +13,8 @@ namespace Telegram.Altayskaya97.Model.DbContext
 
         public IRepository<UserMessage> UserMessageRepository => throw new NotImplementedException();
 
+        public IRepository<Password> PasswordRepository => throw new NotImplementedException();
+
         IRepository<User> IDbContext.UserRepository => throw new NotImplementedException();
 
         IRepository<Chat> IDbContext.ChatRepository => throw new NotImplementedException();

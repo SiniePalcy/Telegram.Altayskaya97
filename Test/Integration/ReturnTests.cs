@@ -85,7 +85,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             {
                 Chat = chat1,
                 From = user,
-                Text = "/notirt"
+                Text = "/password"
             };
 
             _fixture.MockBotClient.Reset();
@@ -98,7 +98,6 @@ namespace Telegram.Altayskaya97.Test.Integration
             _fixture.MockBotClient.Setup(b => b.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == chat4.Id),
                 It.IsAny<CancellationToken>())).ReturnsAsync(chat4);
 
-
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == user.Id)))
                 .ReturnsAsync(userRepo);
@@ -110,6 +109,12 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Setup(s => s.GetList())
                 .ReturnsAsync(chats);
             _bot.ChatService = chatServiceMock.Object;
+
+            var passwordServiceMock = new Mock<IPasswordService>();
+            passwordServiceMock.SetupSequence(s => s.IsMemberPass(message.Text))
+                .ReturnsAsync(false)
+                .ReturnsAsync(true);
+            _bot.PasswordService = passwordServiceMock.Object;
 
             var clientMock = _fixture.MockBotClient;
             clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat1.Id),
@@ -124,9 +129,11 @@ namespace Telegram.Altayskaya97.Test.Integration
             clientMock.Setup(s => s.GetChatMemberAsync(It.Is<ChatId>(_ => _.Identifier == chat4.Id),
                 It.Is<int>(_ => _ == user.Id), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(chatMember4);
+
+            _bot.RecieveMessage(message).Wait();
             _bot.RecieveMessage(message).Wait();
 
-            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
+            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Exactly(2));
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.GetList(), Times.Never);
             chatServiceMock.Verify(mock => mock.GetList(), Times.Once);

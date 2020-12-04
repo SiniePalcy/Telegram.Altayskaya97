@@ -1,16 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Altayskaya97.Model.DbContext;
 using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Model.Middleware;
 using Telegram.Altayskaya97.Service;
 using Telegram.Altayskaya97.Service.Interface;
 
@@ -37,6 +30,7 @@ namespace Telegram.Altayskaya97.Bot
                     services.AddTransient<IUserService, UserService>();
                     services.AddTransient<IChatService, ChatService>();
                     services.AddTransient<IUserMessageService, UserMessageService>();
+                    services.AddTransient<IPasswordService, PasswordService>();
                     services.AddTransient<IDateTimeService, DateTimeService>();
                 });
 
