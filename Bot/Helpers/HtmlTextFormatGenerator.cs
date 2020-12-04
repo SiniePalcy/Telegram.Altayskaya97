@@ -4,7 +4,7 @@ using System.Text;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.Altayskaya97.Bot.Helpers
 {
     public class HtmlTextFormatGenerator
     {
@@ -73,22 +73,22 @@ namespace Telegram.Altayskaya97.Bot
                     case '&':
                         var ampArray = "&amp;".ToCharArray();
                         destChars.AddRange(ampArray);
-                        entities.Where(e => e.Offset > i).ToList().ForEach(e => e.Offset += ampArray.Length - 1);
+                        UpdateEntities(entities, i, ampArray.Length - 1);
                         break;
                     case '<':
                         var ltArray = "&lt;".ToCharArray();
                         destChars.AddRange(ltArray);
-                        entities.Where(e => e.Offset > i).ToList().ForEach(e => e.Offset += ltArray.Length - 1);
+                        UpdateEntities(entities, i, ltArray.Length - 1);
                         break;
                     case '>':
                         var gtArray = "&gt;".ToCharArray();
                         destChars.AddRange(gtArray);
-                        entities.Where(e => e.Offset > i).ToList().ForEach(e => e.Offset += gtArray.Length - 1);
+                        UpdateEntities(entities, i, gtArray.Length - 1);
                         break;
                     case '\"':
                         var quotArray = "&quot;".ToCharArray();
                         destChars.AddRange(quotArray);
-                        entities.Where(e => e.Offset > i).ToList().ForEach(e => e.Offset += quotArray.Length - 1);
+                        UpdateEntities(entities, i, quotArray.Length - 1);
                         break;
                     default:
                         destChars.Add(ch);
@@ -102,13 +102,13 @@ namespace Telegram.Altayskaya97.Bot
         private int InsertTag(StringBuilder buffer, string tag, string text, int offset, int length)
         {
             var endTag = tag.Insert(1, "/");
-            
+
             string formatText = tag + text + endTag;
-            
+
             int position = offset + _shift;
             buffer.Remove(position, length);
             buffer.Insert(position, formatText);
-            
+
             _shift += tag.Length + endTag.Length;
 
             return position;
@@ -128,6 +128,16 @@ namespace Telegram.Altayskaya97.Bot
             _shift += tag.Length + endTag.Length;
 
             return position;
+        }
+
+        private void UpdateEntities(IEnumerable<MessageEntity> entities, int position, int shift)
+        {
+            if (entities == null || !entities.Any())
+                return;
+
+            var entitiesToUpdate = entities.Where(e => e.Offset > position);
+            foreach (var entity in entitiesToUpdate)
+                entity.Offset += shift;
         }
     }
 }
