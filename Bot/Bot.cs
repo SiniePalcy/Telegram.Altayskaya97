@@ -274,8 +274,8 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    await BotClient.DeleteMessageAsync(message.ChatId, message.TelegramId);
                     await UserMessageService.Delete(message.Id);
+                    await BotClient.DeleteMessageAsync(message.ChatId, message.TelegramId);
                 }
                 catch (Exception ex)
                 {
