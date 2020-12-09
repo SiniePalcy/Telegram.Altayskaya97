@@ -7,55 +7,60 @@ using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public class PostStateMachine : BaseStateMachine<PostState>
+    public class PostStateMachine : BaseStateMachine<PostUserState, PostState>
     {
-        public PostStateMachine(IChatService chatService) : base(chatService)  {}
+        private IChatService ChatService { get; }
+
+        public PostStateMachine(IChatService chatService)
+        {
+            this.ChatService = chatService;
+        }
 
         public async override Task<CommandResult> ExecuteStage(long id, Message message = null)
         {
-            if (!(GetProcessing(id) is PostUserState postProcessing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PostUserState userState))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
-            postProcessing.ExecuteNextStage();
+            userState.ExecuteNextStage();
 
-            CommandResult commandResult = null;
-            switch (postProcessing.CurrentState)
+            return userState.CurrentState switch
             {
-                case PostState.Start:
-                    commandResult = await StartState();
-                    break;
-                case PostState.ChatChoice:
-                    commandResult = await ChatChoiceState(id, message.Text);
-                    break;
-                case PostState.Message:
-                    commandResult = MessageState(id, message);
-                    break;
-                case PostState.PinChoice:
-                    commandResult = PinChoiceState(id, message.Text);
-                    break;
-                case PostState.Confirmation:
-                    commandResult = ConfirmationState(id, message.Text);
-                    break;
-            }
-            return commandResult;
+                PostState.Start => await StartState(),
+                PostState.ChatChoice => await ChatChoiceState(id, message.Text),
+                PostState.Message => MessageState(id, message),
+                PostState.PinChoice => PinChoiceState(id, message.Text),
+                PostState.Confirmation => ConfirmationState(id, message.Text),
+                _ => default
+            };
         }
 
-        protected override BaseUserState<PostState> CreateUserState(long userId) => new PostUserState();
+        protected async Task<CommandResult> StartState()
+        {
+            var chats = await ChatService.GetList();
+            var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
+                .Select(c => new KeyboardButton(c.Title)).ToList();
+            buttonsList.Add(new KeyboardButton(Messages.Cancel));
+
+            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
+            return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
+                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+        }
 
         private async Task<CommandResult> ChatChoiceState(long id, string chatTitle)
         {
             var chat = await ChatService.Get(chatTitle);
             if (chat == null)
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
             else
             {
-                var postProcessing = GetProcessing(id);
+                var postProcessing = GetUserStateFlow(id);
                 postProcessing.ChatId = chat.Id;
                 return new CommandResult($"Please, input a message", CommandResultType.TextMessage);
             }
@@ -63,7 +68,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult MessageState(long id, Message message)
         {
-            if (!(GetProcessing(id) is PostUserState postProcessing))
+            if (!(GetUserStateFlow(id) is PostUserState postProcessing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             postProcessing.Message = message;
@@ -80,7 +85,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult PinChoiceState(long id, string text)
         {
-            if (!(GetProcessing(id) is PostUserState processing))
+            if (!(GetUserStateFlow(id) is PostUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == Messages.Yes || text == Messages.No)
@@ -95,14 +100,14 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
             else
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
         private CommandResult ConfirmationState(long id, string messageText)
         {
-            if (!(GetProcessing(id) is PostUserState postProcessing))
+            if (!(GetUserStateFlow(id) is PostUserState postProcessing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             CommandResult commandResult;
@@ -117,7 +122,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             else
                 commandResult = new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
 
-            StopProcessing(id);
+            StopUserStateFlow(id);
 
             return commandResult;
         }

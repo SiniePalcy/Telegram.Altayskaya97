@@ -36,7 +36,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command BanAll => new Command(name: "/banall", 
             description: "Забанить всех пользователей", isAdmin: true);
         public static Command DeleteChat => new Command(name: "/deletechat", 
-            description: "Удалить чат", isAdmin: true);
+            template: "/deletechat chatname", description: "Удалить чат", isAdmin: true);
         public static Command DeleteUser => new Command(name: "/deleteuser", 
             template: "/deleteuser [username|id]", description: "Удалить пользователя", isAdmin: true);
         public static Command Clear => new Command(name: "/clear", 

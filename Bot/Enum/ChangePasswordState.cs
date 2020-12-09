@@ -1,10 +1,11 @@
 ﻿namespace Telegram.Altayskaya97.Bot.Enum
 {
-    public enum ClearState
+    public enum ChangePasswordState
     {
         None,
         Start,
-        ChatChoice,
+        PasswordTypeChoice,
+        NewPasswordInput,
         Confirmation,
         Stop
     }

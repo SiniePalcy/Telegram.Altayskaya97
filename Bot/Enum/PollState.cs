@@ -4,14 +4,14 @@
     { 
         None,
         Start, 
-        Stop, 
         ChatChoice, 
         AddQuestion, 
         AddCase,
         FinishCase,
+        MultiAnswersChoice,
         AnonymousChoice, 
-        MultiAnswersChoice, 
         PinChoice, 
-        Confirmation 
+        Confirmation,
+        Stop
     }
 }

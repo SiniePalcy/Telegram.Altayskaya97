@@ -47,5 +47,12 @@ namespace Telegram.Altayskaya97.Service
             var hash = HashMaker.GetHash(password);
             return bytes.Same(hash);
         }
+
+        public async Task<Password> GetByType(string chatType)
+        {
+            var list = await GetList();
+            var password = list.FirstOrDefault(c => c.ChatType == chatType);
+            return password;
+        }
     }
 }

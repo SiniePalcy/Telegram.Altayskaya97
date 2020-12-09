@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
@@ -9,48 +10,54 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public class ClearStateMachine : BaseStateMachine<ClearState>
+    public class ClearStateMachine : BaseStateMachine<ClearUserState, ClearState>
     {
+        private IChatService ChatService { get; }
 
-        public ClearStateMachine(IChatService chatService) : base(chatService) {}
-
+        public ClearStateMachine(IChatService chatService) 
+        {
+            this.ChatService = chatService;
+        }
+        
         public override async Task<CommandResult> ExecuteStage(long id, Message message = null)
         {
-            if (!(GetProcessing(id) is ClearUserState postProcessing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is ClearUserState userState))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
-            postProcessing.ExecuteNextStage();
+            userState.ExecuteNextStage();
 
-            CommandResult commandResult = null;
-            switch (postProcessing.CurrentState)
+            return userState.CurrentState switch
             {
-                case ClearState.Start:
-                    commandResult = await StartState();
-                    break;
-                case ClearState.ChatChoice:
-                    commandResult = await ChatChoiceState(id, message.Text);
-                    break;
-                case ClearState.Confirmation:
-                    commandResult = ConfirmationState(id, message.Text);
-                    break;
-            }
-            return commandResult;
+                ClearState.Start => await StartState(),
+                ClearState.ChatChoice => await ChatChoiceState(id, message.Text),
+                ClearState.Confirmation => ConfirmationState(id, message.Text),
+                _ => default
+            };
         }
 
-        protected override BaseUserState<ClearState> CreateUserState(long userId) => new ClearUserState();
+        protected async Task<CommandResult> StartState()
+        {
+            var chats = await ChatService.GetList();
+            var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
+                .Select(c => new KeyboardButton(c.Title)).ToList();
+            buttonsList.Add(new KeyboardButton(Messages.Cancel));
 
+            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
+            return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
+                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+        }
 
         private async Task<CommandResult> ChatChoiceState(long userId, string chatTitle)
         {
             var chat = await ChatService.Get(chatTitle);
             if (chat == null)
             {
-                StopProcessing(userId);
+                StopUserStateFlow(userId);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
 
-            var postProcessing = GetProcessing(userId);
-            postProcessing.ChatId = chat.Id;
+            var userState = GetUserStateFlow(userId);
+            userState.ChatId = chat.Id;
 
             KeyboardButton[] confirmButtons = new KeyboardButton[]
             {
@@ -63,17 +70,17 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult ConfirmationState(long userId, string messageText)
         {
-            if (!(GetProcessing(userId) is ClearUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(userId) is ClearUserState userState))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             CommandResult commandResult = messageText == Messages.OK ?
                 new CommandResult("Cleared", CommandResultType.Delete)
                 {
-                    Recievers = new long[] { processing.ChatId }
+                    Recievers = new long[] { userState.ChatId }
                 } :
                 new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
 
-            StopProcessing(userId);
+            StopUserStateFlow(userId);
 
             return commandResult;
         }

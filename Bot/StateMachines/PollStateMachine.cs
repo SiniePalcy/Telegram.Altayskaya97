@@ -7,65 +7,64 @@ using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public class PollStateMachine : BaseStateMachine<PollState>
+    public class PollStateMachine : BaseStateMachine<PollUserState, PollState>
     {
-        public PollStateMachine(IChatService chatService) : base(chatService) { }
+        private IChatService ChatService { get; }
+
+        public PollStateMachine(IChatService chatService)
+        {
+            this.ChatService = chatService;
+        }
 
         public override async Task<CommandResult> ExecuteStage(long id, Message message = null)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
+            if (!(GetUserStateFlow(id) is PollUserState userState))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
-            if (processing.CurrentState != PollState.AddCase)
-                processing.ExecuteNextStage();
+            if (userState.CurrentState != PollState.AddCase)
+                userState.ExecuteNextStage();
 
-            CommandResult commandResult = null;
-            switch (processing.CurrentState)
+            return userState.CurrentState switch
             {
-                case PollState.Start:
-                    commandResult = await StartState();
-                    break;
-                case PollState.ChatChoice:
-                    commandResult = await ChatChoiceState(id, message.Text);
-                    break;
-                case PollState.AddQuestion:
-                    commandResult = AddQuestionState(id, message.Text);
-                    break;
-                case PollState.AddCase:
-                    commandResult = AddCaseState(id, message.Text);
-                    break;
-                case PollState.MultiAnswersChoice:
-                    commandResult = MultiAnswersChoiceState(id, message.Text);
-                    break;
-                case PollState.AnonymousChoice:
-                    commandResult = AnonymousChoiceState(id, message.Text);
-                    break;
-                case PollState.PinChoice:
-                    commandResult = PinChoiceState(id, message.Text);
-                    break;
-                case PollState.Confirmation:
-                    commandResult = ConfirmationState(id, message.Text);
-                    break;
-            }
-            return commandResult;
+                PollState.Start => await StartState(),
+                PollState.ChatChoice => await ChatChoiceState(id, message.Text),
+                PollState.AddQuestion => AddQuestionState(id, message.Text),
+                PollState.AddCase => AddCaseState(id, message.Text),
+                PollState.MultiAnswersChoice => MultiAnswersChoiceState(id, message.Text),
+                PollState.AnonymousChoice => AnonymousChoiceState(id, message.Text),
+                PollState.PinChoice => PinChoiceState(id, message.Text),
+                PollState.Confirmation => ConfirmationState(id, message.Text),
+                _ => default
+            };
         }
 
-        protected override BaseUserState<PollState> CreateUserState(long userId) => new PollUserState();
+        protected async Task<CommandResult> StartState()
+        {
+            var chats = await ChatService.GetList();
+            var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
+                .Select(c => new KeyboardButton(c.Title)).ToList();
+            buttonsList.Add(new KeyboardButton(Messages.Cancel));
+
+            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
+            return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
+                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+        }
 
         private async Task<CommandResult> ChatChoiceState(long id, string chatTitle)
         {
             var chat = await ChatService.Get(chatTitle);
             if (chat == null)
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
             else
             {
-                var processing = GetProcessing(id);
+                var processing = GetUserStateFlow(id);
                 processing.ChatId = chat.Id;
                 return new CommandResult($"Please, input a question", CommandResultType.TextMessage);
             }
@@ -73,8 +72,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult AddQuestionState(long id, string question)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PollUserState processing))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             processing.Question = question;
             return new CommandResult("Please, input first case", CommandResultType.TextMessage);
@@ -82,8 +81,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult AddCaseState(long id, string nextCase)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PollUserState processing))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             if (nextCase == "/done")
             {
@@ -109,8 +108,8 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
         private CommandResult MultiAnswersChoiceState(long id, string text)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PollUserState processing))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == Messages.Yes || text == Messages.No)
             {
@@ -125,15 +124,15 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
             else
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
         private CommandResult AnonymousChoiceState(long id, string text)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PollUserState processing))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == Messages.Yes || text == Messages.No)
             {
@@ -148,14 +147,14 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
             else
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
         private CommandResult PinChoiceState(long id, string text)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
+            if (!(GetUserStateFlow(id) is PollUserState processing))
                 return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
 
             if (text == Messages.Yes || text == Messages.No)
@@ -170,15 +169,15 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
             else
             {
-                StopProcessing(id);
+                StopUserStateFlow(id);
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
         }
 
         private CommandResult ConfirmationState(long id, string messageText)
         {
-            if (!(GetProcessing(id) is PollUserState processing))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!(GetUserStateFlow(id) is PollUserState processing))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
             CommandResult commandResult;
 
@@ -197,7 +196,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             else
                 commandResult = new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
 
-            StopProcessing(id);
+            StopUserStateFlow(id);
 
             return commandResult;
         }

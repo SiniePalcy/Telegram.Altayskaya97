@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Core.Constant;
 
 namespace Telegram.Altayskaya97.Service
 {
@@ -25,7 +24,8 @@ namespace Telegram.Altayskaya97.Service
             new MenuAction(Commands.BanAll),
             new MenuAction(Commands.DeleteChat),
             new MenuAction(Commands.DeleteUser),
-            new MenuAction(Commands.Clear)
+            new MenuAction(Commands.Clear),
+            new MenuAction(Commands.ChangePassword)
         };
         public MenuService()
         {

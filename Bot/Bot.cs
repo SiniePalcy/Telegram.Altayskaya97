@@ -124,7 +124,8 @@ namespace Telegram.Altayskaya97.Bot
             {
                 new PostStateMachine(ChatService),
                 new PollStateMachine(ChatService),
-                new ClearStateMachine(ChatService)
+                new ClearStateMachine(ChatService),
+                new ChangePasswordStateMachine(PasswordService)
             };
 
             BotClient.OnMessage += Bot_OnMessage;
@@ -517,6 +518,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.DeleteChat ? await DeleteChat(command.Content) :
                    command == Commands.DeleteUser ? await DeleteUser(command.Content) :
                    command == Commands.InActive ? await InActiveUsers() :
+                   command == Commands.ChangePassword ? await ChangePassword(from) :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
@@ -535,6 +537,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.NoWalk ? await NoWalk(from) :
                    command == Commands.DeleteChat ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.DeleteUser ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.ChangePassword ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(from) :
                    new CommandResult(Messages.IncorrectCommand);
         }
@@ -655,6 +658,11 @@ namespace Telegram.Altayskaya97.Bot
                         break;
                     case CommandResultType.Delete:
                         result = await DeleteMessages(reciever, commandResult.Content.ToString());
+                        break;
+                    case CommandResultType.ChangePassword:
+                        result = await UpdatePassword(reciever, 
+                            commandResult.Properties["ChatType"].ToString(),
+                            commandResult.Properties["NewPassword"].ToString());
                         break;
                 }
 
@@ -791,19 +799,25 @@ namespace Telegram.Altayskaya97.Bot
         private async Task<CommandResult> Post(User user)
         {
             var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PostStateMachine));
-            return await postStateMachine.CreateProcessing(user.Id);
+            return await postStateMachine.CreateUserStateFlow(user.Id);
         }
 
         private async Task<CommandResult> Poll(User user)
         {
             var pollStateMachine = StateMachines.First(sm => sm.GetType() == typeof(PollStateMachine));
-            return await pollStateMachine.CreateProcessing(user.Id);
+            return await pollStateMachine.CreateUserStateFlow(user.Id);
         }
 
         private async Task<CommandResult> Clear(User user)
         {
             var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ClearStateMachine));
-            return await postStateMachine.CreateProcessing(user.Id);
+            return await postStateMachine.CreateUserStateFlow(user.Id);
+        }
+
+        private async Task<CommandResult> ChangePassword(User user)
+        {
+            var changePassStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ChangePasswordStateMachine));
+            return await changePassStateMachine.CreateUserStateFlow(user.Id);
         }
 
         public async Task<CommandResult> Ban(string userIdOrName)
@@ -989,7 +1003,7 @@ namespace Telegram.Altayskaya97.Bot
             return message;
         }
 
-        private async Task SendLinksList(long chatId, IEnumerable<Link> links, IReplyMarkup markUp = null)
+        private async Task SendLinksList(long chatId, IEnumerable<Link> links)
         {
             foreach(var link in links)
             {
@@ -1047,6 +1061,19 @@ namespace Telegram.Altayskaya97.Bot
             return await BotClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: message,
+                    parseMode: ParseMode.Html
+            );
+        }
+        
+        private async Task<Message> UpdatePassword(long chatId, string chatType, string newPassword)
+        {
+            var password = await PasswordService.GetByType(chatType);
+            password.Value = newPassword;
+            await PasswordService.Update(password);
+
+            return await BotClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: "Password updated",
                     parseMode: ParseMode.Html
             );
         }

@@ -1,36 +1,36 @@
-﻿using System.Collections.Concurrent;
-using System.Linq;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
-    public abstract class BaseStateMachine<State> : IStateMachine where State : System.Enum
+    public abstract class BaseStateMachine<TUserState, TState> : IStateMachine 
+        where TUserState : UserState<TState>
+        where TState: struct
     {
-        protected ConcurrentDictionary<long, BaseUserState<State>> Processings { get; set; }
-        public IChatService ChatService { get; protected set; }
-        public BaseStateMachine(IChatService chatService) 
+        protected ConcurrentDictionary<long, TUserState> UserStates { get; }
+
+        public BaseStateMachine()
         {
-            ChatService = chatService;
-            Processings = new ConcurrentDictionary<long, BaseUserState<State>>();
+            UserStates = new ConcurrentDictionary<long, TUserState>();
         }
 
-        public async Task<CommandResult> CreateProcessing(long userId)
+
+        public async Task<CommandResult> CreateUserStateFlow(long userId)
         {
-            if (!StopProcessing(userId))
-                return new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            if (!StopUserStateFlow(userId))
+                return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
-            CommandResult result = new CommandResult(Core.Constant.Messages.UnknownError, CommandResultType.TextMessage);
+            CommandResult result = new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
-            var postProcessing = CreateUserState(userId);
+            var processing = MakeUserStateInstance();
 
-            if (Processings.TryAdd(userId, postProcessing))
+            if (UserStates.TryAdd(userId, processing))
             {
                 result = await ExecuteStage(userId);
             }
@@ -38,40 +38,32 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             return result;
         }
 
-        protected BaseUserState<State> GetProcessing(long userId)
+        protected TUserState GetUserStateFlow(long userId)
         {
-            return Processings.TryGetValue(userId, out BaseUserState<State> postProcessing) ? postProcessing : null;
+            return UserStates.TryGetValue(userId, out TUserState userState) ? userState : null;
         }
 
         public bool IsExecuting(long userId)
         {
-            var processing = GetProcessing(userId);
+            var processing = GetUserStateFlow(userId);
             return processing != null && !processing.IsFinished;
         }
 
-        public bool StopProcessing(long userId)
+        public bool StopUserStateFlow(long userId)
         {
-            BaseUserState<State> postProcessing = GetProcessing(userId);
+            TUserState postProcessing = GetUserStateFlow(userId);
             if (postProcessing == null)
                 return true;
 
-            return Processings.TryRemove(userId, out _);
+            return UserStates.TryRemove(userId, out _);
         }
 
         public abstract Task<CommandResult> ExecuteStage(long userId, Message message = null);
 
-        protected abstract BaseUserState<State> CreateUserState(long userId);
-
-        protected async Task<CommandResult> StartState()
+        protected virtual TUserState MakeUserStateInstance()
         {
-            var chats = await ChatService.GetList();
-            var buttonsList = chats.Where(c => c.ChatType != Core.Model.ChatType.Private)
-                .Select(c => new KeyboardButton(c.Title)).ToList();
-            buttonsList.Add(new KeyboardButton(Messages.Cancel));
-
-            var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
-            return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+            var useState = (TUserState)Activator.CreateInstance(typeof(TUserState));
+            return useState;
         }
     }
 }

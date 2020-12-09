@@ -3,7 +3,17 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Telegram.Altayskaya97.Bot.Model
 {
-    public enum CommandResultType { None, TextMessage, Message, Links, Image, Delete, Pool }
+    public enum CommandResultType 
+    { 
+        None, 
+        TextMessage, 
+        Message, 
+        Links, 
+        Image, 
+        Delete, 
+        Pool,
+        ChangePassword
+    }
     public class CommandResult
     {
         public CommandResultType Type { get; set; } = CommandResultType.None;

@@ -4,10 +4,10 @@
     {
         None,
         Start, 
-        Stop, 
         ChatChoice, 
         Message, 
         PinChoice, 
-        Confirmation 
+        Confirmation,
+        Stop
     };
 }
