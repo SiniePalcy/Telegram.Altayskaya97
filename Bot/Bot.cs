@@ -632,46 +632,41 @@ namespace Telegram.Altayskaya97.Bot
 
             foreach (var reciever in recievers)
             {
-                Message result = null;
-                switch (commandResult.Type)
+                Message result = commandResult.Type switch
                 {
-                    case CommandResultType.TextMessage:
-                        result = await SendTextMessage(
-                            reciever, 
-                            commandResult.Content.ToString(), 
-                            commandResult.ReplyMarkup);
-                        break;
-                    case CommandResultType.Links:
-                        await SendLinksList(reciever, commandResult.Properties["Links"] as IEnumerable<Link>);
-                        break;
-                    case CommandResultType.Pool:
-                        result = await SendPollMessage(
+                    CommandResultType.TextMessage => await SendTextMessage(
                             reciever,
+                            commandResult.Content.ToString(),
+                            commandResult.ReplyMarkup),
+                    CommandResultType.Links => await SendLinksList(reciever, 
+                            commandResult.Properties["Links"] as IEnumerable<Link>),
+                    CommandResultType.Pool => await SendPollMessage(reciever,
                             commandResult.Content.ToString(),
                             commandResult.Properties["Cases"] as List<string>,
                             commandResult.Properties["IsMultiAnswers"] as bool?,
                             commandResult.Properties["IsAnonymous"] as bool?,
-                            commandResult.ReplyMarkup);
-                        break;
-                    case CommandResultType.Message:
-                        result = await SendMessageObject(reciever, commandResult);
-                        break;
-                    case CommandResultType.Delete:
-                        result = await DeleteMessages(reciever, commandResult.Content.ToString());
-                        break;
-                    case CommandResultType.ChangePassword:
-                        result = await UpdatePassword(reciever, 
+                            commandResult.ReplyMarkup),
+                    CommandResultType.Message => await SendMessageObject(reciever, 
+                            commandResult),
+                    CommandResultType.Delete =>  await DeleteMessages(reciever, 
+                            commandResult.Content.ToString()),
+                    CommandResultType.ChangePassword => await UpdatePassword(reciever,
                             commandResult.Properties["ChatType"].ToString(),
-                            commandResult.Properties["NewPassword"].ToString());
-                        break;
-                }
+                            commandResult.Properties["NewPassword"].ToString()),
+                    _ => default
+                };
 
-                if (commandResult.Properties.ContainsKey("IsPin") && result != null)
+                if (result == null)
+                    continue;
+
+                if (commandResult.Properties.ContainsKey("IsPin"))
                 {
                     var isPin = commandResult.Properties["IsPin"] as bool?;
                     if (isPin.HasValue && isPin.Value)
                         await BotClient.PinChatMessageAsync(reciever, result.MessageId);
                 }
+
+                await AddMessage(result);
             }
         }
         
@@ -963,9 +958,6 @@ namespace Telegram.Altayskaya97.Bot
             var message = await BotClient.SendTextMessageAsync(chatId: chat.Id, text: content, 
                 parseMode: ParseMode.Html, replyMarkup: markUp);
 
-            if (message != null)
-                await AddMessage(message);
-
             return message;
         }
 
@@ -976,9 +968,6 @@ namespace Telegram.Altayskaya97.Bot
 
             var chat = await BotClient.GetChatAsync(chatId);
             var message = await BotClient.SendPhotoAsync(chatId: chat.Id, photo: fileId, caption: caption, parseMode: ParseMode.Html, replyMarkup: markUp);
-
-            if (message != null)
-                await AddMessage(message);
 
             return message;
         }
@@ -997,18 +986,17 @@ namespace Telegram.Altayskaya97.Bot
                 isAnonymous: isAnonymous,
                 allowsMultipleAnswers: isMultiAnswers);
 
-            if (message != null)
-                await AddMessage(message);
-
             return message;
         }
 
-        private async Task SendLinksList(long chatId, IEnumerable<Link> links)
+        private async Task<Message> SendLinksList(long chatId, IEnumerable<Link> links)
         {
+            StringBuilder sb = new StringBuilder();
             foreach(var link in links)
             {
-                await SendTextMessage(chatId, $"{link.Description}{Environment.NewLine}{link.Url}");
+                sb.Append($"{link.Description}{Environment.NewLine}{link.Url}{Environment.NewLine}{Environment.NewLine}");
             }
+            return await SendTextMessage(chatId, sb.ToString());
         }
 
         private async Task<Message> SendMessageObject(long chatId, CommandResult commandResult)

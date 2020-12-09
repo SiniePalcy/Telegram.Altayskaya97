@@ -152,7 +152,8 @@ namespace Telegram.Altayskaya97.Test.Integration
                 It.IsAny<bool>(),
                 It.IsAny<int>(),
                 It.IsAny<IReplyMarkup>(),
-                It.IsAny<CancellationToken>()), Times.Exactly(2));
+                It.IsAny<CancellationToken>()), 
+                Times.Once);
         }
     }
 }

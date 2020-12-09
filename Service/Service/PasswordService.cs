@@ -7,6 +7,7 @@ using Telegram.Altayskaya97.Model.Interface;
 using Telegram.Altayskaya97.Service.Interface;
 using Telegram.Altayskaya97.Core.Helpers;
 using Telegram.Altayskaya97.Core.Extensions;
+using Telegram.Altayskaya97.Core.Constant;
 
 namespace Telegram.Altayskaya97.Service
 {
@@ -43,8 +44,8 @@ namespace Telegram.Altayskaya97.Service
             if (memberPass == null)
                 return false;
 
-            var bytes = Encoding.Unicode.GetBytes(memberPass.Value);
-            var hash = HashMaker.GetHash(password);
+            var bytes = GlobalEnvironment.Encoding.GetBytes(memberPass.Value);
+            var hash = HashMaker.ComputeHash(password, GlobalEnvironment.Encoding);
             return bytes.Same(hash);
         }
 

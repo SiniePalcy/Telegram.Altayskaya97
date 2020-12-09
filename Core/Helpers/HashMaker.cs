@@ -5,10 +5,10 @@ namespace Telegram.Altayskaya97.Core.Helpers
 {
     public static class HashMaker
     {
-        public static byte[] GetHash(string value)
+        public static byte[] ComputeHash(string value, Encoding encoding)
         {
             var encryptor = SHA256.Create();
-            var hash = encryptor.ComputeHash(Encoding.UTF8.GetBytes(value));
+            var hash = encryptor.ComputeHash(encoding.GetBytes(value));
             return hash;
         }
     }

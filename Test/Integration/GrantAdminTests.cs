@@ -156,16 +156,8 @@ namespace Telegram.Altayskaya97.Test.Integration
                  It.IsAny<bool>(),
                  It.IsAny<int>(),
                  It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Exactly(2));
-                        _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
-                 It.Is<ChatId>(_ => _.Identifier == chat.Id),
-                 It.IsAny<string>(),
-                 It.IsAny<ParseMode>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<bool>(),
-                 It.IsAny<int>(),
-                 It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Exactly(2));
+                 It.IsAny<CancellationToken>()), 
+                 Times.Once);
         }
 
         [Fact]
@@ -258,7 +250,8 @@ namespace Telegram.Altayskaya97.Test.Integration
                  It.IsAny<bool>(),
                  It.IsAny<int>(),
                  It.IsAny<IReplyMarkup>(),
-                 It.IsAny<CancellationToken>()), Times.Exactly(4));
+                 It.IsAny<CancellationToken>()), 
+                 Times.Exactly(2));
         }
 
     }
