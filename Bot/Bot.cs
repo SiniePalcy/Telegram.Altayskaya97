@@ -191,6 +191,11 @@ namespace Telegram.Altayskaya97.Bot
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
 
             var passwords = await PasswordService.GetList();
+#if DEBUG
+            foreach(var pass in passwords)
+                await PasswordService.Delete(pass.Id);
+            passwords = await PasswordService.GetList();
+#endif
             var maxId = !passwords.Any()? 0 :passwords.Select(p => p.Id).Max();
             if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Admin))
             {

@@ -43,6 +43,12 @@ namespace Telegram.Altayskaya97.Core.Model
             description: "Очистка чата", isAdmin: true);
         public static Command ChangePassword => new Command(name: "/changepass", 
             description: "Сменить пароль чата", isAdmin: true);
+        public static Command ChangeChatType => new Command(name: "/changechattype",
+            description: "Сменить тип чата", isAdmin: true);
+        public static Command ChangeUserType => new Command(name: "/changeusertype",
+            template: "changeusertype [Admin|Member|Coordinator] [id|username]",
+            description: "Сменить тип пользователя", isAdmin: true);
+
         public static Command GrantAdmin => new Command(name: "/grantadmin", 
             isAdmin: true, isShown: false, isSecret: true);
 

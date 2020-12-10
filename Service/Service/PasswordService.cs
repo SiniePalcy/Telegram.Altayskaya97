@@ -44,8 +44,8 @@ namespace Telegram.Altayskaya97.Service
             if (memberPass == null)
                 return false;
 
-            var bytes = GlobalEnvironment.Encoding.GetBytes(memberPass.Value);
-            var hash = HashMaker.ComputeHash(password, GlobalEnvironment.Encoding);
+            var bytes = HashHelper.GetBytes(memberPass.Value);
+            var hash = HashHelper.ComputeHash(password, GlobalEnvironment.Encoding);
             return bytes.Same(hash);
         }
 
