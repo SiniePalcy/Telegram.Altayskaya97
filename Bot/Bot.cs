@@ -525,7 +525,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.InActive ? await InActiveUsers() :
                    command == Commands.ChangePassword ? await ChangePassword(from) :
                    command == Commands.ChangeUserType ? await ChangeUserType(from, command.Text) :
-                   command == Commands.ChangeChatType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.ChangeChatType ? await ChangeChatType(from) :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
@@ -824,6 +824,11 @@ namespace Telegram.Altayskaya97.Bot
             return await changePassStateMachine.CreateUserStateFlow(user.Id);
         }
 
+        public async Task<CommandResult> ChangeChatType(User user)
+        {
+            return null; 
+        }
+
         public async Task<CommandResult> Ban(string userIdOrName)
         {
             UserRepo user = await UserService.GetByIdOrName(userIdOrName);
@@ -985,12 +990,6 @@ namespace Telegram.Altayskaya97.Bot
                 $"<b>{changedUserType.Name}</b>", CommandResultType.TextMessage);
         }
 
-
-        /*public async Task<CommandResult> ChangeChatType(string chatId, string )
-        {
-
-        }*/
-
         #endregion
 
         private async Task<Message> SendTextMessage(long chatId, string content, IReplyMarkup markUp = null)
@@ -1132,7 +1131,11 @@ namespace Telegram.Altayskaya97.Bot
                 TelegramId = message.MessageId,
                 ChatId = message.Chat.Id,
                 UserId = message.From.Id,
-                Text = message.Type == MessageType.Photo ? message.Caption : message.Text,
+                Text = message.Type == MessageType.Photo || 
+                       message.Type == MessageType.Video ||
+                       message.Type == MessageType.Document ? 
+                       message.Caption : 
+                       message.Text,
                 ChatType = chat.ChatType,
                 When = DateTimeService.GetDateTimeUTCNow()
             };
