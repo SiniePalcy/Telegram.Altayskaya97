@@ -125,7 +125,8 @@ namespace Telegram.Altayskaya97.Bot
                 new PostStateMachine(ChatService),
                 new PollStateMachine(ChatService),
                 new ClearStateMachine(ChatService),
-                new ChangePasswordStateMachine(PasswordService)
+                new ChangePasswordStateMachine(PasswordService),
+                new ChangeChatTypeStateMachine(ChatService)
             };
 
             BotClient.OnMessage += Bot_OnMessage;
@@ -662,6 +663,9 @@ namespace Telegram.Altayskaya97.Bot
                     CommandResultType.ChangePassword => await UpdatePassword(reciever,
                             commandResult.Properties["ChatType"].ToString(),
                             commandResult.Properties["NewPassword"].ToString()),
+                    CommandResultType.ChangeChatType => await UpdateChatType(reciever,
+                            (long) commandResult.Properties["ChatId"],
+                            commandResult.Properties["ChatType"].ToString()),
                     _ => default
                 };
 
@@ -826,7 +830,8 @@ namespace Telegram.Altayskaya97.Bot
 
         public async Task<CommandResult> ChangeChatType(User user)
         {
-            return null; 
+            var changePassStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ChangeChatTypeStateMachine));
+            return await changePassStateMachine.CreateUserStateFlow(user.Id);
         }
 
         public async Task<CommandResult> Ban(string userIdOrName)
@@ -1130,6 +1135,27 @@ namespace Telegram.Altayskaya97.Bot
             return await BotClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: "Password updated",
+                    parseMode: ParseMode.Html
+            );
+        }
+
+        private async Task<Message> UpdateChatType(long chatId, long chatToChangeId, string chatType)
+        {
+            var chatToChange = await ChatService.Get(chatToChangeId);
+            chatToChange.ChatType = chatType;
+            await ChatService.Update(chatToChange);
+
+            var allMessages = await UserMessageService.GetList();
+            var chatMessages = allMessages.Where(m => m.ChatId == chatToChangeId);
+            foreach(var chatMessage in chatMessages)
+            {
+                chatMessage.ChatType = chatType;
+                await UserMessageService.Update(chatMessage);
+            }
+
+            return await BotClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Chat type changed to {chatType}",
                     parseMode: ParseMode.Html
             );
         }
