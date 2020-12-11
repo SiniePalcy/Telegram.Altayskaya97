@@ -1015,6 +1015,28 @@ namespace Telegram.Altayskaya97.Bot
             return message;
         }
 
+        private async Task<Message> SendVideoMessage(long chatId, string fileId, string caption, IReplyMarkup markUp = null)
+        {
+            if (string.IsNullOrEmpty(fileId))
+                return null;
+
+            var chat = await BotClient.GetChatAsync(chatId);
+            var message = await BotClient.SendVideoAsync(chatId: chat.Id, video: fileId, caption: caption, parseMode: ParseMode.Html, replyMarkup: markUp);
+
+            return message;
+        }
+
+        private async Task<Message> SendDocumentMessage(long chatId, string fileId, string caption, IReplyMarkup markUp = null)
+        {
+            if (string.IsNullOrEmpty(fileId))
+                return null;
+
+            var chat = await BotClient.GetChatAsync(chatId);
+            var message = await BotClient.SendDocumentAsync(chatId: chat.Id, document: fileId, caption: caption, parseMode: ParseMode.Html, replyMarkup: markUp);
+
+            return message;
+        }
+
         private async Task<Message> SendPollMessage(long chatId, string content, IEnumerable<string> cases, bool? isMultiAnswers, bool? isAnonymous, IReplyMarkup markUp = null)
         {
             if (string.IsNullOrEmpty(content))
@@ -1049,11 +1071,14 @@ namespace Telegram.Altayskaya97.Bot
 
             var text = new HtmlTextFormatGenerator().GenerateHtmlText(message);
 
-            Message result = null;
-            if (message.Type == MessageType.Text)
-                result = await SendTextMessage(chatId, text, message.ReplyMarkup);
-            else if (message.Type == MessageType.Photo)
-                result = await SendImageMessage(chatId, message.Photo.First().FileId, text, message.ReplyMarkup);
+            Message result = message.Type switch
+            {
+                MessageType.Text => await SendTextMessage(chatId, text, message.ReplyMarkup),
+                MessageType.Photo => await SendImageMessage(chatId, message.Photo.First().FileId, text, message.ReplyMarkup),
+                MessageType.Video => await SendVideoMessage(chatId, message.Video.FileId, text, message.ReplyMarkup),
+                MessageType.Document => await SendDocumentMessage(chatId, message.Document.FileId, text, message.ReplyMarkup),
+                _ => default
+            };
 
             return result;
         }
