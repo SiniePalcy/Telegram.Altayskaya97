@@ -15,17 +15,19 @@ namespace Telegram.Altayskaya97.Service
 
         private readonly IList<MenuAction> _adminCommands = new List<MenuAction>
         {
-            new MenuAction(Commands.Post),
-            new MenuAction(Commands.Poll),
-            new MenuAction(Commands.UserList),
-            new MenuAction(Commands.ChatList),
-            new MenuAction(Commands.InActive),
             new MenuAction(Commands.Ban),
             new MenuAction(Commands.BanAll),
+            new MenuAction(Commands.ChangeChatType),
+            new MenuAction(Commands.ChangePassword),
+            new MenuAction(Commands.ChangeUserType),
+            new MenuAction(Commands.ChatList),
+            new MenuAction(Commands.Clear),
             new MenuAction(Commands.DeleteChat),
             new MenuAction(Commands.DeleteUser),
-            new MenuAction(Commands.Clear),
-            new MenuAction(Commands.ChangePassword)
+            new MenuAction(Commands.InActive),
+            new MenuAction(Commands.Poll),
+            new MenuAction(Commands.Post),
+            new MenuAction(Commands.UserList)
         };
         public MenuService()
         {

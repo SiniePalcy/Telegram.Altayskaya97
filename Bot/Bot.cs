@@ -524,6 +524,8 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.DeleteUser ? await DeleteUser(command.Content) :
                    command == Commands.InActive ? await InActiveUsers() :
                    command == Commands.ChangePassword ? await ChangePassword(from) :
+                   command == Commands.ChangeUserType ? await ChangeUserType(from, command.Text) :
+                   command == Commands.ChangeChatType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
@@ -543,6 +545,8 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.DeleteChat ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.DeleteUser ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.ChangePassword ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.ChangeUserType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.ChangeChatType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(from) :
                    new CommandResult(Messages.IncorrectCommand);
         }
@@ -951,6 +955,41 @@ namespace Telegram.Altayskaya97.Bot
 
             return new CommandResult($"User {user.Name} deleted", CommandResultType.TextMessage);
         }
+
+        public async Task<CommandResult> ChangeUserType(User from, string commandText)
+        {
+            var blocks = commandText.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(b => b.ToLower()).ToArray();
+
+            var fieldNames = typeof(UserType).GetFields(BindingFlags.Static | BindingFlags.Public)
+                .Where(f => f.Name != nameof(UserType.Bot));
+
+            var changedUserType = fieldNames.FirstOrDefault(ut => ut.Name.ToLower() == blocks[1]);
+            if (changedUserType == null)
+                return new CommandResult("Incorrect user type", CommandResultType.TextMessage);
+
+            var userIdOrName = commandText.Replace(blocks[0], "").Replace(blocks[1], "").Trim();
+            var user = await UserService.GetByIdOrName(userIdOrName);
+            if (user == null)
+                return new CommandResult(Messages.UserNotFound, CommandResultType.TextMessage);
+
+            var sender = await UserService.Get(from.Id);
+            if (sender.Type == UserType.Admin && 
+                blocks[1].ToLower() == UserType.Coordinator.ToLower())
+                return new CommandResult("Only coordinators can set Coordinator type", CommandResultType.TextMessage);
+
+            user.Type = changedUserType.Name;
+            await UserService.Update(user);
+
+            return new CommandResult($"Changed type of user <b>{user.Name}</b> to " +
+                $"<b>{changedUserType.Name}</b>", CommandResultType.TextMessage);
+        }
+
+
+        /*public async Task<CommandResult> ChangeChatType(string chatId, string )
+        {
+
+        }*/
 
         #endregion
 

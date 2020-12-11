@@ -123,5 +123,29 @@ namespace Telegram.Altayskaya97.Test.Core
             Assert.Equal(Commands.DeleteUser.Name, command.Name);
             Assert.True(command.IsValid);
         }
+
+        [Fact]
+        public void ChangeUserTypeTest()
+        {
+            var commandText = "/changeusertype";
+            var command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.ChangeUserType.Name, command.Name);
+            Assert.False(command.IsValid);
+
+            commandText = "/changeusertype admin";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.ChangeUserType.Name, command.Name);
+            Assert.False(command.IsValid);
+
+            commandText = "/changeusertype admin admin";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.ChangeUserType.Name, command.Name);
+            Assert.True(command.IsValid);
+
+            commandText = "/changeusertype admin admin admin";
+            command = Commands.GetCommand(commandText);
+            Assert.Equal(Commands.ChangeUserType.Name, command.Name);
+            Assert.True(command.IsValid);
+        }
     }
 }

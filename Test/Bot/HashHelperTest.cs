@@ -12,13 +12,6 @@ namespace Telegram.Altayskaya97.Test.Bot
 {
     public class HashHelperTest
     {
-        private readonly ITestOutputHelper output;
-
-        public HashHelperTest(ITestOutputHelper outputHelper)
-        {
-            output = outputHelper;
-        }
-
         [Theory()]
         [InlineData("/12345")]
         [InlineData("/cpihsc")]
@@ -43,7 +36,5 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             Assert.True(hash.Same(hashBytes));
         }
-
-        
     }
 }
