@@ -69,7 +69,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         Core.Model.ChatType.Admin;
             userState.ChatType = newChatState;
 
-            return new CommandResult($"Confirm changing to <b>{newChatState}</b>", 
+            return new CommandResult($"Confirm changing to <b>{newChatState}</b>?", 
                 CommandResultType.TextMessage,
                 new ReplyKeyboardMarkup(confirmButtons, true, true));
         }
