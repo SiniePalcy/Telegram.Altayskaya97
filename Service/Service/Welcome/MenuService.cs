@@ -27,6 +27,7 @@ namespace Telegram.Altayskaya97.Service
             new MenuAction(Commands.InActive),
             new MenuAction(Commands.Poll),
             new MenuAction(Commands.Post),
+            new MenuAction(Commands.UnpinMessage),
             new MenuAction(Commands.UserList)
         };
         public MenuService()

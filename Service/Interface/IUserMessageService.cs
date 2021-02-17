@@ -6,5 +6,8 @@ namespace Telegram.Altayskaya97.Service.Interface
 {
     public interface IUserMessageService : IRepositoryService<UserMessage>
     {
+        Task Pin(long id);
+        Task UnPin(long id);
+        Task<UserMessage> Get(long chatId, long telegramId);
     }
 }
