@@ -25,5 +25,7 @@ namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
         public string Text { get; set; }
         [DynamoDBProperty]
         public DateTime When { get; set; }
+        [DynamoDBProperty]
+        public bool? Pinned { get; set; }
     }
 }

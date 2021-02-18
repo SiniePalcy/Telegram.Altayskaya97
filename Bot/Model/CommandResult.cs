@@ -13,7 +13,8 @@ namespace Telegram.Altayskaya97.Bot.Model
         Delete, 
         Pool,
         ChangePassword,
-        ChangeChatType
+        ChangeChatType,
+        Unpin
     }
     public class CommandResult
     {

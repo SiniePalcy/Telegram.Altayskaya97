@@ -49,6 +49,9 @@ namespace Telegram.Altayskaya97.Core.Model
             template: "/changeusertype [Admin|Member|Coordinator] [id|username]",
             description: "Сменить тип пользователя", isAdmin: true);
 
+        public static Command UnpinMessage => new Command(name: "/unpin",
+            description: "Открепить сообщения", isAdmin: true);
+
         public static Command GrantAdmin => new Command(name: "/grantadmin", 
             isAdmin: true, isShown: false, isSecret: true);
 

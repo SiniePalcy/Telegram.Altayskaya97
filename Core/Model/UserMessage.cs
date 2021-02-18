@@ -12,5 +12,6 @@ namespace Telegram.Altayskaya97.Core.Model
         public string ChatType { get; set; }
         public string Text { get; set; }
         public DateTime When { get; set; }
+        public bool? Pinned { get; set; }
     }
 }

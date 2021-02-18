@@ -126,14 +126,37 @@ namespace Telegram.Altayskaya97.Bot
                 new PollStateMachine(ChatService),
                 new ClearStateMachine(ChatService),
                 new ChangePasswordStateMachine(PasswordService),
-                new ChangeChatTypeStateMachine(ChatService)
+                new ChangeChatTypeStateMachine(ChatService),
+                new UnpinMessageStateMachine(ChatService, UserMessageService)
             };
 
-            BotClient.OnMessage += Bot_OnMessage;
             BotClient.OnCallbackQuery += BotClient_OnCallbackQuery;
             BotClient.OnInlineQuery += BotClient_OnInlineQuery;
             BotClient.OnInlineResultChosen += BotClient_OnInlineResultChosen;
+            
+            BotClient.OnMessage += Bot_OnMessage;
+            BotClient.OnMessageEdited += BotClient_OnMessageEdited;
+            BotClient.OnUpdate += BotClient_OnUpdate;
             BotClient.StartReceiving();
+        }
+
+        private void BotClient_OnUpdate(object sender, UpdateEventArgs e)
+        {
+           /* if (e == null)
+            {
+                throw new NotImplementedException();
+            }
+           */
+        }
+
+        private void BotClient_OnMessageEdited(object sender, MessageEventArgs e)
+        {
+            /*
+            if (e == null)
+            {
+                throw new NotImplementedException();
+            }
+            */
         }
 
         private void BotClient_OnInlineResultChosen(object sender, ChosenInlineResultEventArgs e)
@@ -513,7 +536,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.Start ? await Start(from) :
                    command == Commands.Post ? await Post(from) :
                    command == Commands.Poll ? await Poll(from) :
-                   command == Commands.Clear ? await Clear(from) :
+                   command == Commands.Clear ? await ClearInteractive(from) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(from) :
                    command == Commands.ChatList ? await ChatList() :
                    command == Commands.UserList ? await UserList() :
@@ -524,9 +547,10 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.DeleteChat ? await DeleteChat(command.Content) :
                    command == Commands.DeleteUser ? await DeleteUser(command.Content) :
                    command == Commands.InActive ? await InActiveUsers() :
-                   command == Commands.ChangePassword ? await ChangePassword(from) :
+                   command == Commands.ChangePassword ? await ChangePasswordInteractive(from) :
                    command == Commands.ChangeUserType ? await ChangeUserType(from, command.Text) :
-                   command == Commands.ChangeChatType ? await ChangeChatType(from) :
+                   command == Commands.ChangeChatType ? await ChangeChatTypeInteractive(from) :
+                   command == Commands.UnpinMessage ? await UnpinMessageInteractive(from) :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
@@ -548,6 +572,7 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.ChangePassword ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.ChangeUserType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.ChangeChatType ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
+                   command == Commands.UnpinMessage ? new CommandResult(Messages.NoPermissions, CommandResultType.TextMessage) :
                    command == Commands.GrantAdmin ? await GrantAdminPermissions(from) :
                    new CommandResult(Messages.IncorrectCommand);
         }
@@ -572,6 +597,15 @@ namespace Telegram.Altayskaya97.Bot
 
             if (chatMessage.Type == MessageType.MigratedFromGroup)
             {
+                return;
+            }
+
+            if (chatMessage.Type == MessageType.MessagePinned)
+            {
+
+                var msg = await UserMessageService.Get(chatMessage.Chat.Id, 
+                    chatMessage.PinnedMessage.MessageId);
+                await UserMessageService.Pin(msg.Id);
                 return;
             }
 
@@ -666,6 +700,9 @@ namespace Telegram.Altayskaya97.Bot
                     CommandResultType.ChangeChatType => await UpdateChatType(reciever,
                             (long) commandResult.Properties["ChatId"],
                             commandResult.Properties["ChatType"].ToString()),
+                    CommandResultType.Unpin => await UnpinMessage(reciever,
+                            (long)commandResult.Properties["ChatId"],
+                            (long)commandResult.Properties["MessageId"]),
                     _ => default
                 };
 
@@ -816,21 +853,27 @@ namespace Telegram.Altayskaya97.Bot
             return await pollStateMachine.CreateUserStateFlow(user.Id);
         }
 
-        private async Task<CommandResult> Clear(User user)
+        private async Task<CommandResult> ClearInteractive(User user)
         {
             var postStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ClearStateMachine));
             return await postStateMachine.CreateUserStateFlow(user.Id);
         }
 
-        private async Task<CommandResult> ChangePassword(User user)
+        private async Task<CommandResult> ChangePasswordInteractive(User user)
         {
             var changePassStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ChangePasswordStateMachine));
             return await changePassStateMachine.CreateUserStateFlow(user.Id);
         }
 
-        public async Task<CommandResult> ChangeChatType(User user)
+        public async Task<CommandResult> ChangeChatTypeInteractive(User user)
         {
             var changePassStateMachine = StateMachines.First(sm => sm.GetType() == typeof(ChangeChatTypeStateMachine));
+            return await changePassStateMachine.CreateUserStateFlow(user.Id);
+        }
+
+        public async Task<CommandResult> UnpinMessageInteractive(User user)
+        {
+            var changePassStateMachine = StateMachines.First(sm => sm.GetType() == typeof(UnpinMessageStateMachine));
             return await changePassStateMachine.CreateUserStateFlow(user.Id);
         }
 
@@ -1158,6 +1201,45 @@ namespace Telegram.Altayskaya97.Bot
                     text: $"Chat type changed to {chatType}",
                     parseMode: ParseMode.Html
             );
+        }
+
+        private async Task<Message> UnpinMessage(long chatId, long unpinChatId, long unpinMessageId)
+        {
+            var chatToChange = await ChatService.Get(unpinChatId);
+            Message message;
+            try
+            {
+                var messagesList = await UserMessageService.GetList();
+                
+                var pinnedMessages = messagesList.Where(m => m.ChatId == unpinChatId &&
+                    m.Pinned != null && m.Pinned.HasValue && m.Pinned.Value).
+                    OrderBy(m => m.When).ToList();
+                var msg = pinnedMessages.First(c => c.Id == unpinMessageId);
+                
+                await UserMessageService.UnPin(msg.Id);
+                await BotClient.UnpinChatMessageAsync(unpinChatId);
+                pinnedMessages.Remove(msg);
+
+                foreach (var pinnedMsg in pinnedMessages)
+                {
+                    await BotClient.PinChatMessageAsync(unpinChatId, pinnedMsg.TelegramId);
+                }
+
+                message = await BotClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Messages unpinned",
+                    parseMode: ParseMode.Html);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogWarning($"Cannot unpin messages from chat '{chatToChange.Title}': {ex.Message}");
+                message = await BotClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Something got wrong",
+                    parseMode: ParseMode.Html);
+            }
+            
+            return message;
         }
 
         private async Task AddGroup(Chat chat)
