@@ -367,6 +367,10 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task UpdateNoWalk()
         {
+            var now = DateTimeService.GetDateTimeNow();
+            if (!BanDays.Contains(now.DayOfWeek))
+                return;
+
             if (IsNextDay())
             {
                 var userList = await UserService.GetList();
@@ -382,10 +386,6 @@ namespace Telegram.Altayskaya97.Bot
                 _allKicked = false;
                 return;
             }
-
-            var now = DateTimeService.GetDateTimeNow();
-            if (!BanDays.Contains(now.DayOfWeek))
-                return;
 
             if (now.TimeOfDay > WalkingTime && !_allKicked)
             {
