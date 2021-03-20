@@ -573,8 +573,6 @@ namespace Telegram.Altayskaya97.Test.Integration
             chatServiceMock.Verify(mock => mock.Update(
                 It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Once);
             userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Exactly(4));
-            userMessageServiceMock.Verify(mock => mock.Update(It.Is<UserMessage>(_ => _.ChatId == chat3.Id)), 
-                Times.Exactly(2));
             userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
             userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
             userServiceMock.Verify(mock => mock.IsAdmin(It.IsAny<long>()), Times.Once);

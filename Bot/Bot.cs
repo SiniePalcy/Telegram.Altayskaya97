@@ -296,12 +296,9 @@ namespace Telegram.Altayskaya97.Bot
             {
                 var msgDateTime = message.When.ToUniversalTime();
                 var timePassed = dtNow - msgDateTime;
-                var hoursPassed = timePassed.TotalHours;
                 var minutePassed = timePassed.TotalMinutes;
                 if ((string.IsNullOrEmpty(message.ChatType) || message.ChatType == Core.Model.ChatType.Private) 
                     && minutePassed >= PeriodClearPrivateChatMin)
-                    messagesForDelete.Add(message);
-                else if (hoursPassed >= PeriodClearGroupChatHours)
                     messagesForDelete.Add(message);
             }
 
@@ -608,10 +605,6 @@ namespace Telegram.Altayskaya97.Bot
 
             if (chatMessage.Type == MessageType.MessagePinned)
             {
-
-                var msg = await UserMessageService.Get(chatMessage.Chat.Id, 
-                    chatMessage.PinnedMessage.MessageId);
-                await UserMessageService.Pin(msg.Id);
                 return;
             }
 
@@ -634,13 +627,11 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Message msg = await SendWelcomeGroupMessage(chatMessage.Chat, chatMember.GetUserName(), chatRepo.ChatType);
                     await EnsureUserSaved(chatMember, chatRepo.ChatType);
-                    await AddMessage(msg, chatRepo);
                 }
                 return;
             }
 
             await EnsureUserSaved(sender, chatRepo.ChatType);
-            await AddMessage(chatMessage, chatRepo);
 
             string userName = sender.GetUserName();
             _logger.LogInformation($"Recieved message from {userName} in chat id={chat?.Id}, title={chat?.Title}, type={chat?.Type}");
@@ -1194,14 +1185,6 @@ namespace Telegram.Altayskaya97.Bot
             chatToChange.ChatType = chatType;
             await ChatService.Update(chatToChange);
 
-            var allMessages = await UserMessageService.GetList();
-            var chatMessages = allMessages.Where(m => m.ChatId == chatToChangeId);
-            foreach(var chatMessage in chatMessages)
-            {
-                chatMessage.ChatType = chatType;
-                await UserMessageService.Update(chatMessage);
-            }
-
             return await BotClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: $"Chat type changed to {chatType}",
@@ -1327,14 +1310,6 @@ namespace Telegram.Altayskaya97.Bot
             var chatToModify = await ChatService.Get(oldId);
             chatToModify.Id = newId;
             await ChatService.Update(oldId, chatToModify);
-
-            var messages = await UserMessageService.GetList();
-            var msgToModify = messages.Where(m => m.ChatId == oldId);
-            foreach (var msg in msgToModify)
-            {
-                msg.ChatId = newId;
-                await UserMessageService.Update(msg.Id, msg);
-            }
         }
 
         private bool IsNextDay()
