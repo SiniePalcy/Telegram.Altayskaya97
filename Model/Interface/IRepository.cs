@@ -7,6 +7,7 @@ namespace Telegram.Altayskaya97.Model.Interface
     public interface IRepository<T> where T:IObject
     {
         Task<ICollection<T>> GetCollection();
+        Task PushCollection(ICollection<T> collection);
         Task ClearCollection();
         Task<T> Get(long id);
         Task Add(T item);

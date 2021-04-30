@@ -45,5 +45,15 @@ namespace Telegram.Altayskaya97.Service
         {
             await Update(updatedItem.Id, updatedItem);
         }
+
+        public virtual async Task Clear()
+        {
+            await _repo.ClearCollection();
+        }
+
+        public virtual async Task Add(ICollection<T> items)
+        {
+            await _repo.PushCollection(items);
+        }
     }
 }

@@ -7,7 +7,7 @@ using Telegram.Altayskaya97.Model.Middleware;
 
 namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
 {
-    public class DynamoDbRepository<TEntity, TModel, TMapper> : IRepository<TModel> 
+    public class DynamoDbRepository<TEntity, TModel, TMapper> : IRepository<TModel>
         where TModel: IObject, new()
         where TMapper: IModelEntityMapper<TModel, TEntity>, new()
     {
@@ -32,6 +32,12 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
         {
             var collection = await GetCollection();
             var result = Parallel.ForEach(collection, async item => await Remove(item.Id));
+        }
+
+        public virtual async Task PushCollection(ICollection<TModel> collection)
+        {
+            foreach (var item in collection)
+                await Add(item);
         }
 
         public virtual async Task<TModel> Get(long id)

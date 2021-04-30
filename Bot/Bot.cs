@@ -1105,19 +1105,33 @@ namespace Telegram.Altayskaya97.Bot
             Array.Sort(backupFilenames);
 
             string fileName = backupFilenames.Last();
+            var shortName = Path.GetFileName(fileName);
             var formatter = new BinaryFormatter();
             try
             {
+                _logger.LogInformation($"Starting restoring backup from '{fileName}'");
                 using var fs = new FileStream(fileName, FileMode.Open);
-                var backup = (BackupContaner) formatter.Deserialize(fs);
-                _logger.LogInformation($"Backup '{fileName}' successfull restored");
+                var contaner = (BackupContaner) formatter.Deserialize(fs);
+                await UserMessageService.Clear();
+                _logger.LogInformation($"Backup UserMessages cleared");
+                await UserService.Clear();
+                _logger.LogInformation($"Backup Users cleared");
+                await ChatService.Clear();
+                _logger.LogInformation($"Backup Chats cleared");
+                await ChatService.Add(contaner.Chats);
+                _logger.LogInformation($"Backup Chats restored");
+                await UserService.Add(contaner.Users);
+                _logger.LogInformation($"Backup Users restored");
+                await UserMessageService.Add(contaner.UserMessages);
+                _logger.LogInformation($"Backup UserMessages restored");
+                _logger.LogInformation($"Backup '{shortName}' successfull restored");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return new CommandResult($"Can't restore backup '{fileName}'", CommandResultType.TextMessage);
+                return new CommandResult($"Can't restore backup '{shortName}'", CommandResultType.TextMessage);
             }
-            return new CommandResult($"Backup restored <b>{fileName}</b>", CommandResultType.TextMessage);
+            return new CommandResult($"Backup restored <b>{shortName}</b>", CommandResultType.TextMessage);
         }
 
 
