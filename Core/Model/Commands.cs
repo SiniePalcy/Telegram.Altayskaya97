@@ -48,10 +48,12 @@ namespace Telegram.Altayskaya97.Core.Model
         public static Command ChangeUserType => new Command(name: "/changeusertype",
             template: "/changeusertype [Admin|Member|Coordinator] [id|username]",
             description: "Сменить тип пользователя", isAdmin: true);
-
         public static Command UnpinMessage => new Command(name: "/unpin",
             description: "Открепить сообщения", isAdmin: true);
-
+        public static Command Backup => new Command(name: "/backup",
+            isShown: false, isAdmin: true);
+        public static Command Restore => new Command(name: "/restore",
+            isShown: false, isAdmin: true);
         public static Command GrantAdmin => new Command(name: "/grantadmin", 
             isAdmin: true, isShown: false, isSecret: true);
 
@@ -67,7 +69,7 @@ namespace Telegram.Altayskaya97.Core.Model
             string commandName = ExtractCommandName(commandText);
             if (!IsCommand(commandName))
                 return null;
-
+           
             var props = typeof(Commands).GetProperties(BindingFlags.Public | BindingFlags.Static);
             var commands = props.Where(p => p.PropertyType == typeof(Command)).Select(p => (Command) p.GetValue(null));
 

@@ -11,6 +11,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public const string Bot = "Bot";
     };
 
+    [Serializable]
     public class User : IObject
     {
         public virtual long Id { get; set; }

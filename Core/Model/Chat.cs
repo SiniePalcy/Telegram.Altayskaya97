@@ -1,4 +1,5 @@
-﻿using Telegram.Altayskaya97.Core.Interface;
+﻿using System;
+using Telegram.Altayskaya97.Core.Interface;
 
 namespace Telegram.Altayskaya97.Core.Model
 {
@@ -9,6 +10,7 @@ namespace Telegram.Altayskaya97.Core.Model
         public const string Public = "Public";
     };
 
+    [Serializable]
     public class Chat : IObject
     {
         public long Id { get; set; }

@@ -27,6 +27,9 @@ using Telegram.Bot.Exceptions;
 using System.Reflection;
 using Telegram.Altayskaya97.Bot.StateMachines;
 using Telegram.Altayskaya97.Bot.Interface;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Telegram.Altayskaya97.Bot
 {
@@ -115,8 +118,7 @@ namespace Telegram.Altayskaya97.Bot
             var banDaysStringList = banDaysString.Split(',', StringSplitOptions.RemoveEmptyEntries);
             foreach(var banDay in banDaysStringList)
             {
-                DayOfWeek banDayOfWeek;
-                if (System.Enum.TryParse<DayOfWeek>(banDay.Trim(), true, out banDayOfWeek))
+                if (System.Enum.TryParse<DayOfWeek>(banDay.Trim(), true, out DayOfWeek banDayOfWeek))
                     BanDays.Add(banDayOfWeek);
             }
         }
@@ -554,6 +556,8 @@ namespace Telegram.Altayskaya97.Bot
                    command == Commands.ChangeUserType ? await ChangeUserType(from, command.Text) :
                    command == Commands.ChangeChatType ? await ChangeChatTypeInteractive(from) :
                    command == Commands.UnpinMessage ? await UnpinMessageInteractive(from) :
+                   command == Commands.Backup ? await Backup() :
+                   command == Commands.Restore ? await Restore() :
                    new CommandResult(Messages.IncorrectCommand, CommandResultType.TextMessage);
         }
 
@@ -1034,6 +1038,88 @@ namespace Telegram.Altayskaya97.Bot
             return new CommandResult($"Changed type of user <b>{user.Name}</b> to " +
                 $"<b>{changedUserType.Name}</b>", CommandResultType.TextMessage);
         }
+
+        public async Task<CommandResult> Backup()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string directory = Path.Combine(Path.GetDirectoryName(assembly.Location), "backups");
+            try
+            {
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogDebug(ex.ToString());
+                return new CommandResult($"Can't create directory {directory}", CommandResultType.TextMessage);
+            }
+
+            var formatter = new BinaryFormatter();
+            string fileName = $"Backup.{DateTimeService.GetDateTimeUTCNow().ToString("yyyyMMdd.HHmmss")}";
+            try
+            {
+                var backupContaner = new BackupContaner();
+                backupContaner.Users = (await UserService.GetList()).ToList();
+                backupContaner.Chats = (await ChatService.GetList()).ToList();
+                backupContaner.UserMessages = (await UserMessageService.GetList()).ToList();
+
+                using var fs = new FileStream(Path.Combine(directory, fileName), FileMode.Create);
+                formatter.Serialize(fs, backupContaner);
+                _logger.LogInformation($"Backup '{fileName}' successfully created in '{directory}'");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return new CommandResult($"Can't make backup '{fileName}' in '{directory}'", CommandResultType.TextMessage);
+            }
+            return new CommandResult($"Backup created <b>{fileName}</b>", CommandResultType.TextMessage);
+        }
+
+        public async Task<CommandResult> Restore()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string directory = Path.Combine(Path.GetDirectoryName(assembly.Location), "backups");
+            string[] backupFilenames = null;
+            try
+            {
+                if (!Directory.Exists(directory))
+                {
+                    _logger.LogWarning($"Directory {directory} doesn't exist");
+                    return new CommandResult(null);
+                }
+                backupFilenames = Directory.GetFiles(directory, "Backup.*");
+                if (!backupFilenames.Any())
+                {
+                    _logger.LogWarning($"Backups not found in directory {directory}");
+                    return new CommandResult(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex.ToString());
+                return new CommandResult($"Something got wrong :(", CommandResultType.TextMessage);
+            }
+
+            Array.Sort(backupFilenames);
+
+            string fileName = backupFilenames.Last();
+            var formatter = new BinaryFormatter();
+            try
+            {
+                using var fs = new FileStream(fileName, FileMode.Open);
+                var backup = (BackupContaner) formatter.Deserialize(fs);
+                _logger.LogInformation($"Backup '{fileName}' successfull restored");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return new CommandResult($"Can't restore backup '{fileName}'", CommandResultType.TextMessage);
+            }
+            return new CommandResult($"Backup restored <b>{fileName}</b>", CommandResultType.TextMessage);
+        }
+
 
         #endregion
 

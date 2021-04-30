@@ -3,6 +3,7 @@ using Telegram.Altayskaya97.Core.Interface;
 
 namespace Telegram.Altayskaya97.Core.Model
 {
+    [Serializable]
     public class UserMessage : IObject
     {
         public long Id { get; set; }
