@@ -20,7 +20,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task<User> GetByName(string userName)
         {
             var users = await _repo.GetCollection();
-            return users.FirstOrDefault(u => u.Name.ToLower() == userName.ToLower().Trim());
+            return users.FirstOrDefault(u => u.Name?.ToLower() == userName.ToLower().Trim());
         }
 
         public async Task<bool> PromoteUserAdmin(long userId)
