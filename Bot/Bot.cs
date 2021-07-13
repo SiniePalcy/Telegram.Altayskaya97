@@ -174,6 +174,14 @@ namespace Telegram.Altayskaya97.Bot
 
         private async Task InitDb()
         {
+            var userList = await UserService.GetList();
+            if (!userList.Any())
+            {
+
+                return;
+            }
+                
+
             var chatList = await ChatService.GetList();
             if (!chatList.Any())
                 return;
