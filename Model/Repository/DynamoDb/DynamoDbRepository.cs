@@ -18,7 +18,7 @@ namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
         {
             _dbContext = dbContext;
             _mapper = new TMapper();
-
+            // code from god
         }
 
         public virtual async Task<ICollection<TModel>> GetCollection()
