@@ -981,7 +981,7 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    await BotClient.KickChatMemberAsync(chatId: chatRepo.Id, userId: (int)user.Id, revokeMessages: true);
+                    await BotClient.KickChatMemberAsync(chatRepo.Id, (int)user.Id);
                     _logger.LogInformation($"User '{user.Name}' deleted from chat '{chatRepo.Title}'");
                 }
                 catch (ApiRequestException unpEx) when (unpEx.Message == "Bad Request: USER_NOT_PARTICIPANT")
