@@ -144,17 +144,7 @@ namespace Telegram.Altayskaya97.Bot
             
             BotClient.OnMessage += Bot_OnMessage;
             BotClient.OnMessageEdited += BotClient_OnMessageEdited;
-            BotClient.OnUpdate += BotClient_OnUpdate;
             BotClient.StartReceiving();
-        }
-
-        private void BotClient_OnUpdate(object sender, UpdateEventArgs e)
-        {
-           /* if (e == null)
-            {
-                throw new NotImplementedException();
-            }
-           */
         }
 
         private void BotClient_OnMessageEdited(object sender, MessageEventArgs e)
@@ -980,24 +970,42 @@ namespace Telegram.Altayskaya97.Bot
             if (chatRepo == null)
                 return new CommandResult(Messages.ChatNotFound, CommandResultType.TextMessage);
 
-           try
-            {
-                await ChatService.Delete(chatRepo.Id);
+            var messages = await UserMessageService.GetList();
+            var msgIdToDelete = messages.Where(m => m.ChatId == chatRepo.Id).Select(m => m.Id).ToList();
+            foreach (var id in msgIdToDelete)
+                await UserMessageService.Delete(id);
 
-                var messages = await UserMessageService.GetList();
-                var msgIdToDelete = messages.Where(m => m.ChatId == chatRepo.Id).Select(m => m.Id).ToList();
-                foreach (var id in msgIdToDelete)
-                    await UserMessageService.Delete(id);
 
-                await BotClient.LeaveChatAsync(chatRepo.Id);
-                    
-                _logger.LogInformation($"Chat {chatName}, type={chatRepo.ChatType} deleted");
-            }
-            catch(Exception)
+            var users = (await UserService.GetList()).Where(u => u.Id != BotClient.BotId);
+            foreach (var user in users)
             {
-                _logger.LogWarning($"Can't delete or leave chat {chatName}, propably has been deleted already");
+                try
+                {
+                    await BotClient.KickChatMemberAsync(chatId: chatRepo.Id, userId: (int)user.Id, revokeMessages: true);
+                    _logger.LogInformation($"User '{user.Name}' deleted from chat '{chatRepo.Title}'");
+                }
+                catch (ApiRequestException unpEx) when (unpEx.Message == "Bad Request: USER_NOT_PARTICIPANT")
+                {
+                }
+                catch (ApiRequestException uaEx) when (uaEx.Message == "Bad Request: user is an administrator of the chat")
+                {
+                    _logger.LogWarning($"Can't delete user '{user.Name}' from chat '{chatName}': {uaEx.Message}");
+                }
+                catch (ApiRequestException uoEx) when (uoEx.Message == "Bad Request: can't remove chat owner")
+                {
+                    _logger.LogWarning($"Can't delete user '{user.Name}' from chat '{chatName}': {uoEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Can't delete user '{user.Name}' from chat '{chatName}': {ex.Message}");
+                }
             }
-            return new CommandResult($"Chat {chatName} deleted", CommandResultType.TextMessage);
+
+            await BotClient.LeaveChatAsync(chatRepo.Id);
+            _logger.LogInformation($"Chat {chatName}, type={chatRepo.ChatType} deleted");
+
+            await ChatService.Delete(chatRepo.Id);
+            return new CommandResult("", CommandResultType.None);
         }
 
         public async Task<CommandResult> DeleteUser(string userNameOrId)
