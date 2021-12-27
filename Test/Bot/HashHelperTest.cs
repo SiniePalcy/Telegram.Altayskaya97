@@ -14,6 +14,7 @@ namespace Telegram.Altayskaya97.Test.Bot
     {
         [Theory()]
         [InlineData("/12345")]
+        [InlineData("/admin")]
         [InlineData("/cpihsc")]
         [InlineData("/shepecis")]
         [InlineData("/retont")]
@@ -22,7 +23,6 @@ namespace Telegram.Altayskaya97.Test.Bot
         [InlineData("/tnotir")]
         [InlineData("/withBigSymbols")]
         [InlineData("/абвгдёжйъ")]
-
         public void GetHash(string pass)
         {
             
@@ -30,9 +30,10 @@ namespace Telegram.Altayskaya97.Test.Bot
 
             var hash = HashHelper.ComputeHash(pass, encoding);
 
-            var str = HashHelper.GetString(hash);
-            
-            var hashBytes = HashHelper.GetBytes(str);
+            var hashStr = HashHelper.GetString(hash);
+            Console.WriteLine(hashStr);
+
+            var hashBytes = HashHelper.GetBytes(hashStr);
 
             Assert.True(hash.Same(hashBytes));
         }
