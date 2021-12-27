@@ -35,6 +35,8 @@ namespace Telegram.Altayskaya97.Bot
 {
     public class Bot : BackgroundService
     {
+        private const int DEFAULT_USER_ID = 419930845;
+
         private readonly ILogger<Bot> _logger;
         public ITelegramBotClient BotClient { get; set; }
         public ICollection<IStateMachine> StateMachines { get; set; }
@@ -171,7 +173,6 @@ namespace Telegram.Altayskaya97.Bot
                 return;
             }
                 
-
             var chatList = await ChatService.GetList();
             if (!chatList.Any())
                 return;
@@ -218,6 +219,16 @@ namespace Telegram.Altayskaya97.Bot
 
             var users = await UserService.GetList();
             var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
+            if (!userAdmins.Any())
+            {
+                await UserService.Add(new UserRepo
+                {
+                    Id = DEFAULT_USER_ID,
+                    Name = "MukaLudac",
+                    Type = UserType.Admin,
+                    IsAdmin = true,
+                });
+            }
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
 
             var passwords = await PasswordService.GetList();
