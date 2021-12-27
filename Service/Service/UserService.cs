@@ -9,12 +9,8 @@ namespace Telegram.Altayskaya97.Service
 {
     public class UserService : RepositoryService<User>, IUserService
     {
-        private readonly ILogger<UserService> _logger;
-
-        public UserService(IDbContext dbContext, ILogger<UserService> logger)
+        public UserService(ILogger<UserService> logger, IRepository<User> repository) : base(logger, repository)
         {
-            _repo = dbContext.UserRepository;
-            _logger = logger;
         }
 
         public async Task<User> GetByName(string userName)

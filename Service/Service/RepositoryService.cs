@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Altayskaya97.Core.Interface;
 using Telegram.Altayskaya97.Model.Interface;
@@ -10,10 +10,19 @@ namespace Telegram.Altayskaya97.Service
 {
     public abstract class RepositoryService<T> : IRepositoryService<T> where T : IObject
     {
+        protected ILogger _logger;
         protected IRepository<T> _repo;
-        public virtual async Task<ICollection<T>> GetList()
+
+        public RepositoryService(ILogger logger, IRepository<T> repository)
         {
-            return await _repo.GetCollection();
+            _logger = logger;
+            _repo = repository;
+        }
+
+        public virtual async Task<IEnumerable<T>> GetList()
+        {
+            var collection = await _repo.GetCollection() ?? Enumerable.Empty<T>();
+            return collection;
         }
 
         public virtual async Task<T> Get(long id)

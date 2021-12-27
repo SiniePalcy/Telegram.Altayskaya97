@@ -9,12 +9,8 @@ namespace Telegram.Altayskaya97.Service
 {
     public class UserMessageService : RepositoryService<UserMessage>, IUserMessageService
     {
-        private readonly ILogger<UserMessageService> _logger;
-
-        public UserMessageService(IDbContext dbContext, ILogger<UserMessageService> logger)
+        public UserMessageService(ILogger<UserMessageService> logger, IRepository<UserMessage> repository) : base(logger, repository)
         {
-            _repo = dbContext.UserMessageRepository;
-            _logger = logger;
         }
 
         public override async Task Add(UserMessage userMessage)

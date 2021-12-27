@@ -13,12 +13,8 @@ namespace Telegram.Altayskaya97.Service
 {
     public class PasswordService : RepositoryService<Password>, IPasswordService
     {
-        private readonly ILogger<PasswordService> _logger;
-
-        public PasswordService(IDbContext dbContext, ILogger<PasswordService> logger)
+        public PasswordService(ILogger<PasswordService> logger, IRepository<Password> repository) : base(logger, repository)
         {
-            _repo = dbContext.PasswordRepository;
-            _logger = logger;
         }
 
         public override async Task Update(long id, Password updatedItem)

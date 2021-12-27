@@ -15,10 +15,6 @@ namespace Telegram.Altayskaya97.Model.DbContext
 
         public IRepository<Password> PasswordRepository => throw new NotImplementedException();
 
-        IRepository<User> IDbContext.UserRepository => throw new NotImplementedException();
-
-        IRepository<Chat> IDbContext.ChatRepository => throw new NotImplementedException();
-
         public void Init(string connectionString)
         {
             MongoClient dbClient = new MongoClient(connectionString);

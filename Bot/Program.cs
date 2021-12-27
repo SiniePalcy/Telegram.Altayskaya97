@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Altayskaya97.Model.DbContext;
+using Telegram.Altayskaya97.Model.Extensions;
 using Telegram.Altayskaya97.Model.Interface;
 using Telegram.Altayskaya97.Service;
 using Telegram.Altayskaya97.Service.Interface;
@@ -24,7 +25,8 @@ namespace Telegram.Altayskaya97.Bot
                 {
                     Configuration = hostContext.Configuration;
                     services.AddHostedService<Bot>();
-                    services.AddSingleton<IDbContext, DynamoDbContext>(InitDynamoDbContext);
+                    services.AddSingleton(hostContext.Configuration);
+                    services.AddRepositories();                    
                     services.AddTransient<IButtonsService, ButtonsService>();
                     services.AddTransient<IMenuService, MenuService>();
                     services.AddTransient<IUserService, UserService>();
@@ -33,11 +35,5 @@ namespace Telegram.Altayskaya97.Bot
                     services.AddTransient<IPasswordService, PasswordService>();
                     services.AddTransient<IDateTimeService, DateTimeService>();
                 });
-
-        private static DynamoDbContext InitDynamoDbContext(IServiceProvider provider)
-        {
-            string connString = Configuration.GetSection("Configuration").GetSection("ConnectionStrings").GetSection("DynamoConnectionString").Value;
-            return new DynamoDbContext(connString);
-        }
     }
 }

@@ -67,10 +67,10 @@ namespace Telegram.Altayskaya97.Bot
         #region Services
         public IButtonsService WelcomeService { get; set; }
         public IMenuService MenuService { get; set; }
+        public IPasswordService PasswordService { get; set; }
         public IUserService UserService { get; set; }
         public IChatService ChatService { get; set; }
         public IUserMessageService UserMessageService { get; set; }
-        public IPasswordService PasswordService { get; set; }
         public IDateTimeService DateTimeService { get; set; }
         #endregion
 
@@ -101,7 +101,7 @@ namespace Telegram.Altayskaya97.Bot
                 InitClient(configSection);
 
             if (shouldInitDb)
-                InitDb().Wait();
+                InitDb();
 
             InitProps(configSection);
         }
@@ -164,16 +164,49 @@ namespace Telegram.Altayskaya97.Bot
             _logger.LogInformation(e.ChosenInlineResult.Query);
         }
 
-        private async Task InitDb()
+        private void InitDb()
         {
-            var userList = await UserService.GetList();
+            Thread.Sleep(5000);
+
+            var passwords = PasswordService.GetList().Result;
+#if DEBUG
+            foreach (var pass in passwords)
+                PasswordService.Delete(pass.Id).Wait();
+            passwords = PasswordService.GetList().Result;
+#endif
+            var maxId = !passwords.Any() ? 0 : passwords.Select(p => p.Id).Max();
+            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Admin))
+            {
+                PasswordService.Add(new Password
+                {
+                    Id = ++maxId,
+                    ChatType = Core.Model.ChatType.Admin,
+                    Value = "/admin"
+                }).Wait();
+            }
+            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Public))
+            {
+                PasswordService.Add(new Password
+                {
+                    Id = ++maxId,
+                    ChatType = Core.Model.ChatType.Public,
+                    Value = "/public"
+                }).Wait();
+            }
+
+            var userList = UserService.GetList().Result;
             if (!userList.Any())
             {
-
-                return;
+                UserService.Add(new UserRepo
+                {
+                    Id = DEFAULT_USER_ID,
+                    Name = "MukaLudac",
+                    Type = UserType.Admin,
+                    IsAdmin = true,
+                }).Wait();
             }
                 
-            var chatList = await ChatService.GetList();
+            var chatList = ChatService.GetList().Result;
             if (!chatList.Any())
                 return;
 
@@ -183,19 +216,19 @@ namespace Telegram.Altayskaya97.Bot
             {
                 try
                 {
-                    var adminsOfChat = await BotClient.GetChatAdministratorsAsync(adminChat.Id);
+                    var adminsOfChat = BotClient.GetChatAdministratorsAsync(adminChat.Id).Result;
                     admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
                 }
                 catch (ApiRequestException)
                 {
                     _logger.LogWarning($"Chat {adminChat.Title} is unavailable and will be deleted");
-                    await ChatService.Delete(adminChat.Id);
+                    ChatService.Delete(adminChat.Id).Wait();
                 }
             }
 
             foreach (var admin in admins)
             {
-                var userInRepo = await UserService.Get(admin.User.Id);
+                var userInRepo = UserService.Get(admin.User.Id).Result;
                 if (userInRepo != null)
                 {
                     _adminResetCounters.TryAdd(userInRepo.Id, 0);
@@ -211,52 +244,15 @@ namespace Telegram.Altayskaya97.Bot
                     IsAdmin = true,
                     Type = admin.User.IsBot ? UserType.Bot : UserType.Admin
                 };
-                await UserService.Add(newUser);
+                UserService.Add(newUser).Wait();
                 _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, type={newUser.Type}");
 
                 _adminResetCounters.TryAdd(newUser.Id, 0);
             }
 
-            var users = await UserService.GetList();
+            var users = UserService.GetList().Result;
             var userAdmins = users.Where(u => u.Type == UserType.Admin).ToList();
-            if (!userAdmins.Any())
-            {
-                await UserService.Add(new UserRepo
-                {
-                    Id = DEFAULT_USER_ID,
-                    Name = "MukaLudac",
-                    Type = UserType.Admin,
-                    IsAdmin = true,
-                });
-            }
             userAdmins.ForEach(u => _adminResetCounters.TryAdd(u.Id, 0));
-
-            var passwords = await PasswordService.GetList();
-#if DEBUG
-            foreach(var pass in passwords)
-                await PasswordService.Delete(pass.Id);
-            passwords = await PasswordService.GetList();
-#endif
-            var maxId = !passwords.Any()? 0 :passwords.Select(p => p.Id).Max();
-            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Admin))
-            {
-                await PasswordService.Add(new Password
-                {
-                    Id = ++maxId,
-                    ChatType = Core.Model.ChatType.Admin,
-                    Value = "/admin"
-                });
-            }
-            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Public))
-            {
-                await PasswordService.Add(new Password
-                {
-                    Id = ++maxId,
-                    ChatType = Core.Model.ChatType.Public,
-                    Value = "/public"
-                });
-            }
-
         }
         #endregion
 

@@ -9,12 +9,8 @@ namespace Telegram.Altayskaya97.Service
 {
     public class ChatService : RepositoryService<Chat>, IChatService
     {
-        private readonly ILogger<ChatService> _logger;
-
-        public ChatService(IDbContext dbContext, ILogger<ChatService> logger)
+        public ChatService(ILogger<ChatService> logger, IRepository<Chat> repository) : base(logger, repository)
         {
-            _repo = dbContext.ChatRepository;
-            _logger = logger;
         }
 
         public override async Task Add(Chat chat)

@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Microsoft.Extensions.Configuration;
 using System;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Model.Interface;
@@ -11,31 +12,24 @@ namespace Telegram.Altayskaya97.Model.DbContext
 {
     public class DynamoDbContext : IDbContext, IDisposable
     {
-        private AmazonDynamoDBClient _client;
-        private DynamoDBContext _dbContext;
         private bool disposedValue;
 
-        #region Repositories
-        public IRepository<User> UserRepository { get; }
-        public IRepository<Chat> ChatRepository { get; }
-        public IRepository<UserMessage> UserMessageRepository { get; }
-        public IRepository<Password> PasswordRepository { get; }
-        #endregion
-        public DynamoDbContext(string connectionString)
+        public DynamoDBContext Context { get; private set; }
+        public AmazonDynamoDBClient Client { get; private set; }
+
+        public DynamoDbContext(IConfiguration configuration)
         {
-            Init(connectionString);
-            UserRepository = new DynamoDbRepository<Entity.DynamoDb.User, User, BaseMapper<User, Entity.DynamoDb.User>>(_dbContext);
-            ChatRepository = new DynamoDbRepository<Entity.DynamoDb.Chat, Chat, BaseMapper<Chat, Entity.DynamoDb.Chat>>(_dbContext);
-            UserMessageRepository = new DynamoDbRepository<Entity.DynamoDb.UserMessage, UserMessage, BaseMapper<UserMessage, Entity.DynamoDb.UserMessage>>(_dbContext);
-            PasswordRepository = new DynamoDbRepository<Entity.DynamoDb.Password, Password, PasswordMapper>(_dbContext);
+            var connString = configuration.GetSection("Configuration").GetSection("ConnectionStrings").GetSection("DynamoConnectionString").Value;
+
+            Init(connString);
         }
 
         public void Init(string connectionString)
         {
             var keys = ExtractAccessKeys(connectionString);
             var endpoint =  Amazon.RegionEndpoint.GetBySystemName(keys.Item3);
-            _client = new AmazonDynamoDBClient(keys.Item1, keys.Item2, endpoint);
-            _dbContext = new DynamoDBContext(_client, new DynamoDBContextConfig { ConsistentRead = true, SkipVersionCheck = true });
+            Client = new AmazonDynamoDBClient(keys.Item1, keys.Item2, endpoint);
+            Context = new DynamoDBContext(Client, new DynamoDBContextConfig { ConsistentRead = true, SkipVersionCheck = true });
         }
 
         private Tuple<string, string, string> ExtractAccessKeys(string connectionString)
@@ -54,8 +48,7 @@ namespace Telegram.Altayskaya97.Model.DbContext
             {
                 if (disposing)
                 {
-                    _dbContext.Dispose();
-                    _client.Dispose();
+                    Context.Dispose();
                     // TODO: dispose managed state (managed objects)
                 }
 
