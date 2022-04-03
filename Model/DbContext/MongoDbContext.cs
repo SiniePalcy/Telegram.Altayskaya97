@@ -23,9 +23,9 @@ namespace Telegram.Altayskaya97.Model.DbContext
 
         public void Init(string connectionString)
         {
-            MongoClient dbClient = new MongoClient(connectionString);
+            Client = new MongoClient(connectionString);
 
-            var dbList = dbClient.ListDatabases().ToList();
+            var dbList = Client.ListDatabases().ToList();
 
             Console.WriteLine("The list of databases on this server is: ");
             foreach (var db in dbList)

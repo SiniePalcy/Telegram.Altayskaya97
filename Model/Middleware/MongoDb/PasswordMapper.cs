@@ -10,7 +10,7 @@ namespace Telegram.Altayskaya97.Model.Middleware.MongoDb
         public PasswordMapper()
         {
             ModelToEntityConfig = new MapperConfiguration(cfg => 
-                cfg.CreateMap<Password, Password>()
+                cfg.CreateMap<Password, Entity.MongoDb.Password>()
                 .ForMember(nameof(Entity.MongoDb.Password.Hash), 
                     opt => opt.MapFrom(c => HashHelper.ComputeHash(c.Value, GlobalEnvironment.Encoding))));
             EntityToModelConfig = new MapperConfiguration(cfg => 
