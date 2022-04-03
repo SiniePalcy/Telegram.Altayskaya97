@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Model.Interface;
@@ -7,13 +8,18 @@ namespace Telegram.Altayskaya97.Model.DbContext
 {
     public class MongoDbContext : IDbContext
     {
-        public MongoDbContext()
+        public MongoClient Client { get; private set; }
+
+        public MongoDbContext(IConfiguration configuration)
         {
+            var connString = configuration
+                .GetSection("Configuration")
+                .GetSection("ConnectionStrings")
+                .GetSection("MongoDbConnectionString")
+                .Value;
+
+            Init(connString);
         }
-
-        public IRepository<UserMessage> UserMessageRepository => throw new NotImplementedException();
-
-        public IRepository<Password> PasswordRepository => throw new NotImplementedException();
 
         public void Init(string connectionString)
         {

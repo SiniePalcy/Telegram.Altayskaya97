@@ -19,7 +19,11 @@ namespace Telegram.Altayskaya97.Model.DbContext
 
         public DynamoDbContext(IConfiguration configuration)
         {
-            var connString = configuration.GetSection("Configuration").GetSection("ConnectionStrings").GetSection("DynamoConnectionString").Value;
+            var connString = configuration
+                .GetSection("Configuration")
+                .GetSection("ConnectionStrings")
+                .GetSection("DynamoConnectionString")
+                .Value;
 
             Init(connString);
         }

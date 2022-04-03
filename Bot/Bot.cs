@@ -794,15 +794,22 @@ namespace Telegram.Altayskaya97.Bot
         {
             var chatList = await ChatService.GetList();
 
-            StringBuilder sb = new StringBuilder("<code>");
-            foreach (var chat in chatList.Where(c => c.ChatType != Core.Model.ChatType.Private))
+            string answer = "no any chats";
+            
+            var chats = chatList.Where(c => c.ChatType != Core.Model.ChatType.Private).ToList();
+            if (chats.Any())
             {
-                if (chat.ChatType != Core.Model.ChatType.Private)
-                    sb.AppendLine($"type: {chat.ChatType,-8}name: <b>{chat.Title}</b>");
+                StringBuilder sb = new StringBuilder("<code>");
+                foreach (var chat in chats)
+                {
+                    if (chat.ChatType != Core.Model.ChatType.Private)
+                        sb.AppendLine($"type: {chat.ChatType,-8}name: <b>{chat.Title}</b>");
+                }
+                sb.Append("</code>");
+                answer = sb.ToString();
             }
-            sb.Append("</code>");
 
-            return new CommandResult(sb.ToString(), CommandResultType.TextMessage);
+            return new CommandResult(answer, CommandResultType.TextMessage);
         }
 
         public async Task<CommandResult> UserList()
