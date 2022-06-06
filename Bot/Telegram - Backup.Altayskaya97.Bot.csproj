@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Bot-58DF0949-B5BB-44C8-8A9D-C56CDF7CA616</UserSecretsId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <PublishReadyToRun>true</PublishReadyToRun>
@@ -16,12 +16,21 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
-    <PackageReference Include="Telegram.BotAPI" Version="5.9.1" />
+    <PackageReference Include="Telegram.Bot" Version="15.7.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
     <ProjectReference Include="..\Model\Telegram.Altayskaya97.Model.csproj" />
     <ProjectReference Include="..\Service\Telegram.Altayskaya97.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Linux\bot.test.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Linux\bot.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
