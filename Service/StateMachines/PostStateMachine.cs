@@ -1,14 +1,14 @@
-﻿using Telegram.Altayskaya97.Bot.Model;
-using Telegram.Altayskaya97.Service.Interface;
+﻿using Telegram.Altayskaya97.Service.Interface;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Bot.Enum;
-using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
+using Telegram.Altayskaya97.Core.Enum;
 using Telegram.Altayskaya97.Core.Constant;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.BotAPI.AvailableTypes;
+using Telegram.Altayskaya97.Service.StateMachines.UserStates;
+using Telegram.Altayskaya97.Core.Model;
 
-namespace Telegram.Altayskaya97.Bot.StateMachines
+namespace Telegram.Altayskaya97.Service.StateMachines
 {
     public class PostStateMachine : BaseStateMachine<PostUserState, PostState>
     {

@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Altayskaya97.Bot.Model;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Bot.Interface
+namespace Telegram.Altayskaya97.Service.Interface
 {
     public interface IStateMachine
     {

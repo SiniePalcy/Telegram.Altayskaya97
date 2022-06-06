@@ -1,28 +1,9 @@
 ﻿using System;
-using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Bot.Helpers
+namespace Telegram.Altayskaya97.Core.Extensions
 {
-    public static class Extensions
+    public static class TypesExtensions
     {
-        public static string GetUserName(this User user)
-        {
-            string result;
-            if (!string.IsNullOrEmpty(user.Username))
-            {
-                result = user.Username;
-            }
-            else
-            {
-                result = user.FirstName;
-                if (!string.IsNullOrEmpty(user.LastName))
-                {
-                    result += " " + user.LastName;
-                }
-            }
-            return result;
-        }
-
         public static int ParseInt(this string source, int defaultValue)
         {
             if (string.IsNullOrEmpty(source) || !int.TryParse(source, out int result))

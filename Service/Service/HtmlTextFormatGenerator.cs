@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Telegram.BotAPI.AvailableTypes;
 using Telegram.BotAPI;
+using Telegram.Altayskaya97.Service.Interface;
 
-namespace Telegram.Altayskaya97.Bot.Helpers
+namespace Telegram.Altayskaya97.Service
 {
-    public class HtmlTextFormatGenerator
+    public class HtmlTextFormatGenerator : IHtmlTextFormatGenerator
     {
         private int _shift = 0;
 

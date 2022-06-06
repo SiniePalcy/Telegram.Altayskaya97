@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Telegram.Altayskaya97.Bot.Helpers;
 using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
 using System.Text;
@@ -14,10 +13,9 @@ using Telegram.Altayskaya97.Core.Model;
 using ChatRepo = Telegram.Altayskaya97.Core.Model.Chat;
 using UserRepo = Telegram.Altayskaya97.Core.Model.User;
 using Microsoft.Extensions.Configuration;
-using Telegram.Altayskaya97.Bot.Model;
+using Telegram.Altayskaya97.Core.Model;
 using System.Reflection;
-using Telegram.Altayskaya97.Bot.StateMachines;
-using Telegram.Altayskaya97.Bot.Interface;
+using Telegram.Altayskaya97.Service.StateMachines;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Runtime.Serialization;
@@ -28,6 +26,9 @@ using Telegram.BotAPI.AvailableMethods.FormattingOptions;
 using User = Telegram.BotAPI.AvailableTypes.User;
 using Chat = Telegram.BotAPI.AvailableTypes.Chat;
 using Telegram.BotAPI.GettingUpdates;
+using Telegram.Altayskaya97.Service.Extensions;
+using Telegram.Altayskaya97.Core.Extensions;
+using Telegram.Altayskaya97.Service;
 
 namespace Telegram.Altayskaya97.Bot
 {

@@ -1,6 +1,6 @@
-﻿using Telegram.Altayskaya97.Bot.Helpers;
+﻿using Telegram.Altayskaya97.Core.Enum;
 
-namespace Telegram.Altayskaya97.Bot.StateMachines.UserStates
+namespace Telegram.Altayskaya97.Service.StateMachines.UserStates
 {
     public class UserState<T> where T : struct
     {

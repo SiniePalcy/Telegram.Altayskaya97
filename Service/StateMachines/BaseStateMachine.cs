@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Bot.Interface;
-using Telegram.Altayskaya97.Bot.Model;
-using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
+using Telegram.Altayskaya97.Service.Interface;
+using Telegram.Altayskaya97.Service.StateMachines.UserStates;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Bot.StateMachines
+namespace Telegram.Altayskaya97.Service.StateMachines
 {
     public abstract class BaseStateMachine<TUserState, TState> : IStateMachine 
         where TUserState : UserState<TState>

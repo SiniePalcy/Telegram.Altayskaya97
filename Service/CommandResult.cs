@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Core.Model
+namespace Telegram.Altayskaya97.Service
 {
     public enum CommandResultType 
     { 
