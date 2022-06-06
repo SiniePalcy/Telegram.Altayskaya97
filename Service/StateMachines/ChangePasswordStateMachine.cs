@@ -6,8 +6,7 @@ using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -46,7 +45,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
             return new CommandResult(Messages.SelectChatType, CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+                new ReplyKeyboardMarkup(buttonsReplyList));
         }
 
         public async Task<CommandResult> PasswordTypeChoice(long userId, string chatType)
@@ -89,7 +88,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                             new KeyboardButton(Messages.Cancel)
             };
             return new CommandResult(Messages.Confirmation, CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(confirmButtons, true, true));
+                new ReplyKeyboardMarkup(confirmButtons));
         }
 
         private CommandResult ConfirmationState(long userId, string messageText)

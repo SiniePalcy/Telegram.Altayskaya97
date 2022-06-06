@@ -6,8 +6,8 @@ using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.BotAPI.AvailableTypes;
+
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
     public class UnpinMessageStateMachine : 
@@ -48,7 +48,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
             return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+                new ReplyKeyboardMarkup(buttonsReplyList));
         }
 
         private async Task<CommandResult> ChatChoiceState(long userId, string chatTitle)
@@ -76,11 +76,11 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
             }
 
             buttonsList.Add(Messages.Cancel);
-            var buttonsMarkupList = buttonsList.Select(b => new KeyboardButton[1] { b });
+            var buttonsMarkupList = buttonsList.Select(b => new KeyboardButton[1] { new KeyboardButton(b) });
 
             return new CommandResult($"Please, select a message to unpin", 
                 CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(buttonsMarkupList, true, true));
+                new ReplyKeyboardMarkup(buttonsMarkupList));
         }
 
         private async Task<CommandResult> MessageChoiceState(long userId, string messageTitle)
@@ -106,7 +106,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             return new CommandResult($"Confirm unpin messages?",
                 CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(confirmButtons, true, true));
+                new ReplyKeyboardMarkup(confirmButtons));
         }
 
 

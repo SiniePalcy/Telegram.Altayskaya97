@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Bot.Model
+﻿namespace Telegram.Altayskaya97.Core.Model
 {
     public class Link
     {

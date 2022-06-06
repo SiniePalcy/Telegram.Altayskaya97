@@ -24,7 +24,7 @@ namespace Telegram.Altayskaya97.Bot
                 .ConfigureServices((hostContext, services) =>
                 {
                     Configuration = hostContext.Configuration;
-                    services.AddHostedService<Bot>();
+                    services.AddHostedService<Worker>();
                     services.AddSingleton(hostContext.Configuration);
                     //services.AddDynamoDbRepositories();
                     services.AddMongoDbRepositories();

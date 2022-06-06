@@ -1,5 +1,5 @@
 ﻿using System;
-using Telegram.Bot.Types;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Bot.Helpers
 {

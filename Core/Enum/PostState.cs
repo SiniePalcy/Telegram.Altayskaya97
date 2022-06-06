@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Bot.Enum
+﻿namespace Telegram.Altayskaya97.Core.Enum
 {
     public enum PostState 
     {

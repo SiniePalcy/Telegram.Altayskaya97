@@ -2,7 +2,7 @@
 using Telegram.Altayskaya97.Core.Constant;
 using Telegram.Altayskaya97.Core.Model;
 using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Service
 {
@@ -28,17 +28,17 @@ namespace Telegram.Altayskaya97.Service
             {
                 switch(_buttons[i])
                 {
-                    case LinkButton linkButton when chatType == ChatType.Admin && linkButton.IsAdmin.HasValue && linkButton.IsAdmin.Value:
-                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                    case LinkButton linkButton when chatType == Core.Model.ChatType.Admin && linkButton.IsAdmin.HasValue && linkButton.IsAdmin.Value:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.SetUrl(linkButton.Title, linkButton.Link) });
                         break;
-                    case LinkButton linkButton when chatType == ChatType.Public && linkButton.IsAdmin.HasValue && !linkButton.IsAdmin.Value:
-                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                    case LinkButton linkButton when chatType == Core.Model.ChatType.Public && linkButton.IsAdmin.HasValue && !linkButton.IsAdmin.Value:
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.SetUrl(linkButton.Title, linkButton.Link) });
                         break;
                     case LinkButton linkButton when !linkButton.IsAdmin.HasValue:
-                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithUrl(linkButton.Title, linkButton.Link) });
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.SetUrl(linkButton.Title, linkButton.Link) });
                         break;
                     case CallbackButton callbackButton:
-                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.WithCallbackData(callbackButton.Title, callbackButton.CallbackName) });
+                        inlineKeyboardButtons.Add(new InlineKeyboardButton[1] { InlineKeyboardButton.SetCallbackData(callbackButton.Title, callbackButton.CallbackName) });
                         break;
                 };
             }

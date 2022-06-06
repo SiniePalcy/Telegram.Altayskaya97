@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Telegram.Altayskaya97.Core.Model;
-using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Service.Interface
 {

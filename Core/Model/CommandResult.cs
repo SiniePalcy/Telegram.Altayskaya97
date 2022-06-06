@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Bot.Model
+namespace Telegram.Altayskaya97.Core.Model
 {
     public enum CommandResultType 
     { 
@@ -23,11 +23,11 @@ namespace Telegram.Altayskaya97.Bot.Model
         public IDictionary<string, object> Properties { get; set; } =
             new Dictionary<string, object>();
         public ICollection<long> Recievers { get; set; }
-        public IReplyMarkup ReplyMarkup { get; set; }
+        public ReplyMarkup ReplyMarkup { get; set; }
 
         public CommandResult(object content, 
             CommandResultType type = CommandResultType.None, 
-            IReplyMarkup replyMarkup = null)
+            ReplyMarkup replyMarkup = null)
         {
             Content = content;
             Type = type;

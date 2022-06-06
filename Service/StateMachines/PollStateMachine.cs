@@ -1,13 +1,12 @@
 ﻿using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Bot.Types.ReplyMarkups;
 using System.Threading.Tasks;
-using Telegram.Bot.Types;
 using Telegram.Altayskaya97.Bot.Enum;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {
@@ -51,7 +50,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
 
             var buttonsReplyList = buttonsList.Select(b => new KeyboardButton[1] { b });
             return new CommandResult(Messages.SelectChat, CommandResultType.TextMessage,
-                new ReplyKeyboardMarkup(buttonsReplyList, true, true));
+                new ReplyKeyboardMarkup(buttonsReplyList));
         }
 
         private async Task<CommandResult> ChatChoiceState(long id, string chatTitle)
@@ -99,7 +98,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         new KeyboardButton(Messages.Cancel)
                 };
                 return new CommandResult("Is the pool with multiple answers?", CommandResultType.TextMessage,
-                    new ReplyKeyboardMarkup(pinButtons, true, true));
+                    new ReplyKeyboardMarkup(pinButtons));
             }
             
             processing.Cases.Add(nextCase);
@@ -120,7 +119,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         new KeyboardButton(Messages.No),
                         new KeyboardButton(Messages.Cancel)
                 };
-                return new CommandResult("Is the pool anonymous?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
+                return new CommandResult("Is the pool anonymous?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons));
             }
             else
             {
@@ -143,7 +142,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                         new KeyboardButton(Messages.No),
                         new KeyboardButton(Messages.Cancel)
                 };
-                return new CommandResult("Pin the pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
+                return new CommandResult("Pin the pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons));
             }
             else
             {
@@ -165,7 +164,7 @@ namespace Telegram.Altayskaya97.Bot.StateMachines
                             new KeyboardButton(Messages.OK),
                             new KeyboardButton(Messages.Cancel)
                 };
-                return new CommandResult("Confirm sending pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons, true, true));
+                return new CommandResult("Confirm sending pool?", CommandResultType.TextMessage, new ReplyKeyboardMarkup(confirmButtons));
             }
             else
             {

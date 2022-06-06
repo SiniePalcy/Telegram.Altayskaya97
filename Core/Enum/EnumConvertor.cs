@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Telegram.Altayskaya97.Bot.Helpers
+namespace Telegram.Altayskaya97.Core.Enum
 {
     public static class EnumConvertor
     {

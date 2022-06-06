@@ -5,7 +5,7 @@ using Telegram.Altayskaya97.Bot.Interface;
 using Telegram.Altayskaya97.Bot.Model;
 using Telegram.Altayskaya97.Bot.StateMachines.UserStates;
 using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Bot.Types;
+using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.Altayskaya97.Bot.StateMachines
 {

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using Telegram.BotAPI.AvailableTypes;
+using Telegram.BotAPI;
 
 namespace Telegram.Altayskaya97.Bot.Helpers
 {
@@ -12,14 +12,14 @@ namespace Telegram.Altayskaya97.Bot.Helpers
 
         public string GenerateHtmlText(Message message)
         {
-            if (message.Type == MessageType.Text)
+            if (!string.IsNullOrEmpty(message.Text))
                 return GenerateTextByEntities(message.Text, message.Entities);
-            else if (message.Type == MessageType.Photo)
+            else if (!string.IsNullOrEmpty(message.Caption))
                 return GenerateTextByEntities(message.Caption, message.CaptionEntities);
             return string.Empty;
         }
 
-        private string GenerateTextByEntities(string text, MessageEntity[] entities)
+        private string GenerateTextByEntities(string text, IEnumerable<MessageEntity> entities)
         {
             if (string.IsNullOrEmpty(text))
                 return text;
@@ -31,11 +31,11 @@ namespace Telegram.Altayskaya97.Bot.Helpers
             if (entities == null)
                 return textBuilder.ToString();
 
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < entities.Count(); i++)
             {
-                var entity = entities[i];
+                var entity = entities.ElementAt(i);
                 string val = updatedText.Substring(entity.Offset, entity.Length);
-                switch (entity.Type)
+                switch (entity.GetEntityType())
                 {
                     case MessageEntityType.Bold:
                         InsertTag(textBuilder, "<b>", val, entity.Offset, entity.Length);
@@ -61,7 +61,7 @@ namespace Telegram.Altayskaya97.Bot.Helpers
             return textBuilder.ToString();
         }
 
-        private string UpdateSpecialLetters(string sourceText, MessageEntity[] entities)
+        private string UpdateSpecialLetters(string sourceText, IEnumerable<MessageEntity> entities)
         {
             var sourceChars = sourceText.ToCharArray();
             List<char> destChars = new List<char>();
