@@ -5,10 +5,10 @@ Description=Bot service .NET for Telegram Altayskaya bot
 [Service]
 Type=simple
 # will set the Current Working Directory (CWD). Worker service will have issues without this setting
-WorkingDirectory=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64
+WorkingDirectory=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/net6.0/ubuntu.18.04-x64
 
 # systemd will run this executable to start the service
-ExecStart=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/netcoreapp3.1/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
+ExecStart=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/net6.0/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
 
 # to query logs using journalctl, set a logical name here  
 SyslogIdentifier=bot

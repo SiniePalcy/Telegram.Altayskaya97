@@ -16,10 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Bot",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Test", "Test\Telegram.Altayskaya97.Test.csproj", "{F11EF113-0730-459A-B5ED-1BCAE247B687}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linux", "Linux", "{396287C9-5275-4BC6-BC63-98C84C02C1F5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linux", "Linux", "{82ECEF0B-49AB-44CD-BEE9-5735DE81E686}"
 	ProjectSection(SolutionItems) = preProject
-		Bot\Linux\bot.service = Bot\Linux\bot.service
-		Bot\Linux\bot.test.service = Bot\Linux\bot.test.service
+		Linux\bot.service = Linux\bot.service
+		Linux\bot.test.service = Linux\bot.test.service
 	EndProjectSection
 EndProject
 Global
