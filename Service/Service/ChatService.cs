@@ -31,7 +31,7 @@ namespace Telegram.Altayskaya97.Service
         public async Task<Chat> Get(string name)
         {
             var chatList = await GetList();
-            return chatList.FirstOrDefault(c => c.Title.Trim().ToLower() == name.Trim().ToLower());
+            return chatList.FirstOrDefault(c => c.Title != null && c.Title.Trim().ToLower() == name.Trim().ToLower());
         }
 
         public override async Task Update(long id, Chat updatedItem)

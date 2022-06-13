@@ -4,6 +4,11 @@ namespace Telegram.Altayskaya97.Core.Extensions
 {
     public static class TypesExtensions
     {
+        public static bool IsCommand(this string self)
+        {
+            return self != null && self.StartsWith('/'); 
+        }
+
         public static int ParseInt(this string source, int defaultValue)
         {
             if (string.IsNullOrEmpty(source) || !int.TryParse(source, out int result))

@@ -13,7 +13,6 @@ namespace Telegram.Altayskaya97.Model.DbContext
         public MongoDbContext(IConfiguration configuration)
         {
             var connString = configuration
-                .GetSection("Configuration")
                 .GetSection("ConnectionStrings")
                 .GetSection("MongoDbConnectionString")
                 .Value;

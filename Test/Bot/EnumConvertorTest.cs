@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Altayskaya97.Bot.Enum;
-using Telegram.Altayskaya97.Bot.Helpers;
+using Telegram.Altayskaya97.Core.Enum;
 using Xunit;
 
 namespace Telegram.Altayskaya97.Test.Bot

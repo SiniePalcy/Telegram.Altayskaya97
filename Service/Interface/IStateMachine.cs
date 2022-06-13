@@ -6,6 +6,7 @@ namespace Telegram.Altayskaya97.Service.Interface
     public interface IStateMachine
     {
         Task<CommandResult> CreateUserStateFlow(long userId);
+        bool StopUserStateFlow(long userId);
         Task<CommandResult> ExecuteStage(long id, Message message = null);
         bool IsExecuting(long id);
     }

@@ -2,18 +2,19 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
 using Telegram.Altayskaya97.Model.DbContext;
 using Telegram.Altayskaya97.Model.Extensions;
 using Telegram.Altayskaya97.Model.Interface;
+using Telegram.Altayskaya97.Bot;
 using Telegram.Altayskaya97.Service;
 using Telegram.Altayskaya97.Service.Interface;
+using Telegram.Altayskaya97.Service.Service;
 
 namespace Telegram.Altayskaya97.Bot
 {
     public class Program
     {
-        private static IConfiguration Configuration { get; set; }
-
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -23,9 +24,9 @@ namespace Telegram.Altayskaya97.Bot
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    Configuration = hostContext.Configuration;
-                    services.AddHostedService<Worker>();
                     services.AddSingleton(hostContext.Configuration);
+                    services.AddSingleton<BotProperties>();
+                    services.AddScoped<Bot>();                   
                     //services.AddDynamoDbRepositories();
                     services.AddMongoDbRepositories();
                     services.AddTransient<IButtonsService, ButtonsService>();
@@ -35,6 +36,10 @@ namespace Telegram.Altayskaya97.Bot
                     services.AddTransient<IUserMessageService, UserMessageService>();
                     services.AddTransient<IPasswordService, PasswordService>();
                     services.AddTransient<IDateTimeService, DateTimeService>();
+                    services.AddSingleton<IStateMachineContainer, StateMachineContainer>();
+                    services.AddQuartz(hostContext.Configuration);
+                    services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+                    services.AddHostedService<Worker>();
                 });
     }
 }
