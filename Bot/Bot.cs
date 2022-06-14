@@ -67,90 +67,7 @@ namespace Telegram.Altayskaya97.Bot
             this.DateTimeService = dateTimeService;
             _stateMachineContainer = stateMachineContainer;
 
-            _configuration = configuration.Get<Configuration>();
-        }
-
-        private async Task InitDb()
-        {
-            var passwords = await PasswordService.GetList();
-#if DEBUG
-            foreach (var pass in passwords)
-                await PasswordService.Delete(pass.Id);
-            passwords = await PasswordService.GetList();
-#endif
-            var maxId = !passwords.Any() ? 0 : passwords.Select(p => p.Id).Max();
-            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Admin))
-            {
-                await PasswordService.Add(new Password
-                {
-                    Id = ++maxId,
-                    ChatType = Core.Model.ChatType.Admin,
-                    Value = "/admin"
-                });
-            }
-            if (!passwords.Any(p => p.ChatType == Core.Model.ChatType.Public))
-            {
-                await PasswordService.Add(new Password
-                {
-                    Id = ++maxId,
-                    ChatType = Core.Model.ChatType.Public,
-                    Value = "/public"
-                });
-            }
-
-            var userList = await UserService.GetList();
-            if (!userList.Any())
-            {
-                await UserService.Add(new Core.Model.User
-                {
-                    Id = _configuration.OwnerId,
-                    Name = "MukaLudac",
-                    Type = UserType.Admin,
-                    IsAdmin = true,
-                });
-            }
-
-            var chatList = await ChatService.GetList();
-            if (!chatList.Any())
-                return;
-
-            var adminChats = chatList.Where(c => c.ChatType == Core.Model.ChatType.Admin);
-            List<ChatMember> admins = new List<ChatMember>();
-            foreach (var adminChat in adminChats)
-            {
-                try
-                {
-                    var adminsOfChat = await Api.GetChatAdministratorsAsync(adminChat.Id);
-                    admins.AddRange(adminsOfChat.Where(usr => !usr.User.IsBot));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning($"Chat {adminChat.Title} is unavailable and will be deleted");
-                    await ChatService.Delete(adminChat.Id);
-                }
-            }
-
-            foreach (var admin in admins)
-            {
-                var userInRepo = await UserService.Get(admin.User.Id);
-                if (userInRepo != null)
-                {
-                    _logger.LogInformation($"User with id={userInRepo.Id}, name={userInRepo.Name} is already exist");
-                    continue;
-                }
-
-                string userName = admin.User.GetUserName();
-                var newUser = new Core.Model.User
-                {
-                    Id = admin.User.Id,
-                    Name = userName,
-                    IsAdmin = true,
-                    Type = admin.User.IsBot ? UserType.Bot : UserType.Admin
-                };
-                await UserService.Add(newUser);
-                _logger.LogInformation($"User saved with id={newUser.Id}, name={newUser.Name}, type={newUser.Type}");
-
-            }
+            _configuration = configuration.Get<Configuration>();           
         }
 
         public override void OnUpdate(Update update)
@@ -1198,15 +1115,6 @@ namespace Telegram.Altayskaya97.Bot
             var chatToModify = await ChatService.Get(oldId);
             chatToModify.Id = newId;
             await ChatService.Update(oldId, chatToModify);
-        }
-
-        private bool IsNextDay()
-        {
-            var ts = new TimeSpan(0, 0, _configuration.PeriodEchoSec);
-            var now = DateTimeService.GetDateTimeUTCNow();
-            var currentDay = now.Day;
-            var prevDay = now.Subtract(ts).Day;
-            return currentDay != prevDay;
         }
     }
 }

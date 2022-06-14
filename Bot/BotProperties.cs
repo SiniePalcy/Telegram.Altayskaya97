@@ -22,7 +22,7 @@ namespace Telegram.Altayskaya97.Bot
                 ? GlobalEnvironment.BotName.Remove(0, 1) 
                 : GlobalEnvironment.BotName;
 
-            var botToken = configuration.GetSection("Telegram").GetValue<string>(botName); 
+            var botToken = configuration[$"{botName}"]; 
             Api = new BotClient(botToken);
             User = Api.GetMe();
 

@@ -17,7 +17,10 @@ namespace Telegram.Altayskaya97.Bot
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var builder = CreateHostBuilder(args);
+            var props = builder.Properties;
+            //configuration[$"Telegram:{botName}"];
+            builder.Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
