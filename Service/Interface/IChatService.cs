@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.SafeBot.Core.Model;
 
 namespace Telegram.SafeBot.Service.Interface

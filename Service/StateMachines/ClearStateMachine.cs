@@ -5,7 +5,6 @@ using Telegram.SafeBot.Core.Constant;
 using Telegram.SafeBot.Service.Interface;
 using Telegram.BotAPI.AvailableTypes;
 using Telegram.SafeBot.Service.StateMachines.UserStates;
-using Telegram.SafeBot.Core.Model;
 
 namespace Telegram.SafeBot.Service.StateMachines
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using Telegram.SafeBot.Core.Model;
 using Telegram.SafeBot.Model.Interface;
 
 namespace Telegram.SafeBot.Model.DbContext

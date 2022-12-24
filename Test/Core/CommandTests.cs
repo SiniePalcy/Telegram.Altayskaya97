@@ -1,4 +1,3 @@
-using Telegram.SafeBot.Core.Constant;
 using Telegram.SafeBot.Core.Model;
 using Xunit;
 

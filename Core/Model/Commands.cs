@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Telegram.SafeBot.Core.Model;
 
 namespace Telegram.SafeBot.Core.Model
 {

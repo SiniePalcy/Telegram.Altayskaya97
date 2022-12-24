@@ -9,7 +9,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.SafeBot.Core.Constant;
-using Telegram.SafeBot.Core.Extensions;
 using Telegram.SafeBot.Core.Model;
 using Telegram.SafeBot.Model;
 using Telegram.SafeBot.Service;

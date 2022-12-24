@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Telegram.SafeBot.Core.Model;
 using Telegram.SafeBot.Model.DbContext;
 using Telegram.SafeBot.Model.Interface;

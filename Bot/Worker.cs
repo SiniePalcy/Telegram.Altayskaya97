@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,6 @@ using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
 using Telegram.SafeBot.Service.Extensions;
 using Telegram.SafeBot.Core.Model;
-using Telegram.SafeBot.Model;
 
 namespace Telegram.SafeBot.Bot
 {

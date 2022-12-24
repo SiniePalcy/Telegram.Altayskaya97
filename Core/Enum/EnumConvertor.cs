@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Telegram.SafeBot.Core.Enum
+﻿namespace Telegram.SafeBot.Core.Enum
 {
     public static class EnumConvertor
     {

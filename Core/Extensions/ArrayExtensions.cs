@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Telegram.SafeBot.Core.Extensions
+﻿namespace Telegram.SafeBot.Core.Extensions
 {
     public static class ArrayExtensions
     {

@@ -1,7 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using System;
 using Telegram.SafeBot.Core.Interface;
-using Telegram.SafeBot.Core.Model;
 
 namespace Telegram.SafeBot.Model.Entity.DynamoDb
 {

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Telegram.SafeBot.Bot.Helpers;
 using Xunit;
 
 namespace Telegram.SafeBot.Test.Bot

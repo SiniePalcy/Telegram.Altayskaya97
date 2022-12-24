@@ -1,12 +1,7 @@
-using System;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
-using Telegram.SafeBot.Model.DbContext;
 using Telegram.SafeBot.Model.Extensions;
-using Telegram.SafeBot.Model.Interface;
-using Telegram.SafeBot.Bot;
 using Telegram.SafeBot.Service;
 using Telegram.SafeBot.Service.Interface;
 using Telegram.SafeBot.Service.Service;

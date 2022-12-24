@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Telegram.SafeBot.Core.Model;
 using Telegram.BotAPI.AvailableTypes;
 
 namespace Telegram.SafeBot.Service.Interface

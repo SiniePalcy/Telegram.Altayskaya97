@@ -1,5 +1,4 @@
-﻿using Amazon.DynamoDBv2.DataModel;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Telegram.SafeBot.Core.Interface;
 using Telegram.SafeBot.Model.Attributes;

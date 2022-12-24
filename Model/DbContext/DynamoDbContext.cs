@@ -2,11 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.Extensions.Configuration;
 using System;
-using Telegram.SafeBot.Core.Model;
 using Telegram.SafeBot.Model.Interface;
-using Telegram.SafeBot.Model.Middleware;
-using Telegram.SafeBot.Model.Middleware.DynamoDb;
-using Telegram.SafeBot.Model.Repository.DynamoDb;
 
 namespace Telegram.SafeBot.Model.DbContext
 {

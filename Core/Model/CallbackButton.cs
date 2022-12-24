@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Telegram.SafeBot.Core.Model
+﻿namespace Telegram.SafeBot.Core.Model
 {
     public class CallbackButton : Button
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Telegram.SafeBot.Core.Constant
+﻿namespace Telegram.SafeBot.Core.Constant
 {
     public static class CallbackActions
     {

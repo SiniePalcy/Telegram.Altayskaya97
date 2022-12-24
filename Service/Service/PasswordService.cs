@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.SafeBot.Core.Model;
