@@ -47,7 +47,7 @@ namespace Telegram.SafeBot.Service
 
         public string GetWelcomeMessage(string userName)
         {
-            return $"Welcome to our chat, <b>{userName}</b>! Вместе с тобой мы будем строить страну для жизни!🔥" +
+            return $"Welcome to our chat, <b>{userName}</b> 🔥!" +
                    $"\nFor this menu call <a href='tg://help'>/help</a>" +
                    $"\n\nAbout #ягуляю and return to home ask me about it." +
                    $"\nConfidentialy is guaratned!😉";
