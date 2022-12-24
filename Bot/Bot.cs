@@ -29,10 +29,12 @@ namespace Telegram.SafeBot.Bot
 {
     public class Bot : TelegramBotBase<BotProperties>
     {
+        private static bool _isFirstRun = true;
+
         private readonly ILogger<Bot> _logger;
         private readonly Configuration _configuration;
         private readonly IStateMachineContainer _stateMachineContainer;
-
+       
         public IButtonsService WelcomeService { get; } 
         public IMenuService MenuService { get;}
         public IPasswordService PasswordService { get; }
@@ -160,6 +162,12 @@ namespace Telegram.SafeBot.Bot
 
         public async Task ProcessBotMessage(Message chatMessage)
         {
+            if (_isFirstRun)
+            {
+                await EnsureDbHasOwner(chatMessage);
+                return;
+            }
+
             string commandText = chatMessage?.Text?.Trim()?.ToLower();
             if (string.IsNullOrEmpty(commandText))
                 return;
@@ -180,6 +188,27 @@ namespace Telegram.SafeBot.Bot
             {
                 var result = await _stateMachineContainer.TryProcessStage(user.Id, chatMessage);
                 await ReplyCommand(chatMessage.Chat.Id, result);
+            }
+        }
+        
+        private async Task EnsureDbHasOwner(Message chatMessage)
+        {
+            _isFirstRun = false;
+
+            var userList = await UserService.GetList();
+            if (!userList.Any())
+            {
+                var sender = chatMessage.From;
+                if (sender != null)
+                {
+                    await UserService.Add(new Core.Model.User
+                    {
+                        Id = sender.Id,
+                        Name = sender.Username,
+                        Type = UserType.Admin,
+                        IsAdmin = true,
+                    }); ;
+                }
             }
         }
 

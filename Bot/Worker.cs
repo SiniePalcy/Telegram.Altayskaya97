@@ -121,15 +121,7 @@ namespace Telegram.SafeBot.Bot
 
             var userList = await _userService.GetList();
             if (!userList.Any())
-            {
-                await _userService.Add(new Core.Model.User
-                {
-                    Id = long.Parse(_ownerId),
-                    Name = Environment.GetEnvironmentVariable("admin_name"),
-                    Type = UserType.Admin,
-                    IsAdmin = true,
-                });
-            }
+                return;
 
             var chatList = await _chatService.GetList();
             if (!chatList.Any())
