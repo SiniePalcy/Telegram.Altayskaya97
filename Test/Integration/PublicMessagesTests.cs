@@ -1,16 +1,16 @@
 ﻿//using Moq;
 //using System.Collections.Generic;
 //using System.Threading;
-//using Telegram.Altayskaya97.Model.Middleware;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Model.Middleware;
+//using Telegram.SafeBot.Service.Interface;
 //using Xunit;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class PublicMessagesTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public PublicMessagesTests(BotFixture fixture)
 //        {
@@ -32,10 +32,10 @@
 //                Id = 1,
 //                Type = ChatType.Group
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat
+//            var chatRepo = new SafeBot.Core.Model.Chat
 //            {
 //                Id = 1,
-//                ChatType = Altayskaya97.Core.Model.ChatType.Public
+//                ChatType = SafeBot.Core.Model.ChatType.Public
 //            };
 //            var message = new Message
 //            {
@@ -53,7 +53,7 @@
 //                .ReturnsAsync(_fixture.UserMapper.MapToEntity(user));
 //            var chatServiceMock = new Mock<IChatService>(); 
 //            chatServiceMock.SetupSequence(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
-//                .ReturnsAsync(default(Altayskaya97.Core.Model.Chat))
+//                .ReturnsAsync(default(SafeBot.Core.Model.Chat))
 //                .ReturnsAsync(chatRepo);
 //            _bot.UserService = userServiceMock.Object;
 //            _bot.ChatService = chatServiceMock.Object;
@@ -62,7 +62,7 @@
 
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
 //            chatServiceMock.Verify(mock => 
-//                mock.Add(It.Is<Altayskaya97.Core.Model.Chat>(c => c.Id == chat.Id)), Times.Once);
+//                mock.Add(It.Is<SafeBot.Core.Model.Chat>(c => c.Id == chat.Id)), Times.Once);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                 It.Is<ChatId>(_ => _.Identifier == chat.Id), 
 //                 It.IsAny<string>(), 
@@ -90,10 +90,10 @@
 //                Id = 1,
 //                Type = ChatType.Group
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat
+//            var chatRepo = new SafeBot.Core.Model.Chat
 //            {
 //                Id = 1,
-//                ChatType = Altayskaya97.Core.Model.ChatType.Public
+//                ChatType = SafeBot.Core.Model.ChatType.Public
 //            };
 //            var message = new Message
 //            {
@@ -118,9 +118,9 @@
 //            _bot.RecieveMessage(message).Wait();
 
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
-//            userServiceMock.Verify(mock => mock.Update(It.Is<Altayskaya97.Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
+//            userServiceMock.Verify(mock => mock.Update(It.Is<SafeBot.Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
 //            chatServiceMock.Verify(mock =>
-//                mock.Add(It.Is<Altayskaya97.Core.Model.Chat>(ct => ct.Id == chat.Id)), Times.Never);
+//                mock.Add(It.Is<SafeBot.Core.Model.Chat>(ct => ct.Id == chat.Id)), Times.Never);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                 It.Is<ChatId>(_ => _.Identifier == chat.Id),
 //                 It.IsAny<string>(),
@@ -148,10 +148,10 @@
 //                Id = 1,
 //                Type = ChatType.Group
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat
+//            var chatRepo = new SafeBot.Core.Model.Chat
 //            {
 //                Id = 1,
-//                ChatType = Altayskaya97.Core.Model.ChatType.Admin
+//                ChatType = SafeBot.Core.Model.ChatType.Admin
 //            };
 //            var message = new Message
 //            {
@@ -164,7 +164,7 @@
 
 //            var userServiceMock = new Mock<IUserService>();
 //            userServiceMock.Setup(s => s.GetByName(It.Is<string>(_ => _ == userName)))
-//                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
+//                .ReturnsAsync(default(SafeBot.Core.Model.User));
 //            var chatServiceMock = new Mock<IChatService>();
 //            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
 //                .ReturnsAsync(chatRepo);
@@ -174,10 +174,10 @@
 //            _bot.RecieveMessage(message).Wait();
 
 //            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
-//            userServiceMock.Verify(mock => mock.Add(It.Is<Altayskaya97.Core.Model.User>(u => u.Id == user.Id)), Times.Once);
-//            userServiceMock.Verify(mock => mock.Update(It.Is<Altayskaya97.Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
+//            userServiceMock.Verify(mock => mock.Add(It.Is<SafeBot.Core.Model.User>(u => u.Id == user.Id)), Times.Once);
+//            userServiceMock.Verify(mock => mock.Update(It.Is<SafeBot.Core.Model.User>(_ => _.Id == user.Id)), Times.Once);
 //            chatServiceMock.Verify(mock =>
-//                mock.Add(It.Is<Altayskaya97.Core.Model.Chat>(_ => _.Id == chat.Id)), Times.Never);
+//                mock.Add(It.Is<SafeBot.Core.Model.Chat>(_ => _.Id == chat.Id)), Times.Never);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                 It.Is<ChatId>(_ => _.Identifier == chat.Id),
 //                 It.IsAny<string>(),
@@ -207,10 +207,10 @@
 //                Id = 1,
 //                Type = ChatType.Group
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat
+//            var chatRepo = new SafeBot.Core.Model.Chat
 //            {
 //                Id = 1,
-//                ChatType = Altayskaya97.Core.Model.ChatType.Admin
+//                ChatType = SafeBot.Core.Model.ChatType.Admin
 //            };
 //            var message = new Message
 //            {
@@ -233,9 +233,9 @@
 //            _bot.RecieveMessage(message).Wait();
 
 //            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
-//            userServiceMock.Verify(mock => mock.Add(It.Is<Altayskaya97.Core.Model.User>(u => u.Id == user.Id)), Times.Never);
+//            userServiceMock.Verify(mock => mock.Add(It.Is<SafeBot.Core.Model.User>(u => u.Id == user.Id)), Times.Never);
 //            chatServiceMock.Verify(mock =>
-//                mock.Add(It.Is<Altayskaya97.Core.Model.Chat>(_ => _.Id == chat.Id)), Times.Never);
+//                mock.Add(It.Is<SafeBot.Core.Model.Chat>(_ => _.Id == chat.Id)), Times.Never);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                  It.Is<ChatId>(_ => _.Identifier == chat.Id),
 //                 It.IsAny<string>(),
@@ -265,10 +265,10 @@
 //                Id = 1,
 //                Type = ChatType.Group
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat
+//            var chatRepo = new SafeBot.Core.Model.Chat
 //            {
 //                Id = 1,
-//                ChatType = Altayskaya97.Core.Model.ChatType.Admin
+//                ChatType = SafeBot.Core.Model.ChatType.Admin
 //            };
 //            var message = new Message
 //            {
@@ -291,9 +291,9 @@
 //            _bot.RecieveMessage(message).Wait();
 
 //            userServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == user.Id)), Times.Once);
-//            userServiceMock.Verify(mock => mock.Add(It.Is<Altayskaya97.Core.Model.User>(u => u.Id == user.Id)), Times.Never);
+//            userServiceMock.Verify(mock => mock.Add(It.Is<SafeBot.Core.Model.User>(u => u.Id == user.Id)), Times.Never);
 //            chatServiceMock.Verify(mock =>
-//                mock.Add(It.Is<Altayskaya97.Core.Model.Chat>(chat => chat.Id == chat.Id)), Times.Never);
+//                mock.Add(It.Is<SafeBot.Core.Model.Chat>(chat => chat.Id == chat.Id)), Times.Never);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                 It.IsAny<ChatId>(),
 //                 It.IsAny<string>(),

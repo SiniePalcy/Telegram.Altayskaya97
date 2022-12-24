@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Core.Interface
+﻿namespace Telegram.SafeBot.Core.Interface
 {
     public interface IObject
     {

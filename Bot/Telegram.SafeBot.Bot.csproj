@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
-    <ProjectReference Include="..\Model\Telegram.Altayskaya97.Model.csproj" />
-    <ProjectReference Include="..\Service\Telegram.Altayskaya97.Service.csproj" />
+    <ProjectReference Include="..\Core\Telegram.SafeBot.Core.csproj" />
+    <ProjectReference Include="..\Model\Telegram.SafeBot.Model.csproj" />
+    <ProjectReference Include="..\Service\Telegram.SafeBot.Service.csproj" />
   </ItemGroup>
 </Project>

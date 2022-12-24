@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Bot.Jobs;
+using Telegram.SafeBot.Bot.Jobs;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.SafeBot.Bot
 {
     public static class ServiceCollectionExtensions
     {

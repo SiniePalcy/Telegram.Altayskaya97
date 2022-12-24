@@ -1,9 +1,9 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using System;
-using Telegram.Altayskaya97.Core.Interface;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Interface;
+using Telegram.SafeBot.Core.Model;
 
-namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
+namespace Telegram.SafeBot.Model.Entity.DynamoDb
 {
 #if DEBUG
     [DynamoDBTable("Password" + "Test")]

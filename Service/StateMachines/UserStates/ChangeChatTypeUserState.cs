@@ -1,6 +1,6 @@
-﻿using Telegram.Altayskaya97.Core.Enum;
+﻿using Telegram.SafeBot.Core.Enum;
 
-namespace Telegram.Altayskaya97.Service.StateMachines.UserStates
+namespace Telegram.SafeBot.Service.StateMachines.UserStates
 {
     public class ChangeChatTypeUserState : UserState<ChangeChatTypeState>
     {

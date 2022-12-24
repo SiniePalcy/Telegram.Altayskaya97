@@ -1,6 +1,6 @@
-﻿using Telegram.Altayskaya97.Core.Model;
+﻿using Telegram.SafeBot.Core.Model;
 
-namespace Telegram.Altayskaya97.Model.Interface
+namespace Telegram.SafeBot.Model.Interface
 {
     public interface IDbContext 
     {

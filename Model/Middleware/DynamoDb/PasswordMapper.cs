@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Core.Helpers;
-using Telegram.Altayskaya97.Core.Constant;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Core.Helpers;
+using Telegram.SafeBot.Core.Constant;
 
-namespace Telegram.Altayskaya97.Model.Middleware.DynamoDb
+namespace Telegram.SafeBot.Model.Middleware.DynamoDb
 {
     public class PasswordMapper : BaseMapper<Password, Entity.DynamoDb.Password>
     {

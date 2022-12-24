@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Telegram.Altayskaya97.Core.Constant
+namespace Telegram.SafeBot.Core.Constant
 {
     public static class Messages
     {

@@ -1,15 +1,15 @@
 ﻿//using Moq;
 //using System.Collections.Generic;
 //using System.Threading;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Service.Interface;
 //using Xunit;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class ReturnTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public ReturnTests(BotFixture fixture)
 //        {
@@ -27,7 +27,7 @@
 //                Username = userName,
 //            };
 //            var userRepo = _fixture.UserMapper.MapToEntity(user);
-//            userRepo.Type = Altayskaya97.Core.Model.UserType.Member;
+//            userRepo.Type = SafeBot.Core.Model.UserType.Member;
 //            var chat1 = new Chat
 //            {
 //                Id = 1,
@@ -66,14 +66,14 @@
 //            };
 
 //            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
-//            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
+//            chatRepo1.ChatType = SafeBot.Core.Model.ChatType.Private;
 //            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-//            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Public;
+//            chatRepo2.ChatType = SafeBot.Core.Model.ChatType.Public;
 //            var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat3);
-//            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
+//            chatRepo3.ChatType = SafeBot.Core.Model.ChatType.Public;
 //            var chatRepo4 = _fixture.ChatMapper.MapToEntity(chat4);
-//            chatRepo4.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3, chatRepo4 };
+//            chatRepo4.ChatType = SafeBot.Core.Model.ChatType.Admin;
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3, chatRepo4 };
 
 //            var message = new Message
 //            {

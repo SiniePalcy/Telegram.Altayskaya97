@@ -1,11 +1,11 @@
 ﻿//using Moq;
 //using System.Linq;
 //using System.Threading;
-//using Telegram.Altayskaya97.Bot.Interface;
-//using Telegram.Altayskaya97.Bot.StateMachines;
-//using Telegram.Altayskaya97.Core.Constant;
-//using Telegram.Altayskaya97.Core.Model;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Bot.Interface;
+//using Telegram.SafeBot.Bot.StateMachines;
+//using Telegram.SafeBot.Core.Constant;
+//using Telegram.SafeBot.Core.Model;
+//using Telegram.SafeBot.Service.Interface;
 //using Telegram.Bot;
 //using Telegram.Bot.Types;
 //using Telegram.Bot.Types.ReplyMarkups;
@@ -13,12 +13,12 @@
 //using Xunit;
 //using System.Collections.Generic;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class ChangeChatTypeTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public ChangeChatTypeTests(BotFixture fixture)
 //        {
@@ -35,10 +35,10 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
-//                Type = Altayskaya97.Core.Model.UserType.Member
+//                Type = SafeBot.Core.Model.UserType.Member
 //            };
 //            var chat = new Telegram.Bot.Types.Chat
 //            {
@@ -72,9 +72,9 @@
 
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Once);
 //            chatServiceMock.Verify(mock => mock.Update(It.IsAny<long>(), 
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            chatServiceMock.Verify(mock => mock.Update(
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
@@ -103,7 +103,7 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
 //                Type = UserType.Admin
@@ -146,9 +146,9 @@
 
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Once);
 //            chatServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            chatServiceMock.Verify(mock => mock.Update(
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
@@ -177,7 +177,7 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
 //                Type = UserType.Admin
@@ -197,10 +197,10 @@
 //                Id = 3,
 //                Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
 //            };
-//            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
-//            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
-//            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+//            var chatRepo1 = new SafeBot.Core.Model.Chat { Id = chat1.Id, ChatType = SafeBot.Core.Model.ChatType.Private, Title = "Private" };
+//            var chatRepo2 = new SafeBot.Core.Model.Chat { Id = chat2.Id, ChatType = SafeBot.Core.Model.ChatType.Public, Title = "Public" };
+//            var chatRepo3 = new SafeBot.Core.Model.Chat { Id = chat3.Id, ChatType = SafeBot.Core.Model.ChatType.Admin, Title = "Admin" };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 //            var message = new Message
 //            {
 //                Chat = chat1,
@@ -242,9 +242,9 @@
 
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat1.Id)), Times.Exactly(3));
 //            chatServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            chatServiceMock.Verify(mock => mock.Update(
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Exactly(3));
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
@@ -297,7 +297,7 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
 //                Type = UserType.Admin
@@ -317,10 +317,10 @@
 //                Id = 3,
 //                Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
 //            };
-//            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
-//            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
-//            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+//            var chatRepo1 = new SafeBot.Core.Model.Chat { Id = chat1.Id, ChatType = SafeBot.Core.Model.ChatType.Private, Title = "Private" };
+//            var chatRepo2 = new SafeBot.Core.Model.Chat { Id = chat2.Id, ChatType = SafeBot.Core.Model.ChatType.Public, Title = "Public" };
+//            var chatRepo3 = new SafeBot.Core.Model.Chat { Id = chat3.Id, ChatType = SafeBot.Core.Model.ChatType.Admin, Title = "Admin" };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 //            var message = new Message
 //            {
 //                Chat = chat1,
@@ -419,7 +419,7 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
 //                Type = UserType.Admin
@@ -439,10 +439,10 @@
 //                Id = 3,
 //                Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
 //            };
-//            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
-//            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
-//            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+//            var chatRepo1 = new SafeBot.Core.Model.Chat { Id = chat1.Id, ChatType = SafeBot.Core.Model.ChatType.Private, Title = "Private" };
+//            var chatRepo2 = new SafeBot.Core.Model.Chat { Id = chat2.Id, ChatType = SafeBot.Core.Model.ChatType.Public, Title = "Public" };
+//            var chatRepo3 = new SafeBot.Core.Model.Chat { Id = chat3.Id, ChatType = SafeBot.Core.Model.ChatType.Admin, Title = "Admin" };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 //            var message = new Message
 //            {
 //                Chat = chat1,
@@ -494,9 +494,9 @@
 
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat1.Id)), Times.Exactly(4));
 //            chatServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            chatServiceMock.Verify(mock => mock.Update(
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Exactly(4));
 //            userMessageServiceMock.Verify(mock => mock.Delete(It.IsAny<long>()), Times.Never);
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
@@ -564,7 +564,7 @@
 //                Id = 1,
 //                Username = userName + "1",
 //            };
-//            var userRepo = new Altayskaya97.Core.Model.User
+//            var userRepo = new SafeBot.Core.Model.User
 //            {
 //                Id = user1.Id,
 //                Type = UserType.Admin
@@ -584,10 +584,10 @@
 //                Id = 41252,
 //                Type = Telegram.Bot.Types.Enums.ChatType.Supergroup
 //            };
-//            var chatRepo1 = new Altayskaya97.Core.Model.Chat { Id = chat1.Id, ChatType = Altayskaya97.Core.Model.ChatType.Private, Title = "Private" };
-//            var chatRepo2 = new Altayskaya97.Core.Model.Chat { Id = chat2.Id, ChatType = Altayskaya97.Core.Model.ChatType.Public, Title = "Public" };
-//            var chatRepo3 = new Altayskaya97.Core.Model.Chat { Id = chat3.Id, ChatType = Altayskaya97.Core.Model.ChatType.Admin, Title = "Admin" };
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+//            var chatRepo1 = new SafeBot.Core.Model.Chat { Id = chat1.Id, ChatType = SafeBot.Core.Model.ChatType.Private, Title = "Private" };
+//            var chatRepo2 = new SafeBot.Core.Model.Chat { Id = chat2.Id, ChatType = SafeBot.Core.Model.ChatType.Public, Title = "Public" };
+//            var chatRepo3 = new SafeBot.Core.Model.Chat { Id = chat3.Id, ChatType = SafeBot.Core.Model.ChatType.Admin, Title = "Admin" };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 //            var message = new Message
 //            {
 //                Chat = chat1,
@@ -665,9 +665,9 @@
 //            string changedText = "Chat type changed to Public";
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat1.Id)), Times.Exactly(4));
 //            chatServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Never);
 //            chatServiceMock.Verify(mock => mock.Update(
-//                It.IsAny<Altayskaya97.Core.Model.Chat>()), Times.Once);
+//                It.IsAny<SafeBot.Core.Model.Chat>()), Times.Once);
 //            userMessageServiceMock.Verify(mock => mock.Add(It.IsAny<UserMessage>()), Times.Exactly(4));
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Once);
 //            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);

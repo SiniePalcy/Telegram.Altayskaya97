@@ -1,6 +1,6 @@
 ﻿using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service.Extensions
+namespace Telegram.SafeBot.Service.Extensions
 {
     public static class BotUserExtensions
     {

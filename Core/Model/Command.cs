@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Telegram.Altayskaya97.Core.Model
+namespace Telegram.SafeBot.Core.Model
 {
     public class Command
     {

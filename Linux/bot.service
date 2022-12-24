@@ -1,21 +1,21 @@
 ﻿[Unit]
 # use it only for Release configuration
-Description=Bot service .NET for Telegram Altayskaya bot
+Description=Bot service .NET for Telegram SafeBot
 
 [Service]
 Type=simple
 # will set the Current Working Directory (CWD). Worker service will have issues without this setting
-WorkingDirectory=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/net6.0/ubuntu.18.04-x64
+WorkingDirectory=/home/user/git/Telegram.SafeBot/Bot/bin/Release/net6.0/ubuntu.18.04-x64
 
 # systemd will run this executable to start the service
-ExecStart=/home/altayski/git/Telegram.Altayskaya97/Bot/bin/Release/net6.0/ubuntu.18.04-x64/Telegram.Altayskaya97.Bot
+ExecStart=/home/user/git/Telegram.SafeBot/Bot/bin/Release/net6.0/ubuntu.18.04-x64/Telegram.SafeBot.Bot
 
 # to query logs using journalctl, set a logical name here  
 SyslogIdentifier=bot
 
 # Use your username to keep things simple.
 # If you pick a different user, make sure dotnet and all permissions are set correctly to run the app
-User=altayski
+User=user
 
 # ensure the service restarts after crashing
 Restart=always

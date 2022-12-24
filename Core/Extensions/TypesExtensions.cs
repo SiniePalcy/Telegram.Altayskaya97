@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Telegram.Altayskaya97.Core.Extensions
+namespace Telegram.SafeBot.Core.Extensions
 {
     public static class TypesExtensions
     {

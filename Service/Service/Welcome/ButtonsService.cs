@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Core.Constant;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public class ButtonsService : IButtonsService
     {
         private readonly Button[] _buttons = new Button[]
         {
-            new LinkButton("Правила чата",  "https://telegra.ph/Pravila-chata-10-28-4", false),
-            new LinkButton("Правила чата",  "https://telegra.ph/Pravila-SHpiciyalnyh-botov-10-28", true),
-            new LinkButton("Список районных чатов",  "http://dze.chat"),
-            new LinkButton("Анонимность в Телеграм",  "https://telegra.ph/faq-09-08-4"),
-            new LinkButton("Добавить камеру на карту",  "https://minsk.sous-surveillance.net"),
-            new CallbackButton("Я гуляю", CallbackActions.IWalk),
-            new CallbackButton("Я не гуляю", CallbackActions.NoWalk)
+            new LinkButton("Chat rules",  "https://telegra.ph/Pravila-chata-10-28-4", false),
+            new LinkButton("Chat rules",  "https://telegra.ph/Pravila-SHpiciyalnyh-botov-10-28", true),
+            new LinkButton("List chats",  "http://dze.chat"),
+            new LinkButton("Safety rules in Telegram",  "https://telegra.ph/faq-09-08-4"),
+            new LinkButton("Add camera to map",  "https://minsk.sous-surveillance.net"),
+            new CallbackButton("I walk", CallbackActions.IWalk),
+            new CallbackButton("I don't walk", CallbackActions.NoWalk)
         };
 
 
@@ -47,10 +47,10 @@ namespace Telegram.Altayskaya97.Service
 
         public string GetWelcomeMessage(string userName)
         {
-            return $"Добро пожаловать в наш чат, <b>{userName}</b>! Вместе с тобой мы будем строить страну для жизни!🔥" +
-                   $"\nДля вызова этого меню набери <a href='tg://help'>/help</a>" +
-                   $"\n\nПо вопросам #ягуляю и возврата обращайся к {GlobalEnvironment.BotName}. " +
-                   $"\nКонфиденциальность гаратируется!😉";
+            return $"Welcome to our chat, <b>{userName}</b>! Вместе с тобой мы будем строить страну для жизни!🔥" +
+                   $"\nFor this menu call <a href='tg://help'>/help</a>" +
+                   $"\n\nAbout #ягуляю and return to home ask me about it." +
+                   $"\nConfidentialy is guaratned!😉";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Model
+﻿namespace Telegram.SafeBot.Model
 {
     public class Configuration
     {

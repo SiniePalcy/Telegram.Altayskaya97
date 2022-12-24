@@ -1,17 +1,17 @@
 ﻿//using Moq;
 //using System.Collections.Generic;
 //using System.Threading;
-//using Telegram.Altayskaya97.Bot.Interface;
-//using Telegram.Altayskaya97.Bot.StateMachines;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Bot.Interface;
+//using Telegram.SafeBot.Bot.StateMachines;
+//using Telegram.SafeBot.Service.Interface;
 //using Xunit;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class StartTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public StartTests(BotFixture fixture)
 //        {
@@ -45,7 +45,7 @@
 
 //            var userServiceMock = new Mock<IUserService>();
 //            userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
-//                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
+//                .ReturnsAsync(default(SafeBot.Core.Model.User));
 //            _bot.UserService = userServiceMock.Object;
 
 //            var chatServiceMock = new Mock<IChatService>();
@@ -100,7 +100,7 @@
 
 //            var userServiceMock = new Mock<IUserService>();
 //            userServiceMock.Setup(s => s.GetByName(It.IsAny<string>()))
-//                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
+//                .ReturnsAsync(default(SafeBot.Core.Model.User));
 //            _bot.UserService = userServiceMock.Object;
 
 //            var chatServiceMock = new Mock<IChatService>();

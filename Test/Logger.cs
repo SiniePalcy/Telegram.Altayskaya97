@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 
-namespace Telegram.Altayskaya97.Test
+namespace Telegram.SafeBot.Test
 {
     public class Logger<T> : ILogger<T>
     {

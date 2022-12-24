@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service.Interface
+namespace Telegram.SafeBot.Service.Interface
 {
     public interface IStateMachineContainer
     {

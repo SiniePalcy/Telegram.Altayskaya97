@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model.Interface;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model.Interface;
 
-namespace Telegram.Altayskaya97.Model.DbContext
+namespace Telegram.SafeBot.Model.DbContext
 {
     public class MongoDbContext : IDbContext
     {

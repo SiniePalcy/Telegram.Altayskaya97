@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Interface;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Core.Interface;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Service.Interface;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public abstract class RepositoryService<T> : IRepositoryService<T> where T : IObject
     {

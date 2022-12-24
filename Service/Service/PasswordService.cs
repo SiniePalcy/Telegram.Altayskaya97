@@ -2,14 +2,14 @@
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Altayskaya97.Core.Helpers;
-using Telegram.Altayskaya97.Core.Extensions;
-using Telegram.Altayskaya97.Core.Constant;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Service.Interface;
+using Telegram.SafeBot.Core.Helpers;
+using Telegram.SafeBot.Core.Extensions;
+using Telegram.SafeBot.Core.Constant;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public class PasswordService : RepositoryService<Password>, IPasswordService
     {
@@ -41,7 +41,7 @@ namespace Telegram.Altayskaya97.Service
                 return false;
 
             var bytes = HashHelper.GetBytes(memberPass.Value);
-            var hash = HashHelper.ComputeHash(password, GlobalEnvironment.Encoding);
+            var hash = HashHelper.ComputeHash(password,  GlobalEnvironment.Encoding);
             return bytes.Same(hash);
         }
 

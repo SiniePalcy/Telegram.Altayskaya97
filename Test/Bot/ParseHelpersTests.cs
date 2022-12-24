@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Altayskaya97.Bot.Helpers;
+using Telegram.SafeBot.Bot.Helpers;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.SafeBot.Test.Bot
 {
     public class ParseHelpersTests
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Service.Interface;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public class DateTimeService : IDateTimeService
     {

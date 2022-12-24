@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Altayskaya97.Service.StateMachines;
+using Telegram.SafeBot.Service.Interface;
+using Telegram.SafeBot.Service.StateMachines;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service.Service
+namespace Telegram.SafeBot.Service.Service
 {
     public class StateMachineContainer : IStateMachineContainer
     {

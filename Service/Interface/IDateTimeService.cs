@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Telegram.Altayskaya97.Service.Interface
+namespace Telegram.SafeBot.Service.Interface
 {
     public interface IDateTimeService : IService
     {

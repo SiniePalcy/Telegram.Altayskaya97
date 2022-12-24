@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Service.Extensions;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Service.Extensions;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Bot.Jobs
+namespace Telegram.SafeBot.Bot.Jobs
 {
     [DisallowConcurrentExecution]
     public class ActualUsernameJob : IJob

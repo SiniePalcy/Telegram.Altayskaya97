@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Constant;
+using Telegram.SafeBot.Core.Constant;
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
 using Telegram.BotAPI.GettingUpdates;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.SafeBot.Bot
 {
     public sealed class BotProperties : IBotProperties
     {
@@ -18,9 +18,7 @@ namespace Telegram.Altayskaya97.Bot
 
         public BotProperties(IConfiguration configuration)
         {
-            string botName = GlobalEnvironment.BotName.StartsWith("@") 
-                ? GlobalEnvironment.BotName.Remove(0, 1) 
-                : GlobalEnvironment.BotName;
+            string botName = Environment.GetEnvironmentVariable("BOT_NAME");
 
             var botToken = configuration[$"{botName}"]; 
             Api = new BotClient(botToken);

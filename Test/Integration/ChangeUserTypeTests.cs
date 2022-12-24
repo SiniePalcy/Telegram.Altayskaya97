@@ -2,19 +2,19 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading;
-//using Telegram.Altayskaya97.Core;
-//using Telegram.Altayskaya97.Core.Constant;
-//using Telegram.Altayskaya97.Service.Interface;
-//using Telegram.Altayskaya97.Bot.Helpers;
+//using Telegram.SafeBot.Core;
+//using Telegram.SafeBot.Core.Constant;
+//using Telegram.SafeBot.Service.Interface;
+//using Telegram.SafeBot.Bot.Helpers;
 //using Xunit;
 //using System;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class ChangeUserTypeTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public ChangeUserTypeTests(BotFixture fixture)
 //        {
@@ -37,7 +37,7 @@
 //                Id = 1,
 //                Type = ChatType.Private
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat { Id = chat.Id };
+//            var chatRepo = new SafeBot.Core.Model.Chat { Id = chat.Id };
 //            var message = new Message
 //            {
 //                Chat = chat,
@@ -101,9 +101,9 @@
 //            };
 //            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
 //            userRepo1.IsAdmin = false;
-//            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo1.Type = SafeBot.Core.Model.UserType.Admin;
 //            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-//            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
+//            var users = new SafeBot.Core.Model.User[] { userRepo1, userRepo2 };
 
 //            var chatMember = new ChatMemberMember();
 
@@ -145,8 +145,8 @@
 //            userServiceMock.Verify(mock => mock.PromoteUserAdmin(It.IsAny<long>()), Times.Never);
 //            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
 //            userServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.User>()), Times.Never);
-//            userServiceMock.Verify(mock => mock.Update(It.IsAny<Altayskaya97.Core.Model.User>()),
+//                It.IsAny<SafeBot.Core.Model.User>()), Times.Never);
+//            userServiceMock.Verify(mock => mock.Update(It.IsAny<SafeBot.Core.Model.User>()),
 //                Times.Never);
 //            chatServiceMock.Verify(mock => mock.GetList(), Times.Never);
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
@@ -198,10 +198,10 @@
 //            };
 //            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
 //            userRepo1.IsAdmin = false;
-//            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo1.Type = SafeBot.Core.Model.UserType.Admin;
 //            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Member;
-//            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Member;
+//            var users = new SafeBot.Core.Model.User[] { userRepo1, userRepo2 };
 
 //            var message = new Message
 //            {
@@ -248,9 +248,9 @@
 //                Times.Never);
 //            userServiceMock.Verify(mock => mock.GetList(), Times.Never);
 //            userServiceMock.Verify(mock => mock.Update(It.IsAny<long>(),
-//                It.IsAny<Altayskaya97.Core.Model.User>()), Times.Never);
+//                It.IsAny<SafeBot.Core.Model.User>()), Times.Never);
 //            userServiceMock.Verify(mock => mock.Update(
-//                It.Is<Altayskaya97.Core.Model.User>(_ => _.Id == user2.Id)),
+//                It.Is<SafeBot.Core.Model.User>(_ => _.Id == user2.Id)),
 //                Times.Once);
             
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(

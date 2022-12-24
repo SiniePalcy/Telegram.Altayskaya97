@@ -3,18 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Service", "Service\Telegram.Altayskaya97.Service.csproj", "{E6A75F2B-247C-445A-9CBB-371665CA394A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.SafeBot.Service", "Service\Telegram.SafeBot.Service.csproj", "{E6A75F2B-247C-445A-9CBB-371665CA394A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Core", "Core\Telegram.Altayskaya97.Core.csproj", "{EA2FB4A7-16DA-47EE-B5C2-F95F251B5439}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.SafeBot.Core", "Core\Telegram.SafeBot.Core.csproj", "{EA2FB4A7-16DA-47EE-B5C2-F95F251B5439}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Model", "Model\Telegram.Altayskaya97.Model.csproj", "{311D0B81-342B-47FA-9C18-01AD98CE6D82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.SafeBot.Model", "Model\Telegram.SafeBot.Model.csproj", "{311D0B81-342B-47FA-9C18-01AD98CE6D82}"
 	ProjectSection(ProjectDependencies) = postProject
 		{EA2FB4A7-16DA-47EE-B5C2-F95F251B5439} = {EA2FB4A7-16DA-47EE-B5C2-F95F251B5439}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Bot", "Bot\Telegram.Altayskaya97.Bot.csproj", "{BD82A12A-6057-43C3-9C5B-AE93EA5F9E08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.SafeBot.Bot", "Bot\Telegram.SafeBot.Bot.csproj", "{BD82A12A-6057-43C3-9C5B-AE93EA5F9E08}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.Altayskaya97.Test", "Test\Telegram.Altayskaya97.Test.csproj", "{F11EF113-0730-459A-B5ED-1BCAE247B687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram.SafeBot.Test", "Test\Telegram.SafeBot.Test.csproj", "{F11EF113-0730-459A-B5ED-1BCAE247B687}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linux", "Linux", "{82ECEF0B-49AB-44CD-BEE9-5735DE81E686}"
 	ProjectSection(SolutionItems) = preProject

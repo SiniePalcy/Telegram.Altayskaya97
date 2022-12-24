@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Service.Interface;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public abstract class BaseMenuService : IMenuService
     {
@@ -19,7 +19,7 @@ namespace Telegram.Altayskaya97.Service
 
         protected string MakeHeader(string userName)
         {
-            return $"Приветствую тебя, <b>{userName}</b>!\nКомманды управления:";
+            return $"Hi, <b>{userName}</b>!\nCommands:";
         }
 
         public abstract string GetMenu(string userName, bool isAdmin);

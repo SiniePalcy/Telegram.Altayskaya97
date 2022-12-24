@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
 
-namespace Telegram.Altayskaya97.Model.Interface
+namespace Telegram.SafeBot.Model.Interface
 {
     public interface IModelEntityMapper<TModel, TEntity>
     {

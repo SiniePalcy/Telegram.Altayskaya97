@@ -1,6 +1,6 @@
-﻿using Telegram.Altayskaya97.Core.Interface;
+﻿using Telegram.SafeBot.Core.Interface;
 
-namespace Telegram.Altayskaya97.Core.Model
+namespace Telegram.SafeBot.Core.Model
 {
     public class Password : IObject
     {

@@ -1,18 +1,18 @@
 ﻿//using Moq;
 //using System.Threading;
-//using Telegram.Altayskaya97.Core.Constant;
-//using Telegram.Altayskaya97.Service.Interface;
-//using Telegram.Altayskaya97.Bot.Helpers;
+//using Telegram.SafeBot.Core.Constant;
+//using Telegram.SafeBot.Service.Interface;
+//using Telegram.SafeBot.Bot.Helpers;
 //using Xunit;
 //using System;
 //using System.Collections.Generic;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class BanTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public BanTests(BotFixture fixture)
 //        {
@@ -35,7 +35,7 @@
 //                Id = 1,
 //                Type = ChatType.Private
 //            };
-//            var chatRepo = new Altayskaya97.Core.Model.Chat { Id = chat.Id };
+//            var chatRepo = new SafeBot.Core.Model.Chat { Id = chat.Id };
 //            var message = new Message
 //            {
 //                Chat = chat,
@@ -91,7 +91,7 @@
 //            };
 //            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
 //            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
 //            string userName = "TestUser";
 //            var user1 = new User
@@ -106,9 +106,9 @@
 //            };
 //            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
 //            userRepo1.IsAdmin = true;
-//            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo1.Type = SafeBot.Core.Model.UserType.Admin;
 //            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-//            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
+//            var users = new SafeBot.Core.Model.User[] { userRepo1, userRepo2 };
             
 //            var chatMember = new ChatMemberMember();
 
@@ -136,8 +136,8 @@
 //            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat1.Id)))
 //                .ReturnsAsync(chatRepo1);
 //            chatServiceMock.SetupSequence(s => s.GetList())
-//                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[0])
-//                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 });
+//                .ReturnsAsync(new SafeBot.Core.Model.Chat[0])
+//                .ReturnsAsync(new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2 });
 //            _bot.ChatService = chatServiceMock.Object;
 
 //            _fixture.MockBotClient.SetupSequence(s => s.GetChatAsync(It.IsAny<ChatId>(), It.IsAny<CancellationToken>()))
@@ -156,13 +156,13 @@
 //            message.Text = "/ban testuser2";
 //            _bot.RecieveMessage(message).Wait();
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Coordinator;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Coordinator;
 //            _bot.RecieveMessage(message).Wait();
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Bot;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Bot;
 //            _bot.RecieveMessage(message).Wait();
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Member;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Member;
 //            _bot.RecieveMessage(message).Wait();
 
 //            userServiceMock.Verify(mock => mock.Get(It.IsAny<long>()), Times.Exactly(5));
@@ -257,7 +257,7 @@
 
 //            var chatServiceMock = new Mock<IChatService>();
 //            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
-//                .ReturnsAsync(new Altayskaya97.Core.Model.Chat { Id = 1 });
+//                .ReturnsAsync(new SafeBot.Core.Model.Chat { Id = 1 });
 //            _bot.ChatService = chatServiceMock.Object;
 
 //            _bot.RecieveMessage(message).Wait();
@@ -296,7 +296,7 @@
 //            };
 //            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
 //            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
 //            string userName = "TestUser";
 //            var user1 = new User
@@ -311,9 +311,9 @@
 //            };
 //            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
 //            userRepo1.IsAdmin = true;
-//            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo1.Type = SafeBot.Core.Model.UserType.Admin;
 //            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
-//            var users = new Altayskaya97.Core.Model.User[] { userRepo1, userRepo2 };
+//            var users = new SafeBot.Core.Model.User[] { userRepo1, userRepo2 };
 
 //            var chatMember1 = new ChatMemberMember { User = user1 };
 //            var chatMember2 = new ChatMemberMember { User = user2 };
@@ -376,7 +376,7 @@
 //                It.IsAny<CancellationToken>()),
 //                Times.Exactly(2));
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Coordinator;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Coordinator;
 //            _bot.RecieveMessage(message).Wait();
 //            _fixture.MockBotClient.Verify(mock => mock.BanChatMemberAsync(
 //                It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
@@ -393,7 +393,7 @@
 //                It.IsAny<CancellationToken>()),
 //                Times.Exactly(2));
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Bot;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Bot;
 //            _bot.RecieveMessage(message).Wait();
 //            _fixture.MockBotClient.Verify(mock => mock.BanChatMemberAsync(
 //                It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),
@@ -410,7 +410,7 @@
 //                It.IsAny<CancellationToken>()),
 //                Times.Exactly(2));
 
-//            userRepo2.Type = Altayskaya97.Core.Model.UserType.Member;
+//            userRepo2.Type = SafeBot.Core.Model.UserType.Member;
 //            _bot.RecieveMessage(message).Wait();
 //            _fixture.MockBotClient.Verify(mock => mock.BanChatMemberAsync(
 //                It.Is<ChatId>(_ => _.Identifier == chatRepo1.Id || _.Identifier == chatRepo2.Id),

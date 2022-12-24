@@ -1,10 +1,10 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Telegram.Altayskaya97.Core.Interface;
-using Telegram.Altayskaya97.Model.Attributes;
+using Telegram.SafeBot.Core.Interface;
+using Telegram.SafeBot.Model.Attributes;
 
-namespace Telegram.Altayskaya97.Model.Entity.MongoDb
+namespace Telegram.SafeBot.Model.Entity.MongoDb
 {
 #if DEBUG
     [Collection("Chat" + "Test")]

@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model.DbContext;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Model.Middleware;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model.DbContext;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Model.Middleware;
 
-namespace Telegram.Altayskaya97.Model.Extensions
+namespace Telegram.SafeBot.Model.Extensions
 {
     public static class ServiceCollectionExtensions
     {

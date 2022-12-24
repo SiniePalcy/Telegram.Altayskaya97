@@ -1,8 +1,8 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using System;
-using Telegram.Altayskaya97.Core.Interface;
+using Telegram.SafeBot.Core.Interface;
 
-namespace Telegram.Altayskaya97.Model.Entity.DynamoDb
+namespace Telegram.SafeBot.Model.Entity.DynamoDb
 {
 #if DEBUG
     [DynamoDBTable("User" + "Test")]

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Model;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public class MenuService : BaseMenuService
     {

@@ -8,14 +8,14 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Core.Extensions;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model;
-using Telegram.Altayskaya97.Service;
-using Telegram.Altayskaya97.Service.Extensions;
-using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Altayskaya97.Service.StateMachines;
+using Telegram.SafeBot.Core.Constant;
+using Telegram.SafeBot.Core.Extensions;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model;
+using Telegram.SafeBot.Service;
+using Telegram.SafeBot.Service.Extensions;
+using Telegram.SafeBot.Service.Interface;
+using Telegram.SafeBot.Service.StateMachines;
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableMethods.FormattingOptions;
@@ -26,7 +26,7 @@ using Chat = Telegram.BotAPI.AvailableTypes.Chat;
 using ChatType = Telegram.BotAPI.AvailableTypes.ChatType;
 using User = Telegram.BotAPI.AvailableTypes.User;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.SafeBot.Bot
 {
     public class Bot : TelegramBotBase<BotProperties>
     {

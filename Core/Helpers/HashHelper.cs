@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace Telegram.Altayskaya97.Core.Helpers
+namespace Telegram.SafeBot.Core.Helpers
 {
     public static class HashHelper
     {

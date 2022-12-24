@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Telegram.Altayskaya97.Model.Attributes
+namespace Telegram.SafeBot.Model.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class CollectionAttribute : Attribute

@@ -1,19 +1,19 @@
 ﻿using Moq;
 using System.Collections.Generic;
 using System.Threading;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Integration
+namespace Telegram.SafeBot.Test.Integration
 {
     public class GrantAdminTests : IClassFixture<BotFixture>
     {
         private readonly BotFixture _fixture = null;
-        private readonly Altayskaya97.Bot.Worker _bot = null;
+        private readonly SafeBot.Bot.Worker _bot = null;
 
         public GrantAdminTests(BotFixture fixture)
         {
@@ -46,12 +46,12 @@ namespace Telegram.Altayskaya97.Test.Integration
 
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(s => s.Get(It.IsAny<long>()))
-                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
+                .ReturnsAsync(default(SafeBot.Core.Model.User));
             _bot.UserService = userServiceMock.Object;
 
             var chatServiceMock = new Mock<IChatService>();
             chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat.Id)))
-                .ReturnsAsync(new Altayskaya97.Core.Model.Chat { Id = 1 });
+                .ReturnsAsync(new SafeBot.Core.Model.Chat { Id = 1 });
             _bot.ChatService = chatServiceMock.Object;
 
             _bot.RecieveMessage(message).Wait();
@@ -83,7 +83,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Altayskaya97.Core.Model.UserType.Admin;
+            userRepo.Type = SafeBot.Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -100,12 +100,12 @@ namespace Telegram.Altayskaya97.Test.Integration
                 Type = ChatType.Supergroup
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
-            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
+            chatRepo1.ChatType = SafeBot.Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
+            chatRepo2.ChatType = SafeBot.Core.Model.ChatType.Admin;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
-            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            chatRepo3.ChatType = SafeBot.Core.Model.ChatType.Public;
+            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
             var chatMember = new ChatMemberBanned { User = user };
             var message = new Message
@@ -179,7 +179,7 @@ namespace Telegram.Altayskaya97.Test.Integration
                 Username = userName,
             };
             var userRepo = _fixture.UserMapper.MapToEntity(user);
-            userRepo.Type = Altayskaya97.Core.Model.UserType.Admin;
+            userRepo.Type = SafeBot.Core.Model.UserType.Admin;
             var chat = new Chat
             {
                 Id = 1,
@@ -196,12 +196,12 @@ namespace Telegram.Altayskaya97.Test.Integration
                 Type = ChatType.Supergroup
             };
             var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat);
-            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Private;
+            chatRepo1.ChatType = SafeBot.Core.Model.ChatType.Private;
             var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat1);
-            chatRepo2.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
+            chatRepo2.ChatType = SafeBot.Core.Model.ChatType.Admin;
             var chatRepo3 = _fixture.ChatMapper.MapToEntity(chat2);
-            chatRepo3.ChatType = Altayskaya97.Core.Model.ChatType.Public;
-            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
+            chatRepo3.ChatType = SafeBot.Core.Model.ChatType.Public;
+            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2, chatRepo3 };
 
             var chatMember = new ChatMemberLeft { User = user };
             var message = new Message

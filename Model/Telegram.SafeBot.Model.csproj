@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
+    <ProjectReference Include="..\Core\Telegram.SafeBot.Core.csproj" />
   </ItemGroup>
 
 </Project>

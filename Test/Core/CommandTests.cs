@@ -1,8 +1,8 @@
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Constant;
+using Telegram.SafeBot.Core.Model;
 using Xunit;
 
-namespace Telegram.Altayskaya97.Test.Core
+namespace Telegram.SafeBot.Test.Core
 {
     public class CommandTests
     {

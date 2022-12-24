@@ -1,7 +1,7 @@
-﻿using Telegram.Altayskaya97.Core.Enum;
+﻿using Telegram.SafeBot.Core.Enum;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service.StateMachines.UserStates
+namespace Telegram.SafeBot.Service.StateMachines.UserStates
 {
     public class PostUserState : UserState<PostState>
     {

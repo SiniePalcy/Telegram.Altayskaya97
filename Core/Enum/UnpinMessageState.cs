@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Core.Enum
+﻿namespace Telegram.SafeBot.Core.Enum
 {
     public enum UnpinMessageState
     {

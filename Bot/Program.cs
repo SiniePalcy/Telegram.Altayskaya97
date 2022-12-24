@@ -3,15 +3,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
-using Telegram.Altayskaya97.Model.DbContext;
-using Telegram.Altayskaya97.Model.Extensions;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Bot;
-using Telegram.Altayskaya97.Service;
-using Telegram.Altayskaya97.Service.Interface;
-using Telegram.Altayskaya97.Service.Service;
+using Telegram.SafeBot.Model.DbContext;
+using Telegram.SafeBot.Model.Extensions;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Bot;
+using Telegram.SafeBot.Service;
+using Telegram.SafeBot.Service.Interface;
+using Telegram.SafeBot.Service.Service;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.SafeBot.Bot
 {
     public class Program
     {

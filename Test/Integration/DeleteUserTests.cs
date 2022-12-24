@@ -2,20 +2,20 @@
 //using System;
 //using System.Collections.Generic;
 //using System.Threading;
-//using Telegram.Altayskaya97.Service;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Service;
+//using Telegram.SafeBot.Service.Interface;
 //using Telegram.Bot;
 //using Telegram.Bot.Types;
 //using Telegram.Bot.Types.Enums;
 //using Telegram.Bot.Types.ReplyMarkups;
 //using Xunit;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class DeleteUserTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public DeleteUserTests(BotFixture fixture)
 //        {
@@ -50,7 +50,7 @@
 
 //            var userServiceMock = new Mock<IUserService>();
 //            userServiceMock.Setup(s => s.Get(It.IsAny<long>()))
-//                .ReturnsAsync(default(Altayskaya97.Core.Model.User));
+//                .ReturnsAsync(default(SafeBot.Core.Model.User));
 //            _bot.UserService = userServiceMock.Object;
 
 //            var chatServiceMock = new Mock<IChatService>();
@@ -153,7 +153,7 @@
 //                Username = userName
 //            };
 //            var userRepo = _fixture.UserMapper.MapToEntity(user);
-//            userRepo.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo.Type = SafeBot.Core.Model.UserType.Admin;
 //            var chat = new Chat
 //            {
 //                Id = 1,
@@ -200,7 +200,7 @@
 //            chatServiceMock.Verify(mock => mock.Get(It.Is<long>(_ => _ == chat.Id)), Times.Exactly(2));
 //            _fixture.MockBotClient.Verify(mock => mock.SendTextMessageAsync(
 //                 It.IsAny<ChatId>(),
-//                 It.Is<string>(_ => _ == Altayskaya97.Core.Constant.Messages.NoPermissions),
+//                 It.Is<string>(_ => _ == SafeBot.Core.Constant.Messages.NoPermissions),
 //                 It.IsAny<ParseMode>(),
 //                 It.IsAny<IEnumerable<MessageEntity>>(),
 //                 It.IsAny<bool>(),
@@ -227,7 +227,7 @@
 //                Username = userName + "2"
 //            };
 //            var userRepo1 = _fixture.UserMapper.MapToEntity(user1);
-//            userRepo1.Type = Altayskaya97.Core.Model.UserType.Admin;
+//            userRepo1.Type = SafeBot.Core.Model.UserType.Admin;
 //            var userRepo2 = _fixture.UserMapper.MapToEntity(user2);
 //            userRepo2.Name = user2.Username;
 //            var chat1 = new Chat
@@ -251,12 +251,12 @@
 //                Text = "/deleteuser testuser2"
 //            };
 
-//            var userMessage1 = new Altayskaya97.Core.Model.UserMessage
+//            var userMessage1 = new SafeBot.Core.Model.UserMessage
 //            {
 //                Id = 1,
 //                UserId = 1
 //            };
-//            var userMessage2 = new Altayskaya97.Core.Model.UserMessage
+//            var userMessage2 = new SafeBot.Core.Model.UserMessage
 //            {
 //                Id = 2,
 //                UserId = 2
@@ -285,7 +285,7 @@
 
 //            var userMessageServiceMock = new Mock<IUserMessageService>();
 //            userMessageServiceMock.Setup(s => s.GetList())
-//                .ReturnsAsync(new Altayskaya97.Core.Model.UserMessage[] { userMessage1, userMessage2});
+//                .ReturnsAsync(new SafeBot.Core.Model.UserMessage[] { userMessage1, userMessage2});
 //            _bot.UserMessageService = userMessageServiceMock.Object;
 
 //            _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Telegram.Altayskaya97.Service.Interface
+namespace Telegram.SafeBot.Service.Interface
 {
     internal class IConfigurationService
     {

@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Interface;
-using Telegram.Altayskaya97.Model.DbContext;
-using Telegram.Altayskaya97.Model.Interface;
+using Telegram.SafeBot.Core.Interface;
+using Telegram.SafeBot.Model.DbContext;
+using Telegram.SafeBot.Model.Interface;
 
-namespace Telegram.Altayskaya97.Model.Repository.DynamoDb
+namespace Telegram.SafeBot.Model.Repository.DynamoDb
 {
     public class DynamoDbRepository<TEntity, TModel, TMapper> : IRepository<TModel>
         where TModel : IObject, new()

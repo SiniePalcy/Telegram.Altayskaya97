@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Service.Interface;
 
-namespace Telegram.Altayskaya97.Service
+namespace Telegram.SafeBot.Service
 {
     public class ChatService : RepositoryService<Chat>, IChatService
     {

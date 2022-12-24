@@ -2,13 +2,13 @@
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.Extensions.Configuration;
 using System;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model.Interface;
-using Telegram.Altayskaya97.Model.Middleware;
-using Telegram.Altayskaya97.Model.Middleware.DynamoDb;
-using Telegram.Altayskaya97.Model.Repository.DynamoDb;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model.Interface;
+using Telegram.SafeBot.Model.Middleware;
+using Telegram.SafeBot.Model.Middleware.DynamoDb;
+using Telegram.SafeBot.Model.Repository.DynamoDb;
 
-namespace Telegram.Altayskaya97.Model.DbContext
+namespace Telegram.SafeBot.Model.DbContext
 {
     public class DynamoDbContext : IDbContext, IDisposable
     {

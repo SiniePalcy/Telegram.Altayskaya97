@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bot\Telegram.Altayskaya97.Bot.csproj" />
-    <ProjectReference Include="..\Core\Telegram.Altayskaya97.Core.csproj" />
+    <ProjectReference Include="..\Bot\Telegram.SafeBot.Bot.csproj" />
+    <ProjectReference Include="..\Core\Telegram.SafeBot.Core.csproj" />
   </ItemGroup>
 
 </Project>

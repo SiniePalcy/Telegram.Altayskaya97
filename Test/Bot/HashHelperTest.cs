@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Diagnostics;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Core.Helpers;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Constant;
+using Telegram.SafeBot.Core.Helpers;
+using Telegram.SafeBot.Core.Model;
 using Xunit;
 using Xunit.Abstractions;
-using Telegram.Altayskaya97.Core.Extensions;
+using Telegram.SafeBot.Core.Extensions;
 
-namespace Telegram.Altayskaya97.Test.Bot
+namespace Telegram.SafeBot.Test.Bot
 {
     public class HashHelperTest
     {

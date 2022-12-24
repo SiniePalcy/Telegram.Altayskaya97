@@ -10,14 +10,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.BotAPI;
 using Telegram.BotAPI.GettingUpdates;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.AvailableTypes;
-using Telegram.Altayskaya97.Service.Extensions;
-using Telegram.Altayskaya97.Core.Model;
-using Telegram.Altayskaya97.Model;
+using Telegram.SafeBot.Service.Extensions;
+using Telegram.SafeBot.Core.Model;
+using Telegram.SafeBot.Model;
 
-namespace Telegram.Altayskaya97.Bot
+namespace Telegram.SafeBot.Bot
 {
     public class Worker : BackgroundService
     {
@@ -127,7 +127,7 @@ namespace Telegram.Altayskaya97.Bot
                 await _userService.Add(new Core.Model.User
                 {
                     Id = long.Parse(_ownerId),
-                    Name = "MukaLudac",
+                    Name = Environment.GetEnvironmentVariable("admin_name"),
                     Type = UserType.Admin,
                     IsAdmin = true,
                 });

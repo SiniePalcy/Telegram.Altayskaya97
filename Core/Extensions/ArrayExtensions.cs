@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Telegram.Altayskaya97.Core.Extensions
+namespace Telegram.SafeBot.Core.Extensions
 {
     public static class ArrayExtensions
     {

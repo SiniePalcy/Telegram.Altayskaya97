@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Telegram.Altayskaya97.Core.Model
+namespace Telegram.SafeBot.Core.Model
 {
     public class CallbackButton : Button
     {

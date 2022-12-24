@@ -2,21 +2,21 @@
 //using System;
 //using System.Collections.Generic;
 //using System.Threading;
-//using Telegram.Altayskaya97.Bot.Helpers;
-//using Telegram.Altayskaya97.Core.Constant;
-//using Telegram.Altayskaya97.Service.Interface;
+//using Telegram.SafeBot.Bot.Helpers;
+//using Telegram.SafeBot.Core.Constant;
+//using Telegram.SafeBot.Service.Interface;
 //using Telegram.Bot;
 //using Telegram.Bot.Types;
 //using Telegram.Bot.Types.Enums;
 //using Telegram.Bot.Types.ReplyMarkups;
 //using Xunit;
 
-//namespace Telegram.Altayskaya97.Test.Integration
+//namespace Telegram.SafeBot.Test.Integration
 //{
 //    public class IWalkTests : IClassFixture<BotFixture>
 //    {
 //        private readonly BotFixture _fixture = null;
-//        private readonly Altayskaya97.Bot.Bot _bot = null;
+//        private readonly SafeBot.Bot.Bot _bot = null;
 
 //        public IWalkTests(BotFixture fixture)
 //        {
@@ -38,10 +38,10 @@
 //                Type = ChatType.Group
 //            };
 //            var chatRepo1 = _fixture.ChatMapper.MapToEntity(chat1);
-//            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Admin;
+//            chatRepo1.ChatType = SafeBot.Core.Model.ChatType.Admin;
 //            var chatRepo2 = _fixture.ChatMapper.MapToEntity(chat2);
-//            chatRepo1.ChatType = Altayskaya97.Core.Model.ChatType.Public;
-//            var chats = new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 };
+//            chatRepo1.ChatType = SafeBot.Core.Model.ChatType.Public;
+//            var chats = new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2 };
 
 //            string userName = "TestUser";
 //            var user = new User
@@ -51,9 +51,9 @@
 //            };
 
 //            var userRepo = _fixture.UserMapper.MapToEntity(user);
-//            userRepo.Type = Altayskaya97.Core.Model.UserType.Member;
+//            userRepo.Type = SafeBot.Core.Model.UserType.Member;
 //            userRepo.Name = user.GetUserName();
-//            var users = new Altayskaya97.Core.Model.User[] { userRepo };
+//            var users = new SafeBot.Core.Model.User[] { userRepo };
 
 //            ChatMember chatMember = new ChatMemberMember();
 
@@ -83,8 +83,8 @@
 //            chatServiceMock.Setup(s => s.Get(It.Is<long>(_ => _ == chat1.Id)))
 //                .ReturnsAsync(chatRepo1);
 //            chatServiceMock.SetupSequence(s => s.GetList())
-//                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[0])
-//                .ReturnsAsync(new Altayskaya97.Core.Model.Chat[] { chatRepo1, chatRepo2 });
+//                .ReturnsAsync(new SafeBot.Core.Model.Chat[0])
+//                .ReturnsAsync(new SafeBot.Core.Model.Chat[] { chatRepo1, chatRepo2 });
 //            _bot.ChatService = chatServiceMock.Object;
 
 //            _fixture.MockBotClient.Setup(s => s.GetChatAsync(It.Is<ChatId>(_ => _.Identifier == 1),

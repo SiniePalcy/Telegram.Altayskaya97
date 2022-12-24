@@ -1,4 +1,4 @@
-﻿namespace Telegram.Altayskaya97.Service.Interface
+﻿namespace Telegram.SafeBot.Service.Interface
 {
     public interface IMenuService : IService
     {

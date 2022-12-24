@@ -1,23 +1,23 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
-using Telegram.Altayskaya97.Model.Middleware;
-using Telegram.Altayskaya97.Service;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Model.Middleware;
+using Telegram.SafeBot.Service;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace Telegram.Altayskaya97.Test.Integration
+namespace Telegram.SafeBot.Test.Integration
 {
     public class BotFixture : IDisposable
     {
-        public Altayskaya97.Bot.Bot Bot { get; }
+        public SafeBot.Bot.Bot Bot { get; }
 
         //private Mock<IConfiguration> _configMock;
 
         public Mock<ITelegramBotClient> MockBotClient { get; }// = new Mock<ITelegramBotClient>();
-        public BaseMapper<User, Altayskaya97.Core.Model.User> UserMapper => new BaseMapper<User, Altayskaya97.Core.Model.User>();
-        public BaseMapper<Chat, Altayskaya97.Core.Model.Chat> ChatMapper => new BaseMapper<Chat, Altayskaya97.Core.Model.Chat>();
+        public BaseMapper<User, SafeBot.Core.Model.User> UserMapper => new BaseMapper<User, SafeBot.Core.Model.User>();
+        public BaseMapper<Chat, SafeBot.Core.Model.Chat> ChatMapper => new BaseMapper<Chat, SafeBot.Core.Model.Chat>();
 
         public BotFixture()
         {
@@ -27,7 +27,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             dateTimeServiceMock.Setup(s => s.GetDateTimeUTCNow()).Returns(DateTime.UtcNow);
             dateTimeServiceMock.Setup(s => s.FormatToString(It.IsAny<DateTime>())).Returns(DateTime.UtcNow.ToString());
 
-            Bot = new Altayskaya97.Bot.Bot(new Logger<Altayskaya97.Bot.Bot>(),
+            Bot = new SafeBot.Bot.Bot(new Logger<SafeBot.Bot.Bot>(),
                 _configMock.Object,
                 new ButtonsService(),
                 new MenuService(),
@@ -91,7 +91,7 @@ namespace Telegram.Altayskaya97.Test.Integration
             banDaysMock.SetupGet(c => c.Value).Returns("Sunday");
 
             var configBotCredsMock = new Mock<IConfigurationSection>();
-            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "altayskaya97_test_bot")))
+            configSectionMock.Setup(c => c.GetSection(It.Is<string>(s => s == "SafeBot_test_bot")))
                 .Returns(configBotCredsMock.Object);
             configBotCredsMock.SetupGet(c => c.Value).Returns("1334252997:AAHXInE3TR2M1aW78MNmj1W0Bid6Zhcs5B0");
 

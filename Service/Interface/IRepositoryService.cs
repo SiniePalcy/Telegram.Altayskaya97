@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Interface;
+using Telegram.SafeBot.Core.Interface;
 
-namespace Telegram.Altayskaya97.Service.Interface
+namespace Telegram.SafeBot.Service.Interface
 {
     public interface IRepositoryService<T> :IService where T : IObject
     {

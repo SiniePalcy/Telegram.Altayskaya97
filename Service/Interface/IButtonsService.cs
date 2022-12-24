@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Model;
 using Telegram.BotAPI.AvailableTypes;
 
-namespace Telegram.Altayskaya97.Service.Interface
+namespace Telegram.SafeBot.Service.Interface
 {
     public interface IButtonsService : IService
     {

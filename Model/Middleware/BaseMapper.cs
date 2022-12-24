@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using Telegram.Altayskaya97.Model.Interface;
+using Telegram.SafeBot.Model.Interface;
 
-namespace Telegram.Altayskaya97.Model.Middleware
+namespace Telegram.SafeBot.Model.Middleware
 {
     public class BaseMapper<TModel, TEntity> : IModelEntityMapper<TModel, TEntity>
     {

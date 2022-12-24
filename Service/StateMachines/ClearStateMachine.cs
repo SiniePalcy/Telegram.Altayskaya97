@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Altayskaya97.Core.Enum;
-using Telegram.Altayskaya97.Core.Constant;
-using Telegram.Altayskaya97.Service.Interface;
+using Telegram.SafeBot.Core.Enum;
+using Telegram.SafeBot.Core.Constant;
+using Telegram.SafeBot.Service.Interface;
 using Telegram.BotAPI.AvailableTypes;
-using Telegram.Altayskaya97.Service.StateMachines.UserStates;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Service.StateMachines.UserStates;
+using Telegram.SafeBot.Core.Model;
 
-namespace Telegram.Altayskaya97.Service.StateMachines
+namespace Telegram.SafeBot.Service.StateMachines
 {
     public class ClearStateMachine : BaseStateMachine<ClearUserState, ClearState>
     {

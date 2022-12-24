@@ -1,55 +1,55 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Telegram.Altayskaya97.Core.Model;
+using Telegram.SafeBot.Core.Model;
 
-namespace Telegram.Altayskaya97.Core.Model
+namespace Telegram.SafeBot.Core.Model
 {
     public static class Commands
     {
         public static Command Unknown => new Command(name: "/unsaved", isShown: false);
 
         //common commands
-        public static Command Help => new Command(name: "/help", description: "Справка");
+        public static Command Help => new Command(name: "/help", description: "Help");
         public static Command Helb => new Command(name: "/xelb", isShown: false);
         public static Command Start => new Command(name: "/start", 
-            description: "Вызов этого меню");
+            description: "Call this menu");
         public static Command IWalk => new Command(name: "/Iwalk", 
-            description: "Я гуляю"); 
+            description: "I walk"); 
         public static Command NoWalk => new Command(name: "/nowalk", 
-            description: "Я не гуляю"); 
+            description: "I don't walk"); 
         public static Command Return => new Command(name: "/return", 
             isShown: false, isSecret: true);
 
         //admin commands
         public static Command Post => new Command(name: "/post", 
-            description: "Отправить объявление", isAdmin: true);
+            description: "Send a post", isAdmin: true);
         public static Command Poll => new Command(name: "/poll", 
-            description: "Отправить опрос", isAdmin: true);
+            description: "Send a pool", isAdmin: true);
         public static Command ChatList => new Command(name: "/chatlist", 
-            description: "Список чатов бота", isAdmin: true);
+            description: "Chat list", isAdmin: true);
         public static Command UserList => new Command(name: "/userlist", 
-            description: "Список пользователей", isAdmin: true);
+            description: "User list", isAdmin: true);
         public static Command InActive => new Command(name: "/inactive", 
-            description: "Неактивные пользователи", isAdmin: true);
+            description: "Unactive users", isAdmin: true);
         public static Command Ban => new Command(name: "/ban", template: "/ban [username|id]", 
-            description: "Забанить пользователя с username или id", isAdmin: true);
+            description: "Ban user by username or id", isAdmin: true);
         public static Command BanAll => new Command(name: "/banall", 
-            description: "Забанить всех пользователей", isAdmin: true);
+            description: "Ban all users", isAdmin: true);
         public static Command DeleteChat => new Command(name: "/deletechat", 
             template: "/deletechat chatname", description: "Удалить чат", isAdmin: true);
         public static Command DeleteUser => new Command(name: "/deleteuser", 
             template: "/deleteuser [username|id]", description: "Удалить пользователя", isAdmin: true);
         public static Command Clear => new Command(name: "/clear", 
-            description: "Очистка чата", isAdmin: true);
+            description: "Clear chat", isAdmin: true);
         public static Command ChangePassword => new Command(name: "/changepass", 
-            description: "Сменить пароль чата", isAdmin: true);
+            description: "Change password for chat", isAdmin: true);
         public static Command ChangeChatType => new Command(name: "/changechattype",
-            description: "Сменить тип чата", isAdmin: true);
+            description: "Change chat type", isAdmin: true);
         public static Command ChangeUserType => new Command(name: "/changeusertype",
             template: "/changeusertype [Admin|Member|Coordinator] [id|username]",
-            description: "Сменить тип пользователя", isAdmin: true);
+            description: "Change permissions for user", isAdmin: true);
         public static Command UnpinMessage => new Command(name: "/unpin",
-            description: "Открепить сообщения", isAdmin: true);
+            description: "Unpin message", isAdmin: true);
         public static Command Backup => new Command(name: "/backup",
             isShown: false, isAdmin: true);
         public static Command Restore => new Command(name: "/restore",
