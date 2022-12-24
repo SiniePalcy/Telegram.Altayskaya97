@@ -19,6 +19,7 @@ namespace Telegram.SafeBot.Test.Bot
         [InlineData("/tnotir")]
         [InlineData("/withBigSymbols")]
         [InlineData("/абвгдёжйъ")]
+        [InlineData("/1053pm")]
         public void GetHash(string pass)
         {
             

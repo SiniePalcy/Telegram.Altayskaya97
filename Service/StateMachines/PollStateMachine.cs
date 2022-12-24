@@ -82,7 +82,7 @@ namespace Telegram.SafeBot.Service.StateMachines
             if (!(GetUserStateFlow(id) is PollUserState processing))
                 return new CommandResult(Messages.UnknownError, CommandResultType.TextMessage);
 
-            if (nextCase == "/done")
+            if (nextCase == "done")
             {
                 if (processing.Cases.Count < 2)
                 {
@@ -101,7 +101,7 @@ namespace Telegram.SafeBot.Service.StateMachines
             }
             
             processing.Cases.Add(nextCase);
-            return new CommandResult("Please, input next case or <code>/done</code> for stop", CommandResultType.TextMessage);
+            return new CommandResult("Please, input next case or <code>done</code> for stop", CommandResultType.TextMessage);
         }
 
         private CommandResult MultiAnswersChoiceState(long id, string text)

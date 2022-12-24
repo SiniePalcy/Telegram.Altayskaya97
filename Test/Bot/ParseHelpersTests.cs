@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.SafeBot.Core.Extensions;
 using Xunit;
 
 namespace Telegram.SafeBot.Test.Bot

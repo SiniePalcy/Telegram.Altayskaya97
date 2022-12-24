@@ -70,12 +70,12 @@ namespace Telegram.SafeBot.Service.StateMachines
                 return new CommandResult(Messages.Cancelled, CommandResultType.TextMessage);
             }
 
-            if (!newPassword.StartsWith("/"))
-            {
-                StopUserStateFlow(userId);
-                return new CommandResult(Messages.Cancelled + ": password must starts from '/'",
-                    CommandResultType.TextMessage);
-            }
+            //if (!newPassword.StartsWith("/"))
+            //{
+            //    StopUserStateFlow(userId);
+            //    return new CommandResult(Messages.Cancelled + ": password must starts from '/'",
+            //        CommandResultType.TextMessage);
+            //}
 
             var userState = GetUserStateFlow(userId);
             userState.NewPassword = newPassword;

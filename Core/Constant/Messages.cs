@@ -9,7 +9,7 @@
         public const string CheckCommand = "Check command";
         public const string GladToSeeYou = "Glad to see you:)";
         public const string IncorrectCommand = "Incorrect command";
-        public const string InputNewPassword = "Please, input password in format: <code>/password</code>";
+        public const string InputNewPassword = "Please, input password";
         public const string No = "No";
         public const string NoAnyChats = "No any chats";
         public const string NoPermissions = "No permissions. Please, input secret command";
