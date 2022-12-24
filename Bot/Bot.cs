@@ -162,11 +162,8 @@ namespace Telegram.SafeBot.Bot
 
         public async Task ProcessBotMessage(Message chatMessage)
         {
-            if (_isFirstRun)
-            {
-                await EnsureDbHasOwner(chatMessage);
+            if (_isFirstRun && await EnsureDbHasOwner(chatMessage))
                 return;
-            }
 
             string commandText = chatMessage?.Text?.Trim()?.ToLower();
             if (string.IsNullOrEmpty(commandText))
@@ -191,7 +188,7 @@ namespace Telegram.SafeBot.Bot
             }
         }
         
-        private async Task EnsureDbHasOwner(Message chatMessage)
+        private async Task<bool> EnsureDbHasOwner(Message chatMessage)
         {
             _isFirstRun = false;
 
@@ -207,9 +204,13 @@ namespace Telegram.SafeBot.Bot
                         Name = sender.Username,
                         Type = UserType.Admin,
                         IsAdmin = true,
-                    }); ;
+                    });
+
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private async Task ProcessCommandMessage(long chatId, Command command, User user)
