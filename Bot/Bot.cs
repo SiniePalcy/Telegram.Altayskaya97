@@ -165,7 +165,7 @@ namespace Telegram.SafeBot.Bot
             if (_isFirstRun && await EnsureDbHasOwner(chatMessage))
                 return;
 
-            string commandText = chatMessage?.Text?.Trim()?.ToLower();
+            string commandText = (chatMessage?.Text ?? chatMessage.Caption).Trim()?.ToLower();
             if (string.IsNullOrEmpty(commandText))
                 return;
 

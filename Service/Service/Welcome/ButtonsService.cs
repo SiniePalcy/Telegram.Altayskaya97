@@ -19,7 +19,6 @@ namespace Telegram.SafeBot.Service
             new CallbackButton("I don't walk", CallbackActions.NoWalk)
         };
 
-
         public IEnumerable<IEnumerable<InlineKeyboardButton>> GetWelcomeButtons(string chatType)
         {
             var inlineKeyboardButtons = new List<InlineKeyboardButton[]>();
