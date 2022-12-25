@@ -18,6 +18,11 @@ namespace Telegram.SafeBot.Service
 
         public override async Task Update(long id, Password updatedItem)
         {
+            if (!updatedItem.Value.StartsWith("/"))
+            {
+                updatedItem.Value = updatedItem.Value.Insert(0, "/");
+            }
+
             await base.Update(id, updatedItem);
             _logger.LogInformation($"Password has been changed for chatType={updatedItem.ChatType}");
         }
