@@ -41,7 +41,7 @@ namespace Telegram.SafeBot.Service.Service
 
         public async Task<CommandResult> TryProcessStage(long userId, Message message)
         {
-            var result = new CommandResult("Something got wrong", CommandResultType.TextMessage);
+            var result = new CommandResult(CommandResultType.None);
             var stateMachine = _stateMachines.FirstOrDefault(sm => sm.IsExecuting(userId));
             if (stateMachine != null)
             {
@@ -51,6 +51,7 @@ namespace Telegram.SafeBot.Service.Service
                 }
                 catch(Exception ex)
                 {
+                    result = new CommandResult("Something got wrong", CommandResultType.TextMessage);
                     _logger.LogError($"Error in processing stage of '{stateMachine.GetType()}' for userId '{userId}'");
                 }
             }
